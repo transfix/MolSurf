@@ -1,0 +1,179 @@
+/*-------------------------------------------------------------------------*/
+/* 1.  The purpose.  This lib contains the functions of linear approximations
+                     of the iso-cuvre of a 2D BB-form polynomial and  iso-
+                     surface of a 3D BB-form polynomial. The linear approx-
+                     mation will be transformed by scalering and translatiton
+                     in order to fit the screen. 
+                         Let P = (x,y,z) be a point in space. Then P is map 
+                     to 
+                         scaler[0]*x + scaler[1],
+                         scaler[0]*y + scaler[2],
+                         scaler[0]*z + scaler[3],
+                     where scaler is a user chosen parameters, which will be
+                     called mapping parameter. In most of the cases, one may
+                     take 
+                            scaler[0] = 1.0; scaler[1] = 0.0;
+                            scaler[2] = 0.0; scaler[3] = 0.0;
+                     It means the transform is identical
+*/
+
+/* 3. The include .h files                                                 */
+/*#include  "/u/ashoka/xuguo/ganith/src/ui/Approx/Lib/Linear/display.h"    */ 
+/*#include  "/u/ashoka/xuguo/ganith/src/ui/Approx/Lib/Interp/Interpl.h"    */ 
+
+/* 3. Data used                                                            */
+typedef double Vertex[3];        /* the vertex of a polygon                */
+typedef double Normal[3];        /* the normal at a vertex                 */
+
+typedef struct _Polygons_
+{
+   int    numpts;                /* the number of vertices                 */
+   Vertex *vertices;             /* the  vertices                          */
+   Normal *normals;              /* the normals at the vertices            */
+   struct _Polygons_ *next;
+}  *Polygons;
+
+
+/* 4. Functions  used                                                      */
+extern void  
+       DisplayBerns123(),        /* Linearize a iso-surface of a BB-poly   */
+       DisplayBerns2D123(),      /* Linearize a iso-curve of a BB-poly     */
+       Display2DFunction(),      /* Linearize 2D function z=f(x,y), BB-poly*/
+       FreePolygons(),           /* free a polygon chain                   */
+       
+       PartialBernstein(),       /* partial derivatives in three directions*/
+       PartialxyzBernstein(),    /* partial derivative in one direction    */
+       PartialxyBernstein2D();   /* partial derivative in one direction    */
+
+extern Polygons 
+       CreatPolygons();          /* creat a polygon                        */
+
+
+/* 5. Usage of the functions                                               */
+
+/*---------------------------------------------------------------------------
+PartialxyBernstein2D -- compute partial derivative about x,or y  of
+                        a 2D Bernstein polynomial of degree m,n
+----------------------------------------------------------------------------*/
+void
+PartialxyBernstein2D(weight,m,n,a1,a2,b1,b2,weight1,dir)
+double   weight[];               /* the coefficients of Bernstein polynomial
+                                    degree m,n                              */
+int      m,n;                    /* degrees in x and y directions           */
+double a1,a2,b1,b2;              /* a1 <= x <= a2; b1 <= y <= b2;           */
+double   weight1[];              /* the coefficients of derivatives about x,
+                                    or y                                    */
+int      dir;                    /* dir = 0--x, 1--y                        */
+
+
+/*---------------------------------------------------------------------------
+PartialBernstein -- compute partial derivative about x,y and z of a 3D
+                    Bernstein polynomial over a cube  of degree m,n,q
+----------------------------------------------------------------------------*/
+void
+PartialBernstein(weight,m,n,q,a1,a2,b1,b2,c1,c2,dxweight,dyweight, dzweight)
+double   weight[];               /* the coefficients of Bernstein polynomial
+                                    degree m,n,q                            */
+int      m,n,q;                  /* the degree of the  Bernstein polynomial */
+double a1,a2,b1,b2,c1,c2;        /* a1 <= x <= a2; b1 <= y <= b2;
+                                    c1 <= z <= c2, the given cube           */
+double   dxweight[],dyweight[], dzweight[];
+                                 /* the coefficients of derivatives about x,
+                                    y and z, respectively                   */
+
+
+/*---------------------------------------------------------------------------
+PartialxyzBernstein -- compute partial derivative about x,or y or z of  a 3D
+                     Bernstein polynomial over a cube of degree m,n,q
+----------------------------------------------------------------------------*/
+void
+PartialxyzBernstein(weight,m,n,q,a1,a2,b1,b2,c1,c2,weight1,dir)
+double   weight[];               /* the coefficients of Bernstein polynomial
+                                    degree m,n,q                            */
+int      m,n,q;                  /* the degree of the  Bernstein polynomial */
+double a1,a2,b1,b2,c1,c2;        /* a1 <= x <= a2; b1 <= y <= b2;
+                                    c1 <= z <= c2, the given cube           */
+double   weight1[];
+                                 /* the coefficients of derivatives about x,
+                                    y or  z                                 */
+int      dir;                    /* dir = 0--x, 1--y, 2--z                  */
+
+/*---------------------------------------------------------------------------
+DisplayBerns123 -- linearize a iso-surface befined by c = f(x,y,z), 
+                   here f is a Bernstein polynomial of degree 
+                   (1,1,1) or (2,2,2) or (3,3,3) over a cube 
+                   [a1,a2]*[b1,b2]*[c1,c2] by a recursively 
+                   subdivision, where c is a given threshold value
+----------------------------------------------------------------------------*/
+void
+DisplayBerns123(weight,a1,a2,b1,b2,c1,c2, m,epsilon,scaler,threshold,polygons)
+double   weight[];               /* the coefficients of Bernstein polynomial
+                                    degree (1,1,1) or (2,2,2) or  (3,3,3)   */
+double a1,a2,b1,b2,c1,c2;        /* a1 <= x <= a2; b1 <= y <= b2;
+                                    c1 <= z <= c2, the given cube           */
+int    m;                        /* degree,  m = 1 or m = 2, or m = 3       */
+double epsilon;                  /* the upper bound of the partition size   */ 
+double scaler[];                 /* the mapping parameter                   */
+double threshold;                /* the threshold value                     */
+Polygons *polygons;              /* polygons chain  created                 */
+
+
+/*---------------------------------------------------------------------------
+DisplayBerns2D123 -- linearize  a iso-curve befined by c = f(x,y),
+                   at the plane defined z = constant, 
+                   here f is a Bernstein polynomial of degree
+                   (1,1) or (2,2) or (3,3) over a rectangular 
+                   [a1,a2]*[b1,b2] by a recursively subdivision,
+                   where c is a given threshold value
+----------------------------------------------------------------------------*/
+void
+DisplayBerns2D123(weight,a1,a2,b1,b2,m,epsilon,zz,scaler,threshold,polygons)
+double   weight[];               /* the coefficients of Bernstein polynomial
+                                    degree (1,1) or (2,2) or  (3,3)         */
+double a1,a2,b1,b2;              /* a1 <= x <= a2; b1 <= y <= b2; the given
+                                    rectangular                             */
+int    m;                        /* degree,   m = 1 or m = 2, or m = 3      */
+double epsilon;                  /* the size conttrol of the partition      */
+double zz;                       /* the z-value of the plane z = zz on which
+                                    the iso-curve will be displayed.        */
+double scaler[];                 /* the mapping parameter                   */
+double threshold;                /* the threshold value                     */
+Polygons *polygons;              /* polygons created                        */
+
+
+
+/*---------------------------------------------------------------------------
+Display2DFunction --linearize the surface z = f(x,y), here f is in BB-form
+                    of degree m,n over a rectangular [a1,a2]*[b1,b2].
+                    This function can also linearize the curve y = f(x) by
+                    by chosing b1 = b2 and n = 0. Here  f is one dimensional 
+                    BB-form. 
+----------------------------------------------------------------------------*/
+void
+Display2DFunction(a1,a2,b1,b2,m,n,weight,scaler,detx,dety,polygons)
+double   weight[];               /* the coefficients of Bernstein polynomial*/
+double a1,a2,b1,b2;              /* a1 <= x <= a2; b1 <= y <= b2;           */
+int    m,n;                      /* degree in x and y direction m,n <= 5    */
+double scaler[];                 /* the mapping parameter                   */
+double detx,dety;                /* x and y dirction sizes in display the
+                                    surface z = f(x,y)                      */
+Polygons *polygons;              /* polygons chain  created                 */
+
+
+/*----------------------------------------------------------------------------
+CreatPolygons -- creat a polygon
+----------------------------------------------------------------------------*/
+Polygons 
+CreatPolygons(n,vertices,normals)
+int      n;                      /* the number of vertices, n > 0           */
+Point    *vertices,*normals;     /* the vertices and normals of the polygon
+                                    if n = 1 or 2, the normal can be NULL   */
+
+
+/*----------------------------------------------------------------------------
+FreePolygons -- free  a polygon chain
+----------------------------------------------------------------------------*/
+void
+FreePolygons(polygons)
+Polygons polygons;               /* the given polygons                      */
+

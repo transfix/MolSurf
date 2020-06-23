@@ -1,0 +1,27 @@
+------------------------------------------------
+|       MolSurf 1.0 - Build/Installation       |
+------------------------------------------------
+Alex R. -- arand@ices.utexas.edu -- 10/20/2010
+
+To build:
+$ cd $BUILD_DIR
+$ cmake $SOURCE_DIR
+$ make
+
+BUILD_DIR - a location to place files generated during the build.
+            It can be the same as the SOURCE_DIR
+SOURCE_DIR - The location of the project's root CMakeLists.txt file.
+
+The build process with produce the executable:
+
+bin/MolSurf
+
+
+Configuration options:
+
+To build without CGAL or NFFT, use the cmake configuration
+options which can be set with the ccmake command.
+
+Note: Disabling CGAL will remove PocketTunnel functionality.
+      Disabling NFFT will remove CoarseGrain functionality.  
+

@@ -1,0 +1,77 @@
+#ifndef FASTSUMMATION_H
+#define FASTSUMMATION_H
+
+#include <complex> // Warning on this since gcc treats complex differently...
+
+extern "C" {
+  #include "nfftarand/nfft/fastsum.h"
+  //#include "nfft-3.0.2/include/nfft/fastsum.h"
+  //#include "nfft/fastsum.h"
+}
+
+class FastSummation
+{
+
+	public:
+		FastSummation();
+		FastSummation(int dimension, int sourceKnots, int targetKnots, int expansion, int cutOff, int smooth, char* kernel_func, double* kernelParams, double inner, double outer);
+		FastSummation(int dimension, int sourceKnots, int targetKnots, int expansion, int cutOff, int smooth, char* kernel_func1, char* kernel_func2, double* kernelParams, double inner, double outer);
+		void fastSum(double* x, double* y, double* alpha, double* alphax, double* alphay, double* alphaz, double* sum, double* sumx, double* sumy, double* sumz);
+		void fastSum(double* x, double* y, double* alpha, double* sum);
+		void threadedFastSum(double* x, double* y, double* alpha, double* alphax, double* alphay, double* alphaz, double* sum, double* sumx, double* sumy, double* sumz);
+		void threadedFastSumCorrection(double* x, double* y, double* alpha, double* alphax, double* alphay, double* alphaz, double* sum, double* sumx, double* sumy, double* sumz, double* c_sum, double* c_sumx, double* c_sumy, double* c_sumz);
+		void directSum(double* x, double* y, double* alpha, double* sum);
+
+		fastsum_plan my_fastsum_plan;
+		fastsum_plan my_par_fastsum_plan[ 4 ];
+		fastsum_plan my_par_corr_fastsum_plan[8];
+	private:
+
+		typedef struct
+		{
+			int p;
+			double* alpha, *sum;
+			FastSummation* FS;
+		} PARAMS;
+
+		int dimension;		// number of dimensions		d
+		int sourceKnots;	// number of source knots	N
+		int targetKnots;	// number of target knots	M
+		int expansion;		// expansion degree		n
+		int cutOff;		// cut-off parameter for NFFT	m
+		int smooth;		// smoothness of regularization	p
+		//Kernel function
+		double* kernelParams;	// kernel function parameters	c
+		double inner;		// inner boundary		eps_I
+		double outer;		// outer boundary		eps_B
+		complex double(*kernel )(double , int , const double*);
+		complex double(*kernel2)(double , int , const double*);
+
+		void init(int dimension_, int sourceKnots_, int targetKnots_, int expansion_, int cutOff_, int smooth_, char* kernelFunction, double* kernelParams_, double inner_, double outer_);
+		void* getKernelFunction(char* kernelFunction);
+		void buildTree(int dimension, int t, double* x, double* alpha, double* alphax, double* alphay, double* alphaz, int sourceKnots);
+		void buildTree(int dimension, int t, double* x, double* alpha,                                                 int sourceKnots);
+		void quicksort(int dimension, int t, double* x, double* alpha, double* alphax, double* alphay, double* alphaz, int sourceKnots);
+		void quicksort(int dimension, int t, double* x, double* alpha,                                                 int sourceKnots);
+		double regkern1(complex double(*kernel)(double , int , const double*), double xx, int p, const double* param, double a, double b);
+		double regkern3(complex double(*kernel)(double , int , const double*), double xx, int p, const double* param, double a, double b);
+		double factorial(int n);
+		double binomial(int n, int m);
+		double basisPolynomial(int m, int r, double xx);
+		void fastSumThread          (int p, double* alpha, double* sum);
+		void fastSumCorrectionThread(int p, double* alpha, double* sum);
+
+		static void* startFastSumThread(void* v)
+		{
+			PARAMS* pr = (PARAMS*) v;
+			pr->FS->fastSumThread(pr->p, pr->alpha, pr->sum);
+		}
+
+		static void* startFastSumCorrectionThread(void* v)
+		{
+			PARAMS* pr = (PARAMS*) v;
+			pr->FS->fastSumCorrectionThread(pr->p, pr->alpha, pr->sum);
+		}
+};
+
+#endif

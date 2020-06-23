@@ -1,0 +1,39 @@
+  
+  SET(METIS_INC_SEARCHPATH
+    /sw/include
+    /usr/include
+    /usr/local/include
+    /usr/include/metis
+    /usr/local/include/metis
+    $ENV{_NMI_PREREQ_metis_ROOT}/include
+    C:/MinGW/msys/1.0/local
+    $ENV{TACC_METIS_INC}
+  )
+
+  FIND_PATH(METIS_INCLUDE_PATH metis.h ${METIS_INC_SEARCHPATH})
+
+  IF(METIS_INCLUDE_PATH)
+    SET(METIS_INCLUDE ${METIS_INCLUDE_PATH})
+  ENDIF (METIS_INCLUDE_PATH)
+
+  IF(METIS_INCLUDE)
+    INCLUDE_DIRECTORIES( ${METIS_INCLUDE})
+  ENDIF(METIS_INCLUDE)
+
+  GET_FILENAME_COMPONENT(METIS_INSTALL_BASE_PATH ${METIS_INCLUDE_PATH} PATH)
+
+  SET(METIS_LIB_SEARCHPATH
+    ${METIS_INSTALL_BASE_PATH}/lib
+    /usr/lib/metis
+    /usr/local/lib/metis
+    C:/MinGW/msys/1.0/local
+    $ENV{TACC_METIS_LIB}
+  )
+
+  FIND_LIBRARY(METIS_LIB libmetis.a ${METIS_LIB_SEARCHPATH})
+
+  IF(METIS_LIB)
+    SET(METIS_FOUND 1)
+  ENDIF(METIS_LIB)
+
+  MESSAGE(METIS_INCLUDE: ${METIS_INCLUDE})

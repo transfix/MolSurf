@@ -1,0 +1,19 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
+
+# use this line to build without lapack
+ADD_DEFINITIONS(-UHAVE_LAPACK)
+
+# use this line to build with lapack
+#ADD_DEFINITIONS(-DHAVE_LAPACK)
+
+FILE(GLOB SOURCE_FILES *.c)
+FILE(GLOB INCLUDE_FILES ../../inc/UsefulMath/*.[Hh])
+
+SOURCE_GROUP("Source Files" FILES ${SOURCE_FILES})
+SOURCE_GROUP("Header Files" FILES ${HEADER_FILES})
+
+INCLUDE_DIRECTORIES(
+  ../../inc/levmar-2.2
+)
+
+ADD_LIBRARY (levmar STATIC ${SOURCE_FILES} ${INCLUDE_FILES})

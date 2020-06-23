@@ -1,0 +1,41 @@
+  
+  SET(CBLAS_INC_SEARCHPATH
+    ${PROJECT_BINARY_DIR}/include
+    /sw/include
+    /usr/include
+    /usr/local/include
+    /usr/include/cblas
+    /usr/local/include/cblas
+    $ENV{_NMI_PREREQ_cblas_ROOT}/include
+    C:/MinGW/msys/1.0/local
+    $ENV{TACC_CBLAS_INC}
+  )
+
+  FIND_PATH(CBLAS_INCLUDE_PATH cblas.h ${CBLAS_INC_SEARCHPATH})
+
+  IF(CBLAS_INCLUDE_PATH)
+    SET(CBLAS_INCLUDE ${CBLAS_INCLUDE_PATH})
+  ENDIF (CBLAS_INCLUDE_PATH)
+
+  IF(CBLAS_INCLUDE)
+    INCLUDE_DIRECTORIES( ${CBLAS_INCLUDE})
+  ENDIF(CBLAS_INCLUDE)
+
+  GET_FILENAME_COMPONENT(CBLAS_INSTALL_BASE_PATH ${CBLAS_INCLUDE_PATH} PATH)
+
+  SET(CBLAS_LIB_SEARCHPATH
+    ${PROJECT_BINARY_DIR}/lib
+    ${CBLAS_INSTALL_BASE_PATH}/lib
+    /usr/lib/cblas
+    /usr/local/lib/cblas
+    C:/MinGW/msys/1.0/local
+    $ENV{TACC_CBLAS_LIB}
+  )
+
+  FIND_LIBRARY(CBLAS_LIB libcblas.a ${CBLAS_LIB_SEARCHPATH})
+
+  IF(CBLAS_LIB)
+    SET(CBLAS_FOUND 1)
+  ENDIF(CBLAS_LIB)
+
+  MESSAGE(CBLAS_INCLUDE: ${CBLAS_INCLUDE})

@@ -1,0 +1,39 @@
+  
+  SET(TAUCS_INC_SEARCHPATH
+    /sw/include
+    /usr/include
+    /usr/local/include
+    /usr/include/taucs
+    /usr/local/include/taucs
+    $ENV{_NMI_PREREQ_taucs_ROOT}/include
+    C:/MinGW/msys/1.0/local
+    $ENV{TACC_TAUCS_INC}
+  )
+
+  FIND_PATH(TAUCS_INCLUDE_PATH taucs.h ${TAUCS_INC_SEARCHPATH})
+
+  IF(TAUCS_INCLUDE_PATH)
+    SET(TAUCS_INCLUDE ${TAUCS_INCLUDE_PATH})
+  ENDIF (TAUCS_INCLUDE_PATH)
+
+  IF(TAUCS_INCLUDE)
+    INCLUDE_DIRECTORIES( ${TAUCS_INCLUDE})
+  ENDIF(TAUCS_INCLUDE)
+
+  GET_FILENAME_COMPONENT(TAUCS_INSTALL_BASE_PATH ${TAUCS_INCLUDE_PATH} PATH)
+
+  SET(TAUCS_LIB_SEARCHPATH
+    ${TAUCS_INSTALL_BASE_PATH}/lib
+    /usr/lib/taucs
+    /usr/local/lib/taucs
+    C:/MinGW/msys/1.0/local
+    $ENV{TACC_TAUCS_LIB}
+  )
+
+  FIND_LIBRARY(TAUCS_LIB libtaucs.a ${TAUCS_LIB_SEARCHPATH})
+
+  IF(TAUCS_LIB)
+    SET(TAUCS_FOUND 1)
+  ENDIF(TAUCS_LIB)
+
+  MESSAGE(TAUCS_INCLUDE: ${TAUCS_INCLUDE})

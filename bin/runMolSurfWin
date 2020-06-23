@@ -1,0 +1,4 @@
+#!/bin/bash
+bindir="`dirname $0`"
+LD_LIBRARY_PATH=$bindir
+$bindir/bin/MolSurf.exe $@

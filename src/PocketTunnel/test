@@ -1,0 +1,44 @@
+
+void 
+write_curated_surf( const Triangulation &triang,
+	            const char* file_prefix) 
+{
+   char filename[100];
+   strcat(strcpy(filename, file_prefix), ".curated.surf");
+   ofstream fout;
+   fout.open(filename);
+   int facet_count = 0;
+   for(FFI fit = triang.finite_facets_begin();
+      fit != triang.finite_facets_end(); fit ++)
+      if( fit->first->outside != fit->first->neighbor(fit->second)->outside )
+         facet_count ++;
+   fout << "OFF" << endl;
+   fout << triang.number_of_vertices() << " " << facet_count << " 0" << endl;
+   for(FVI vit = triang.finite_vertices_begin();
+      vit != triang.finite_vertices_end(); vit ++)
+      fout << vit->point() << endl;
+   for(FFI fit = triang.finite_facets_begin();
+      fit != triang.finite_facets_end(); fit ++)
+   {
+      Cell_handle c[2] = {fit->first, fit->first->neighbor(fit->second)};
+      int id[2] = {c[0]->index(c[1]), c[1]->index(c[0])};
+      if( c[0]->outside == c[1]->outside ) continue;
+      Vertex_handle vh[3] = { c[0]->vertex((id[0]+1)%4),
+                              c[0]->vertex((id[0]+2)%4),
+                              c[0]->vertex((id[0]+3)%4) };
+      if( ! c[0]->outside )
+         if( CGAL::is_negative( Tetrahedron( vh[0]->point(), vh[1]->point(), vh[2]->point(), 
+                                             c[0]->vertex(id[0])->point() ).volume() ) )
+            fout << "3\t" << vh[0]->id << " " << vh[1]->id << " " << vh[2]->id << " ";
+         else
+            fout << "3\t" << vh[1]->id << " " << vh[0]->id << " " << vh[2]->id << " ";
+      else
+         if( CGAL::is_negative( Tetrahedron( vh[0]->point(), vh[1]->point(), vh[2]->point(), 
+                                             c[1]->vertex(id[1])->point() ).volume() ) )
+            fout << "3\t" << vh[0]->id << " " << vh[1]->id << " " << vh[2]->id << " ";
+         else
+            fout << "3\t" << vh[1]->id << " " << vh[0]->id << " " << vh[2]->id << " ";
+      fout << "1 1 1 0.3" << endl;
+   }
+   return;
+}

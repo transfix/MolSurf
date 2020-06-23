@@ -1,0 +1,99 @@
+------------------------------------------------
+|            MolSurf 1.0 - Usage               |
+------------------------------------------------
+Alex R. -- arand@ices.utexas.edu -- 10/20/2010
+
+MolSurf is a package with different functions for 
+generating and accessing molecular surfaces.
+
+More information is available via the Computational
+Visualization Center's website: 
+
+http://cvcweb.ices.utexas.edu/cvc
+
+------------------------------------------------
+
+MolSurf -h | --help
+    Display this summary.
+
+MolSurf -getSurfaceUsingAdaptiveGrid <pdb/pqr input file> <raw output file> 
+          <dim 1> <dim 2> <dim 3>
+    Generate molecular surface using the adaptive grid algorithm.
+
+MolSurf -getSurfaceUsingGaussianBlur <pdb/pqr input file> <raw output file> 
+          <dim 1> <dim 2> <dim 3> <blobbiness> <radius type>
+    Generate molecular surface using the Gaussian blur algorithm.
+
+MolSurf -getSurfaceUsingHLS <pdb/pqr input file> <raw output file> 
+          <dim1> <dim2> <dim3>
+    Generate molecular surface using the higher order level-set algorithm.
+
+MolSurf -getVolumeUsingHLS <pdb/pqr input file> <rawiv output file> 
+          <dim1> <dim2> <dim3>
+    Generate volumetric level-set function.
+
+MolSurf -getSurfaceUsingLBIE <meshtype> <isovalue> <rawiv input file> 
+          <raw output file>
+    Generate tri/quad/tet/hex mesh from volumetric data using the LBIE library.
+
+MolSurf -getArea <raw input file> <txt output file>
+    Compute the surface area of a triangular mesh.
+
+MolSurf -getVolume <raw input file> <txt output file>
+    Compute the volume bounded by a triangular surface mesh.
+
+MolSurf -normals -average <raw input file> <rawn output file>
+MolSurf -normals -loop  <raw input file> <rawn output file>
+    Compute surface normals at vertices of a triangular mesh using face normal 
+    averaging or Loop's algorithm
+
+MolSurf -aspline -raw <raw input file> <raw output file> <resolution>
+    Generate A-spline model (ASMS) from a triangular mesh.
+
+MolSurf -aspline -quadrature <raw input file> <quadrature rule> 
+          <points per triangle> <txt output file>
+    Generate quadrature points for an ASMS from a triangular mesh.
+
+MolSurf -aspline -volume <raw input file> <txt output file>
+    Compute the volume bounded by an ASMS from a triangular mesh.
+
+MolSurf -geoImprove <raw input file> <raw output file>
+    Improve the mesh quality using geometric flow.
+
+MolSurf -convertToRawnUsingHLS <pqr/pdb input file> <rawn output file>
+    Generate molecular surface with surface normal vectors using the higher 
+    order level-set algorithm.    
+
+MolSurf -getSurfaceAtoms <pdb input file> <output file>
+    Compute which atoms of a molecule touch the molecular surface.
+
+MolSurf -populateSAS <pdb/pqr input file> <output file> <dim 1> <dim 2> <dim 3>
+          <probe radius> <radius type>
+
+MolSurf -decimate <raw/rawn input tile> <rawn output file> 
+          <iterations> <max normal variation> <minimum triangle angle>
+    Decimate a surface mesh with specified parameters.
+
+MolSurf -decimatePercentage <raw/rawn input tile> <rawn output file> 
+          <percentage> <max normal variation> <minimum triangle angle>
+    Decimate a surface mesh until only <percentage> of the vertices remain,
+    or until the decimation algorithm fails to reduce the surface further.
+
+MolSurf -BornRadius <radius type> <pqr input tile> <raw/rawn input file> 
+          <txt output file>
+    Compute the Born radius of each atoms and list them in a text file.
+
+MolSurf -coarseGrain <radius type> <pqr input tile> 
+          <coarse-grained pdb/pqr output file> <txt hierarchy info output file> 
+    Create a coarse-grained approximation to a molecule.
+
+MolSurf -coarseGrainCharge <radius type> <pqr input tile> <born radius input>
+          <coarse-grained pqr input file> <coarse-grained born radius input>
+          <txt hierarchy input input> <pqr output>
+    Add charge values to a coarse-grained model.
+
+MolSurf -optimizeCGGeometry <dim1> <dim2> <dim3> <iterations> <pdb/pqr input> 
+          <coarse-grained pdb/pqr input> <txt hierarchy info input> 
+          <pbq/pqr output>
+    Optimize coarse-grained model (radius and centers) based on hierarchical 
+    information.

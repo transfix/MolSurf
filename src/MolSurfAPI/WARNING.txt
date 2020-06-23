@@ -1,0 +1,8 @@
+WARNING:
+
+Do not add any functionality to this directory.  It will be removed as soon
+as possible.
+
+The MolSurfAPI directory contains too many dependencies to be useful.  
+
+Rather, API-type funcitonality should be added to each of the individual subdirectories.  See CardinalBSpline for an example.

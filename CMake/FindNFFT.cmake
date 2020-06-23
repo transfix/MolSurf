@@ -1,0 +1,44 @@
+
+  SET(NFFT_INC_SEARCHPATH
+    ${PROJECT_BINARY_DIR}/include
+    /sw/include
+    /usr/include
+    /usr/local/include
+    /usr/include/nfft
+    /usr/local/include/nfft
+    $ENV{_NMI_PREREQ_nfft_ROOT}/include
+    C:/MinGW/msys/1.0/local
+    $ENV{TACC_NFFT_INC}
+  )
+
+  FIND_PATH(NFFT_INCLUDE_PATH nfft3.h ${NFFT_INC_SEARCHPATH})
+
+  MARK_AS_ADVANCED(NFFT_INCLUDE)
+  MARK_AS_ADVANCED(NFFT_LIB)
+
+  IF(NFFT_INCLUDE_PATH)
+    SET(NFFT_INCLUDE ${NFFT_INCLUDE_PATH})
+  ENDIF (NFFT_INCLUDE_PATH)
+
+  IF(NFFT_INCLUDE)
+    INCLUDE_DIRECTORIES( ${NFFT_INCLUDE})
+  ENDIF(NFFT_INCLUDE)
+
+  GET_FILENAME_COMPONENT(NFFT_INSTALL_BASE_PATH ${NFFT_INCLUDE_PATH} PATH)
+
+  SET(NFFT_LIB_SEARCHPATH
+    ${PROJECT_BINARY_DIR}/lib
+    ${NFFT_INSTALL_BASE_PATH}/lib
+    /usr/lib/nfft
+    /usr/local/lib/nfft
+    C:/MinGW/msys/1.0/local
+    $ENV{TACC_NFFT_LIB}
+  )
+
+  FIND_LIBRARY(NFFT_LIB libnfft3.a ${NFFT_LIB_SEARCHPATH})
+
+  IF(NFFT_LIB)
+    SET(NFFT_FOUND 1)
+  ENDIF(NFFT_LIB)
+
+  #MESSAGE(NFFT_INCLUDE: ${NFFT_INCLUDE})

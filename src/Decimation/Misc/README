@@ -1,0 +1,8 @@
+
+How to use svd, see the code testsvd.c.bak and 
+code dsvdc.c.  The testsvd.c is tested  in 
+/ccv/xuguo/cagd/FatNurb/method
+
+The test shows svd works very well. 
+
+

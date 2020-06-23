@@ -1,0 +1,20 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
+
+FILE(GLOB SOURCE_FILES *.cpp)
+FILE(GLOB INCLUDE_FILES ../../inc/MultiBody/*.[Hh])
+
+SOURCE_GROUP("Source Files" FILES ${SOURCE_FILES})
+SOURCE_GROUP("Header Files" FILES ${INCLUDE_FILES})
+
+INCLUDE_DIRECTORIES(
+  ../../inc
+)
+
+ADD_LIBRARY(MultiBody STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
+
+SET(MB_LINK_LIBS MultiBody ScoringFuncs GOAFileTypes PDBParser DPG UsefulMath Utility)
+ADD_EXECUTABLE (testAssembyGraphFormation testAssembyGraphFormation.cpp)
+TARGET_LINK_LIBRARIES(testAssembyGraphFormation ${MB_LINK_LIBS})
+
+ADD_EXECUTABLE (computeRMSD computeRMSD.cpp)
+TARGET_LINK_LIBRARIES(computeRMSD ${MB_LINK_LIBS})

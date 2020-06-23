@@ -1,0 +1,19 @@
+
+  MARK_AS_ADVANCED(LAPACK_LIB)
+  MARK_AS_ADVANCED(BLAS_LIB)
+
+#  SET(LAPACK_LIB_SEARCHPATH
+#    ${PROJECT_BINARY_DIR}/lib
+#    /usr/lib/lapack
+#    /usr/local/lib/lapack
+#    C:/MinGW/msys/1.0/local
+#    $ENV{TACC_LAPACK_LIB}
+#  )
+
+#  FIND_LIBRARY(LAPACK_LIB liblapack.a ${LAPACK_LIB_SEARCHPATH})
+#  FIND_LIBRARY(BLAS_LIB libblas.a ${LAPACK_LIB_SEARCHPATH})
+
+  SET(LAPACK_LIB ${PROJECT_BINARY_DIR}/lib/liblapack.a)
+  SET(BLAS_LIB ${PROJECT_BINARY_DIR}/lib/libblas.a)
+
+  #MESSAGE(LAPACK_INCLUDE: ${LAPACK_INCLUDE})

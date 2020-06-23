@@ -1,0 +1,4 @@
+#!/bin/bash
+bindir="`dirname $0`"
+LD_LIBRARY_PATH=$bindir
+$bindir/MolSurf-1.0.0.app/Contents/MacOS/MolSurf-1.0.0 $@

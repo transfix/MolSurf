@@ -1,0 +1,21 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
+
+
+FILE(GLOB SOURCE_FILES *.cpp)
+FILE(GLOB INCLUDE_FILES ../../inc/MultiresolutionSurface/*.[Hh])
+
+SOURCE_GROUP("Source Files" FILES ${SOURCE_FILES})
+SOURCE_GROUP("Header Files" FILES ${HEADER_FILES})
+
+MARK_AS_ADVANCED(USE_FFTWD)
+OPTION(USE_FFTWD "Use double precision FFTW if found" ON)
+MARK_AS_ADVANCED(USE_FFTWF)
+OPTION(USE_FFTWF "Use single precision FFTW if found" ON)
+
+INCLUDE_DIRECTORIES(
+	../../inc
+	${FFTW_INCLUDE_PATH}
+)
+
+ADD_LIBRARY (MultiresolutionSurface STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
+SetupFFTW(MultiresolutionSurface)

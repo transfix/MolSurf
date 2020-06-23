@@ -1,0 +1,46 @@
+
+  SET(MPFR_INC_SEARCHPATH
+    ${MPFR_INC_SEARCHPATH}
+    ${PROJECT_BINARY_DIR}/include
+    /sw/include
+    /usr/include
+    /usr/local/include
+    /usr/include/mpfr
+    /usr/local/include/mpfr
+    $ENV{_NMI_PREREQ_mpfr_ROOT}/include
+    C:/MinGW/msys/1.0/local
+    $ENV{TACC_MPFR_INC}
+  )
+
+  message(MPFR_INC_SEARCHPATH: ${MPFR_INC_SEARCHPATH})
+
+  FIND_PATH(MPFR_INCLUDE_PATH mpfr.h ${MPFR_INC_SEARCHPATH})
+
+  IF(MPFR_INCLUDE_PATH)
+    SET(MPFR_INCLUDE ${MPFR_INCLUDE_PATH})
+  ENDIF (MPFR_INCLUDE_PATH)
+
+  #IF(MPFR_INCLUDE)
+  #  INCLUDE_DIRECTORIES( ${MPFR_INCLUDE})
+  #ENDIF(MPFR_INCLUDE)
+
+  GET_FILENAME_COMPONENT(MPFR_INSTALL_BASE_PATH ${MPFR_INCLUDE_PATH} PATH)
+
+  SET(MPFR_LIB_SEARCHPATH
+    ${MPFR_LIB_SEARCHPATH}
+    ${PROJECT_BINARY_DIR}/lib
+    ${MPFR_INSTALL_BASE_PATH}/lib
+    /usr/lib/mpfr
+    /usr/local/lib/mpfr
+    C:/MinGW/msys/1.0/local
+    $ENV{TACC_MPFR_LIB}
+  )
+
+  FIND_LIBRARY(MPFR_LIB libmpfr.a ${MPFR_LIB_SEARCHPATH})
+
+  IF(MPFR_LIB)
+    SET(MPFR_FOUND 1)
+  ENDIF(MPFR_LIB)
+
+  MESSAGE(MPFR_INCLUDE: ${MPFR_INCLUDE})
+  MESSAGE(MPFR_LIB: ${MPFR_LIB})

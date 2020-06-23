@@ -1,0 +1,18 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
+
+FILE(GLOB SOURCE_FILES *.cpp)
+FILE(GLOB INCLUDE_FILES ../../inc/OctreeSurfaceNew/*.[Hh])
+
+SOURCE_GROUP("Source Files" FILES ${SOURCE_FILES})
+SOURCE_GROUP("Header Files" FILES ${HEADER_FILES})
+
+INCLUDE_DIRECTORIES(
+  ../../inc
+)
+
+ADD_LIBRARY (OctreeSurfaceNew STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
+
+SET(OSN_LINK_LIBS OctreeSurfaceNew PDBParser DPG UsefulMath Utility)
+
+ADD_EXECUTABLE (testOctree testOctree.cpp)
+TARGET_LINK_LIBRARIES(testOctree ${OSN_LINK_LIBS})

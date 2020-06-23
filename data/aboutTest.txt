@@ -1,0 +1,141 @@
+Test file output listing:
+/net/axon/workspace/arand/Svn/revert/MolSurf2110/
+
+PQR:
+1RIE_pqr_cg.info	#what processes these?
+1RIE_pqr_cg.pqr		#ok
+1RIE_vdw_cg.info	#what processes these?
+1RIE_vdw_cg.pqr		#ok
+ARG_1_vdw_cg.info	#what processes these?
+ARG_1_vdw_cg.pqr	#ok
+
+QUAD:
+101M_aSpline.quad	#what processes these?
+cube_aSpline4.quad	#what processes these?
+
+RAW:
+101M_ag.raw		#ok
+101M_gb.raw		#ok
+101M_imp.raw		#ok
+101M_pocket_ms.raw	#ok
+101M_pocket_ms.rawiv	#generated in the wrong spot, error opening
+101M_tri.raw		#ok
+2GLS_ag.raw		#ok
+2GLS_gb.raw		#ok
+2GLS_pocket.raw		#maybe
+2GLS_tunnel.raw		#maybe
+2POR_ag.raw		#ok
+2POR_gb.raw		#ok
+2POR_ms.raw		#ok
+2POR_ms.rawiv		#generated in the wrong spot, error opening
+2POR_pocket.raw		#maybe
+2POR_tunnel.raw		#maybe
+4AT1_ag.raw		#ok
+4AT1_gb.raw		#ok
+4AT1_pocket.raw		#maybe
+4AT1_tunnel.raw		#maybe
+C60_ag_dec_tri.raw	#ok
+C60_ag_imp_tri.raw	#ok
+C60_ag_tri.raw		#ok
+head_hex.raw		#bad!
+head_quad.raw		#ok but very crude
+head_tet.raw		#ok, "moles" on the back of the head
+head_tri.raw		#ok, no moles
+
+RAWIV:
+101M.rawiv		#ok
+
+RAWN:
+101M_aSpline_quad.rawn	#ok
+101M_aSpline.rawn	#ok
+101M_tri.rawn		#ok
+1RIE_ag.rawn		#ok
+ARG_1_ag_cg.rawn	#ok
+ARG_1_ag.rawn		#ok
+ARG_1.rawn		#ok
+brick_average.rawn	#ok
+brick_loop.rawn		#ok
+cube_aSpline2.rawn	#nothing
+cube_aSpline30.rawn	#nothing
+cube_aSpline4_quad.rawn	#ok, very small
+cube_aSpline4.rawn	#ok
+cube_average.rawn	#ok
+cube_loop.rawn		#ok
+curved_tri.rawn		#ok
+tet_aSpline2.rawn	#nothing
+tet_aSpline30.rawn	#nothing
+tet_average.rawn	#ok
+tet_loop.rawn		#ok
+
+TXT:
+1RIE_cg_pqr.br			#empty
+1RIE_cg_vdw.br			#empty
+1RIE_pqr.br			#empty
+1RIE_vdw.br			#empty
+ARG_1_cg_vdw.br			#empty
+ARG_1_vdw.br			#empty
+brick_volume.txt		#has a value, I don't know if it is correct
+cube_area.txt			#has a value, I don't know if it is correct
+cube_aSpline_volume.txt		#has a value, I don't know if it is correct
+cube_oriented2_volume.txt	#has a value, I don't know if it is correct
+cube_oriented_volume.txt	#has a value, I don't know if it is correct
+cube_quad_points12.txt		#what processes these?
+cube_quad_points1.txt		#what processes these?	
+cube_volume.txt			#has a value, I don't know if it is correct
+single_tri_quad_points12.txt	#what processes these?
+single_tri_quad_points1.txt	#what processes these?
+tet_area.txt			#has a value, I don't know if it is correct
+tet_aSpline_volume.txt		#has a value, I don't know if it is correct
+tet_oriented_volume.txt		#has a value, I don't know if it is correct
+tet_quad_points12.txt		#what processes these?
+tet_quad_points1.txt		#what processes these?
+tet_volume.txt			#has a value, I don't know if it is correct
+
+
+Craig: the below section may be out of date, I'll have to check it.
+--------------------------------------------
+
+-getVolume:
+
+Results are off by a factor of 3/2
+
+tet.raw produces an incorrect result 1/4 instead of 1/6
+
+cube.raw also fails: returning 1.5 instead of 1
+changing orientation changes the sign of the result
+if the triangles are not consistently oriented, the answer is wrong
+
+--------------------------------------------
+
+-aspline -raw
+
+Needs a .rawn file as input (not .raw), however, if a .raw
+  file is given, the program does not return an error, but just
+  prints a junk result.
+
+cube.rawn gives a smooth result but tet.rawn does not... 
+  I am not sure why this is the case.
+
+--------------------------------------------
+
+-aspline -quadrature
+
+This function appears to work.  However, the output format is 
+  not documented.  The output consists of 7 doubles per face.
+  I assume these are the point location, the surface normal at
+  the point and the quadrature weight.
+
+On first glance, the quadrature weights do not look correct.  
+  Using a 1 point rule on the cube for example, the sum of the 
+  weights is over 24 while I would expect that to be much closer
+  to the cube surface area of 6.  Maybe I am misinterpreting the
+  output.
+
+--------------------------------------------
+
+-aspline -volume
+
+This command runs.  For the cube, the result is a little over 1.5.
+  This number sounds about right for the aspline surface.
+
+--------------------------------------------

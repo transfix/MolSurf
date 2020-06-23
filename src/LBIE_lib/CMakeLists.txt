@@ -1,0 +1,19 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
+
+#arand - qt dependence removed...
+#find_package(Qt3 REQUIRED)
+
+#add_definitions(${QT_DEFINITIONS})
+
+FILE(GLOB SOURCE_FILES *.cpp)
+FILE(GLOB INCLUDE_FILES ../../inc/LBIE_lib/*.[Hh])
+
+SOURCE_GROUP("Source Files" FILES ${SOURCE_FILES})
+SOURCE_GROUP("Header Files" FILES ${HEADER_FILES})
+
+INCLUDE_DIRECTORIES(
+  ../../inc
+#  ${QT_INCLUDE_DIR}
+)
+
+ADD_LIBRARY (LBIE_lib STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
