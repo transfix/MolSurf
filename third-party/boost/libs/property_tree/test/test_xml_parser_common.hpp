@@ -19,7 +19,8 @@ struct ReadFuncWS
     template<class Ptree>
     void operator()(const std::string &filename, Ptree &pt) const
     {
-        boost::property_tree::read_xml(filename, pt);
+        boost::property_tree::read_xml(filename, pt,
+          boost::property_tree::xml_parser::no_concat_text);
     }
 };
 
@@ -62,6 +63,7 @@ void test_xml_parser()
 {
 
     using namespace boost::property_tree;
+    typedef typename Ptree::data_type::value_type char_type;
 
     generic_parser_test_ok<Ptree, ReadFuncWS, WriteFuncWS>
     (
@@ -72,7 +74,7 @@ void test_xml_parser()
     generic_parser_test_ok<Ptree, ReadFuncWS, WriteFuncWS>
     (
         ReadFuncWS(), WriteFuncWS(), ok_data_2, NULL, 
-        "testok2a.xml", NULL, "testok2aout.xml", 6, 18, 8
+        "testok2a.xml", NULL, "testok2aout.xml", 15, 23, 89
     );
 
     generic_parser_test_ok<Ptree, ReadFuncNS, WriteFuncNS>
@@ -84,7 +86,7 @@ void test_xml_parser()
     generic_parser_test_ok<Ptree, ReadFuncWS, WriteFuncWS>
     (
         ReadFuncWS(), WriteFuncWS(), ok_data_3, NULL, 
-        "testok3a.xml", NULL, "testok3aout.xml", 787, 32523, 3831
+        "testok3a.xml", NULL, "testok3aout.xml", 1662, 35377, 11706
     );
 
     generic_parser_test_ok<Ptree, ReadFuncNS, WriteFuncNS>
@@ -96,14 +98,14 @@ void test_xml_parser()
     generic_parser_test_ok<Ptree, ReadFuncWS, WriteFuncWS>
     (
         ReadFuncWS(), WriteFuncWS(), ok_data_4, NULL, 
-        "testok4.xml", NULL, "testok4out.xml", 5, 2, 20
+        "testok4.xml", NULL, "testok4out.xml", 11, 7, 74
     );
 
     generic_parser_test_ok<Ptree, ReadFuncWS, WriteFuncWS>
     (
         ReadFuncWS(), WriteFuncWS(), ok_data_5, NULL, 
         "testok5.xml", NULL, "testok5out.xml",
-        2, umlautsize<typename Ptree::data_type::value_type>(), 3
+        3, umlautsize<char_type>(), 12
     );
 
     generic_parser_test_error<Ptree, ReadFuncWS, WriteFuncWS, xml_parser_error>
@@ -116,6 +118,32 @@ void test_xml_parser()
     (
         ReadFuncWS(), WriteFuncWS(), error_data_2, NULL,
         "testerr2.xml", NULL, "testerr2out.xml", 2
+    );
+
+    generic_parser_test_ok<Ptree, ReadFuncWS, WriteFuncWS>
+    (
+        ReadFuncWS(), WriteFuncWS(), bug_data_pr2855, NULL,
+        "testpr2855.xml", NULL, "testpr2855out.xml", 3, 7, 14
+    );
+    
+    generic_parser_test_ok<Ptree, ReadFuncWS, WriteFuncWS>
+    (
+        ReadFuncWS(), WriteFuncWS(), bug_data_pr1678, NULL,
+        "testpr1678.xml", NULL, "testpr1678out.xml", 2, 0, 4
+    );
+
+    generic_parser_test_ok<Ptree, ReadFuncWS, WriteFuncWS>
+    (
+        ReadFuncWS(), WriteFuncWS(), bug_data_pr5203, NULL,
+        "testpr5203.xml", NULL, "testpr5203out.xml",
+        3, 4 * umlautsize<char_type>(), 13
+    );
+
+    generic_parser_test_ok<Ptree, ReadFuncWS, WriteFuncWS>
+    (
+        ReadFuncWS(), WriteFuncWS(), bug_data_pr4840, NULL,
+        "testpr4840.xml", NULL, "testpr4840out.xml",
+        4, 13, 15
     );
 
 }

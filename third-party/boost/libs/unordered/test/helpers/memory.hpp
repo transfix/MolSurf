@@ -8,10 +8,8 @@
 
 #include <memory>
 #include <map>
-#include <boost/mpl/apply.hpp>
 #include <boost/assert.hpp>
-#include <boost/unordered/detail/allocator_helpers.hpp>
-#include <boost/mpl/aux_/config/eti.hpp>
+#include <boost/unordered/detail/allocate.hpp>
 #include "../helpers/test.hpp"
 
 namespace test
@@ -53,28 +51,10 @@ namespace test
             }
         };
 
-        template <class Alloc>
-        struct allocator_memory_type_gen {
-            typedef std::map<memory_area, memory_track, memory_area_compare,
-                Alloc> type;
-        };
-
-#if defined(BOOST_MPL_CFG_MSVC_ETI_BUG)
-        template <>
-        struct allocator_memory_type_gen<int> {
-            typedef std::map<memory_area, memory_track, memory_area_compare> type;
-        };
-#endif
-
-        template <class Alloc = std::allocator<int> >
         struct memory_tracker {
-            typedef BOOST_DEDUCED_TYPENAME
-                boost::unordered_detail::rebind_wrap<Alloc,
-                    std::pair<memory_area const, memory_track> >::type
-                allocator_type;
-
-            typedef BOOST_DEDUCED_TYPENAME allocator_memory_type_gen<allocator_type>::type
-                allocated_memory_type;
+            typedef std::map<memory_area, memory_track, memory_area_compare,
+                    std::allocator<std::pair<memory_area const, memory_track> >
+                > allocated_memory_type;
 
             allocated_memory_type allocated_memory;
             unsigned int count_allocators;
@@ -106,7 +86,8 @@ namespace test
                         bool no_constructions_left = (count_constructions == 0);
                         bool allocated_memory_empty = allocated_memory.empty();
 
-                        // Clearing the data before the checks terminate the tests.
+                        // Clearing the data before the checks terminate the
+                        // tests.
                         count_allocations = 0;
                         count_constructions = 0;
                         allocated_memory.clear();
@@ -118,7 +99,8 @@ namespace test
                 }
             }
 
-            void track_allocate(void *ptr, std::size_t n, std::size_t size, int tag)
+            void track_allocate(void *ptr, std::size_t n, std::size_t size,
+                int tag)
             {
                 if(n == 0) {
                     BOOST_ERROR("Allocating 0 length array.");
@@ -132,33 +114,49 @@ namespace test
                 }
             }
 
-            void track_deallocate(void* ptr, std::size_t n, std::size_t size, int tag)
+            void track_deallocate(void* ptr, std::size_t n, std::size_t size,
+                int tag, bool check_tag_ = true)
             {
-                BOOST_DEDUCED_TYPENAME allocated_memory_type::iterator pos
-                    = allocated_memory.find(memory_area(ptr, (char*) ptr + n * size));
+                allocated_memory_type::iterator pos =
+                    allocated_memory.find(
+                        memory_area(ptr, (char*) ptr + n * size));
                 if(pos == allocated_memory.end()) {
                     BOOST_ERROR("Deallocating unknown pointer.");
                 } else {
                     BOOST_TEST(pos->first.start == ptr);
                     BOOST_TEST(pos->first.end == (char*) ptr + n * size);
-                    BOOST_TEST(pos->second.tag_ == tag);
+                    if (check_tag_) BOOST_TEST(pos->second.tag_ == tag);
                     allocated_memory.erase(pos);
                 }
                 BOOST_TEST(count_allocations > 0);
                 if(count_allocations > 0) --count_allocations;
             }
 
-            void track_construct(void* /*ptr*/, std::size_t /*size*/, int /*tag*/)
+            void track_construct(void* /*ptr*/, std::size_t /*size*/,
+                int /*tag*/)
             {
                 ++count_constructions;
             }
 
-            void track_destroy(void* /*ptr*/, std::size_t /*size*/, int /*tag*/)
+            void track_destroy(void* /*ptr*/, std::size_t /*size*/,
+                int /*tag*/)
             {
                 BOOST_TEST(count_constructions > 0);
                 if(count_constructions > 0) --count_constructions;
             }
         };
+    }
+
+    namespace detail
+    {
+        // This won't be a problem as I'm only using a single compile unit
+        // in each test (this is actually required by the minimal test
+        // framework).
+        // 
+        // boostinspect:nounnamed
+        namespace {
+            test::detail::memory_tracker tracker;
+        }
     }
 }
 

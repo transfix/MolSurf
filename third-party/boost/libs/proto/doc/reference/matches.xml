@@ -1,4 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2012 Eric Niebler
+
+  Distributed under the Boost
+  Software License, Version 1.0. (See accompanying
+  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+  -->
 <header name="boost/proto/matches.hpp">
   <para>
     Contains definition of the
@@ -82,7 +89,7 @@
             </method>
           </method-group>
         </struct>
-        <typedef name="proto_base_expr">
+        <typedef name="proto_grammar">
           <type>_</type>
         </typedef>
       </struct>
@@ -144,7 +151,7 @@
             </method>
           </method-group>
         </struct>
-        <typedef name="proto_base_expr">
+        <typedef name="proto_grammar">
           <type>not_</type>
         </typedef>
       </struct>
@@ -262,7 +269,7 @@ struct IsIntegral2 :
             </method>
           </method-group>
         </struct>
-        <typedef name="proto_base_expr">
+        <typedef name="proto_grammar">
           <type>if_</type>
         </typedef>
       </struct>
@@ -287,8 +294,8 @@ struct IsIntegral2 :
             When applying
             <computeroutput>proto::or_&lt;G<subscript>0</subscript>,G<subscript>1</subscript>,...G<subscript>n</subscript>&gt;</computeroutput>
             as a transform with an expression <computeroutput>e</computeroutput> of type <computeroutput>E</computeroutput>,
-            state <computeroutput>s</computeroutput> and data <computeroutput>v</computeroutput>, it is equivalent to
-            <computeroutput>G<subscript>x</subscript>()(e, s, v)</computeroutput>, where
+            state <computeroutput>s</computeroutput> and data <computeroutput>d</computeroutput>, it is equivalent to
+            <computeroutput>G<subscript>x</subscript>()(e, s, d)</computeroutput>, where
             <computeroutput>x</computeroutput> is the lowest number such that
             <computeroutput><classname>proto::matches</classname>&lt;E, G<subscript>x</subscript>&gt;::value</computeroutput>
             is <computeroutput>true</computeroutput>.
@@ -345,7 +352,7 @@ struct IsIntegral2 :
             </method>
           </method-group>
         </struct>
-        <typedef name="proto_base_expr">
+        <typedef name="proto_grammar">
           <type>or_</type>
         </typedef>
       </struct>
@@ -358,7 +365,7 @@ struct IsIntegral2 :
         <inherit><type><classname>proto::transform</classname>&lt;and_&lt;G...&gt; &gt;</type></inherit>
         <purpose>For matching all of a set of grammars. When used as a transform,
           <computeroutput>proto::and_&lt;&gt;</computeroutput> applies the transform associated
-          with the <emphasis>last</emphasis> grammar in the set.</purpose>
+          with each grammar in the set and returns the result of the last.</purpose>
         <description>
           <para>
             An expression type <computeroutput>E</computeroutput> matches
@@ -370,8 +377,8 @@ struct IsIntegral2 :
             When applying
             <computeroutput>proto::and_&lt;G<subscript>0</subscript>,G<subscript>1</subscript>,...G<subscript>n</subscript>&gt;</computeroutput>
             as a transform with an expression <computeroutput>e</computeroutput>, state
-            <computeroutput>s</computeroutput> and data <computeroutput>v</computeroutput>, it is equivalent
-            to <computeroutput>G<subscript>n</subscript>()(e, s, v)</computeroutput>.
+            <computeroutput>s</computeroutput> and data <computeroutput>d</computeroutput>, it is equivalent
+            to <computeroutput>(G<subscript>0</subscript>()(e, s, d),G<subscript>1</subscript>()(e, s, d),...G<subscript>n</subscript>()(e, s, d))</computeroutput>.
           </para>
           <para>
             The maximun number of template arguments <computeroutput>proto::and_&lt;&gt;</computeroutput> accepts
@@ -412,13 +419,13 @@ struct IsIntegral2 :
               </parameter>
               <returns>
                 <para>
-                  <computeroutput>G<subscript>n</subscript>()(expr, state, data)</computeroutput>
+                  <computeroutput>(G<subscript>0</subscript>()(expr, state, data),G<subscript>1</subscript>()(expr, state, data),...G<subscript>n</subscript>()(expr, state, data))</computeroutput>
                 </para>
               </returns>
             </method>
           </method-group>
         </struct>
-        <typedef name="proto_base_expr">
+        <typedef name="proto_grammar">
           <type>and_</type>
         </typedef>
       </struct>
@@ -427,25 +434,29 @@ struct IsIntegral2 :
       <struct name="switch_">
         <template>
           <template-type-parameter name="Cases"/>
+          <template-type-parameter name="Transform"/>
         </template>
-        <inherit><classname>proto::transform</classname>&lt;switch_&lt;Cases&gt; &gt;</inherit>
-        <purpose>For matching one of a set of alternate grammars, which are looked up based on an
-          expression's tag type. When used as a transform,
+        <inherit><classname>proto::transform</classname>&lt;switch_&lt;Cases, Transform&gt; &gt;</inherit>
+        <purpose>For matching one of a set of alternate grammars, which are looked up based on
+          the result type of the transform passed in second template parameter. 
+          If no transform is passed, the default one is <computeroutput><classname>proto::tag_of</classname>&lt;<classname>proto::_</classname>&gt;()</computeroutput>
+          so the default matching is based on the expression's tag type. When used as a transform,
           <computeroutput>proto::switch_&lt;&gt;</computeroutput> applies the transform associated
           with the sub-grammar that matches the expression.</purpose>
         <description>
-          <para>
-            An expression type <computeroutput>E</computeroutput> matches
-            <computeroutput>proto::switch_&lt;C&gt;</computeroutput> if
-            <computeroutput>E</computeroutput> matches
-            <computeroutput>C::case_&lt;E::proto_tag&gt;</computeroutput>.
+        <para>
+          An expression type <computeroutput>E</computeroutput> matches
+            <computeroutput>proto::switch_&lt;C,T&gt;</computeroutput> if
+          <computeroutput>E</computeroutput> matches
+            <computeroutput>C::case_&lt;boost::result_of&lt;<classname>proto::when</classname>&lt;<classname>proto::_</classname>,T&gt;(E)&gt;::type&gt;</computeroutput>.
           </para>
-          <para>
-            When applying <computeroutput>proto::switch_&lt;C&gt;</computeroutput> as a transform
-            with an expression <computeroutput>e</computeroutput> of type
-            <computeroutput>E</computeroutput>, state <computeroutput>s</computeroutput> and
-            data <computeroutput>v</computeroutput>, it is equivalent to
-            <computeroutput>C::case_&lt;E::proto_tag&gt;()(e, s, v)</computeroutput>.
+        <para>
+          When applying <computeroutput>proto::switch_&lt;C,T&gt;</computeroutput> as a
+            transform with an expression <computeroutput>e</computeroutput> of type
+            <computeroutput>E</computeroutput>, state <computeroutput>s</computeroutput> of
+            type <computeroutput>S</computeroutput> and data <computeroutput>d</computeroutput>
+            of type <computeroutput>D</computeroutput>, it is equivalent to
+            <computeroutput>C::case_&lt;boost::result_of&lt;<classname>proto::when</classname>&lt;<classname>proto::_</classname>,T&gt;(E,S,D)&gt;::type&gt;()(e, s, d)</computeroutput>.
           </para>
         </description>
         <struct name="impl">
@@ -455,9 +466,12 @@ struct IsIntegral2 :
             <template-type-parameter name="Data"/>
           </template>
           <inherit><type>
-    Cases::template case_&lt;typename Expr::tag_type&gt;::template impl&lt;Expr, State, Data&gt;</type></inherit>
+    Cases::template case_&lt;
+      typename <classname>when</classname>&lt;_, Transform&gt;::template impl&lt;Expr, State, Data&gt;::result_type 
+    &gt;::template impl&lt;Expr, State, Data&gt;</type>
+          </inherit>
         </struct>
-        <typedef name="proto_base_expr">
+        <typedef name="proto_grammar">
           <type>switch_</type>
         </typedef>
       </struct>
@@ -503,9 +517,9 @@ struct IsIntegral2 :
         <purpose>For matching a Grammar to a variable number of sub-expressions.</purpose>
         <description>
           <para>
-            An expression type <computeroutput><classname>proto::expr</classname>&lt;AT,
+            An expression type <computeroutput><classname>proto::basic_expr</classname>&lt;AT,
             <classname alt="proto::listN">proto::list<replaceable>N</replaceable></classname>&lt;A<subscript>0</subscript>,...A<subscript>n</subscript>,U<subscript>0</subscript>,...U<subscript>m</subscript>&gt; &gt;</computeroutput>
-            matches a grammar <computeroutput><classname>proto::expr</classname>&lt;BT,
+            matches a grammar <computeroutput><classname>proto::basic_expr</classname>&lt;BT,
             <classname alt="proto::listN">proto::list<replaceable>M</replaceable></classname>&lt;B<subscript>0</subscript>,...B<subscript>n</subscript>,proto::vararg&lt;V&gt; &gt; &gt;</computeroutput>
             if <computeroutput>BT</computeroutput> is <computeroutput><classname>proto::_</classname></computeroutput>
             or <computeroutput>AT</computeroutput>, and if
@@ -517,7 +531,7 @@ struct IsIntegral2 :
           </para>
           <para>For example:</para>
           <para>
-            <programlisting>// Match any function call expression, irregardless
+            <programlisting>// Match any function call expression, regardless
 // of the number of function arguments:
 struct Function :
   <classname>proto::function</classname>&lt; proto::vararg&lt;proto::_&gt; &gt;
@@ -541,8 +555,8 @@ struct Function :
           <para>
             <computeroutput>proto::matches&lt;Expr, Grammar&gt;</computeroutput> inherits from
             <computeroutput>mpl::true_</computeroutput> if
-            <computeroutput>Expr::proto_base_expr</computeroutput> matches
-            <computeroutput>Grammar::proto_base_expr</computeroutput>, and from
+            <computeroutput>Expr::proto_grammar</computeroutput> matches
+            <computeroutput>Grammar::proto_grammar</computeroutput>, and from
             <computeroutput>mpl::false_</computeroutput> otherwise.
           </para>
           <para>
@@ -559,7 +573,7 @@ struct Function :
                 <para>
                   An expression
                   <computeroutput>
-                    <classname>proto::expr</classname>&lt;AT,
+                    <classname>proto::basic_expr</classname>&lt;AT,
                     <classname alt="proto::listN">
                       proto::list<replaceable>N</replaceable>
                     </classname>&lt;A<subscript>0</subscript>,...A<subscript>n</subscript>&gt;
@@ -567,7 +581,7 @@ struct Function :
                   </computeroutput>
                   matches a grammar
                   <computeroutput>
-                    <classname>proto::expr</classname>&lt;BT,
+                    <classname>proto::basic_expr</classname>&lt;BT,
                     <classname alt="proto::listN">
                       proto::list<replaceable>N</replaceable>
                     </classname>&lt;B<subscript>0</subscript>,...B<subscript>n</subscript>&gt;
@@ -588,14 +602,14 @@ struct Function :
                 <para>
                   An expression
                   <computeroutput>
-                    <classname>proto::expr</classname>&lt;AT,
+                    <classname>proto::basic_expr</classname>&lt;AT,
                     <classname alt="proto::listN">
                       proto::list<replaceable>N</replaceable>
                     </classname>&lt;A<subscript>0</subscript>,...A<subscript>n</subscript>,U<subscript>0</subscript>,...U<subscript>m</subscript>&gt;
                     &gt;
                   </computeroutput> matches a grammar
                   <computeroutput>
-                    <classname>proto::expr</classname>&lt;BT,
+                    <classname>proto::basic_expr</classname>&lt;BT,
                     <classname alt="proto::listN">
                       proto::list<replaceable>M</replaceable>
                     </classname>&lt;B<subscript>0</subscript>,...B<subscript>n</subscript>,<classname>proto::vararg</classname>&lt;V&gt;
@@ -690,21 +704,23 @@ struct Function :
                 <para>
                   An expression <computeroutput>E</computeroutput> matches
                   <computeroutput>
-                    <classname>proto::switch_</classname>&lt;C&gt;
+                    <classname>proto::switch_</classname>&lt;C, T&gt;
                   </computeroutput> if
-                  <computeroutput>E</computeroutput> matches <computeroutput>C::case_&lt;E::proto_tag&gt;</computeroutput>.
+                  <computeroutput>E</computeroutput> matches <computeroutput>C::case_&lt;boost::result_of&lt;<classname>proto::when</classname>&lt;<classname>proto::_</classname>,T&gt;(E)&gt;::type&gt;</computeroutput>.
+                  Note: <computeroutput>T</computeroutput> defaults to <computeroutput><classname>proto::tag_of</classname>&lt;<classname>proto::_</classname>&gt;()</computeroutput>
                 </para>
               </listitem>
             </itemizedlist>
           </para>
           <para>
-            A terminal expression
+            A terminal expression can trivially match the grammar <classname>proto::_</classname>. In addition,
+            a terminal expression
             <computeroutput>
-              <classname>proto::expr</classname>&lt;AT,
+              <classname>proto::basic_expr</classname>&lt;AT,
               <classname>proto::term</classname>&lt;A&gt; &gt;
             </computeroutput> matches a grammar
             <computeroutput>
-              <classname>proto::expr</classname>&lt;BT, <classname>proto::term</classname>&lt;B&gt; &gt;
+              <classname>proto::basic_expr</classname>&lt;BT, <classname>proto::term</classname>&lt;B&gt; &gt;
             </computeroutput>
             if <computeroutput>BT</computeroutput> is <computeroutput><classname>proto::_</classname></computeroutput>
             or <computeroutput>AT</computeroutput> and one of the following is true:

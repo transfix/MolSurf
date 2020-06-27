@@ -16,11 +16,11 @@
 #include <fstream>
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
-#include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test.hpp>
 
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
+#include <boost/filesystem/path.hpp>
 #include "detail/temp_file.hpp"
 #include "detail/verification.hpp"
 
@@ -65,7 +65,7 @@ bool test_resizeable(mapped_file& mf)
 void mapped_file_test()
 {
     using namespace boost::iostreams;
-    BOOST_MESSAGE("about to begin");
+    BOOST_TEST_MESSAGE("about to begin");
 
     //--------------Reading from a mapped_file_source-------------------------//
 
@@ -85,7 +85,7 @@ void mapped_file_test()
                 "failed reading from stream<mapped_file_source> in chars"
             );
 
-            BOOST_MESSAGE(
+            BOOST_TEST_MESSAGE(
                 "done reading from stream<mapped_file_source> in chars"
             );
         }
@@ -102,7 +102,7 @@ void mapped_file_test()
                 "failed reading from stream<mapped_file_source> in chunks"
             );
 
-            BOOST_MESSAGE(
+            BOOST_TEST_MESSAGE(
                 "done reading from stream<mapped_file_source> in chunks"
             );
         }
@@ -125,7 +125,7 @@ void mapped_file_test()
             "failed writing to stream<mapped_file_sink> in chars"
         );
 
-        BOOST_MESSAGE(
+        BOOST_TEST_MESSAGE(
             "done writing to stream<mapped_file_source> in chars"
         );
 
@@ -139,7 +139,7 @@ void mapped_file_test()
             "failed writing to stream<mapped_file_sink> in chunks"
         );
 
-        BOOST_MESSAGE(
+        BOOST_TEST_MESSAGE(
             "done writing to stream<mapped_file_source> in chunks"
         );
     }
@@ -175,6 +175,23 @@ void mapped_file_test()
         );
     }
 
+    //--------------Writing to a pre-existing file---------------------------//
+    {
+        // Test for Bug #3953 - writing to a pre-existing mapped file.
+        boost::iostreams::test::test_file  first, test;
+
+        mapped_file_params p(first.name());
+        p.new_file_size = boost::iostreams::test::data_reps * boost::iostreams::test::data_length();
+        boost::iostreams::stream<mapped_file_sink> out;
+        out.open(mapped_file_sink(p));
+        boost::iostreams::test::write_data_in_chars(out);
+        out.close();
+        BOOST_CHECK_MESSAGE(
+            boost::iostreams::test::compare_files(first.name(), test.name()),
+            "failed writing to pre-existing mapped file in chars"
+        );
+    }
+    
     //--------------Random access with a mapped_file--------------------------//
 
     {
@@ -188,7 +205,7 @@ void mapped_file_test()
             "failed seeking within stream<mapped_file> in chars"
         );
 
-        BOOST_MESSAGE(
+        BOOST_TEST_MESSAGE(
             "done seeking within stream<mapped_file> in chars"
         );
 
@@ -203,7 +220,7 @@ void mapped_file_test()
             "failed seeking within stream<mapped_file> in chunks"
         );
 
-        BOOST_MESSAGE(
+        BOOST_TEST_MESSAGE(
             "done seeking within stream<mapped_file> in chunks"
         );
     }
@@ -220,7 +237,7 @@ void mapped_file_test()
             "failed resizing a mapped_file"
         );
         
-        BOOST_MESSAGE(
+        BOOST_TEST_MESSAGE(
             "done resizing a mapped_file"
         );
     }
@@ -245,7 +262,7 @@ void mapped_file_test()
             "failed writing to private mapped_file"
         );
         
-        BOOST_MESSAGE(
+        BOOST_TEST_MESSAGE(
             "done seeking within private mapped_file"
         );
         
@@ -262,9 +279,40 @@ void mapped_file_test()
             "failed writing to reopened private mapped_file"
         );
         
-        BOOST_MESSAGE(
+        BOOST_TEST_MESSAGE(
             "done reopening private mapped_file"
         );
+    }
+
+    //-------------Check creating opening mapped_file with char*-------------//
+    
+    {
+        boost::iostreams::test::test_file orig;
+        char name[50];
+        std::strcpy(name, orig.name().c_str());
+        
+        mapped_file mf((char*) name);
+
+        BOOST_CHECK_MESSAGE(
+            boost::iostreams::test::test_writeable(mf),
+            "failed seeking within private mapped_file"
+        );
+
+        mf.close();
+    }
+
+    //---------Check creating opening mapped_file with filesystem3 path------//
+    {
+        boost::iostreams::test::test_file orig;
+        
+        mapped_file mf(boost::filesystem::path(orig.name()));
+
+        BOOST_CHECK_MESSAGE(
+            boost::iostreams::test::test_writeable(mf),
+            "failed seeking within private mapped_file"
+        );
+
+        mf.close();
     }
 }
 

@@ -101,7 +101,7 @@ calculates the mean and 2nd moment of a sequence of doubles.
 
         // Display the results ...
         std::cout << "Mean:   " << mean(acc) << std::endl;
-        std::cout << "Moment: " << moment<2>(acc) << std::endl;
+        std::cout << "Moment: " << accumulators::moment<2>(acc) << std::endl;
 
         return 0;
     }
@@ -500,7 +500,7 @@ the values of all samples passed into it.
     
     }}}
 
-Much of the above should be pretty self-explanitory, except for the use of argument packs
+Much of the above should be pretty self-explanatory, except for the use of argument packs
 which may be confusing if you have never used the _parameter_ library before. An argument
 pack is a cluster of values, each of which can be accessed with a key. So `args[sample]`
 extracts from the pack the value associated with the `sample` key. And the cryptic
@@ -779,9 +779,9 @@ a template parameter:
     // ... add some data ...
     
     // Display the 2nd moment ...
-    std::cout << "2nd moment is " << moment<2>(acc) << std::endl;
+    std::cout << "2nd moment is " << accumulators::moment<2>(acc) << std::endl;
 
-In the expression `moment<2>(acc)`, what is `moment`? It cannot be an object --
+In the expression `accumulators::moment<2>(acc)`, what is `moment`? It cannot be an object --
 the syntax of C++ will not allow it. Clearly, if we want to provide this syntax,
 we must make `moment` a function template. Here's what the definition of the 
 `moment` extractor looks like:
@@ -853,7 +853,7 @@ is an acceptable substitute.
 
 [*Registering feature variants with [^as_feature<>]]
 
-You may hve noticed that some feature variants in the Accumulators Framework can be
+You may have noticed that some feature variants in the Accumulators Framework can be
 specified with a nicer syntax. For instance, instead of `tag::mean` and `tag::immediate_mean`
 you can specify them with `tag::mean(lazy)` and `tag::mean(immediate)` respectively.
 These are merely aliases, but the syntax makes the relationship between the two clearer.
@@ -1089,10 +1089,12 @@ It is specified as `tag::covariance<_variate_type_, _variate_tag_>`.
     [[Extractor Complexity] [O(1)]] 
 ]
 
-[*Header]
+[*Headers]
 [def _COVARIANCE_HPP_ [headerref boost/accumulators/statistics/covariance.hpp]]
+[def _COVARIATE_HPP_ [headerref boost/accumulators/statistics/variates/covariate.hpp]]
 
     #include <_COVARIANCE_HPP_>
+    #include <_COVARIATE_HPP_>
 
 [*Example]
 
@@ -1381,9 +1383,9 @@ details, see [classref boost::accumulators::impl::kurtosis_impl [^kurtosis_impl]
     acc(3);
     
     BOOST_CHECK_EQUAL( mean(acc), 5 );
-    BOOST_CHECK_EQUAL( moment<2>(acc), 159./5. );
-    BOOST_CHECK_EQUAL( moment<3>(acc), 1171./5. );
-    BOOST_CHECK_EQUAL( moment<4>(acc), 1863 );
+    BOOST_CHECK_EQUAL( accumulators::moment<2>(acc), 159./5. );
+    BOOST_CHECK_EQUAL( accumulators::moment<3>(acc), 1171./5. );
+    BOOST_CHECK_EQUAL( accumulators::moment<4>(acc), 1863 );
     BOOST_CHECK_CLOSE( kurtosis(acc), -1.39965397924, 1e-6 );
 
 [*See also]
@@ -1485,21 +1487,21 @@ is the default. For more implementation details, see
     BOOST_CHECK_EQUAL(1u, count(acc));
     BOOST_CHECK_EQUAL(2, sum(acc));
     BOOST_CHECK_CLOSE(2., mean_of_weights(acc), 1e-5);
-    BOOST_CHECK_CLOSE(3., (mean_of_variates<int, tag::covariate1>(acc)), 1e-5);
+    BOOST_CHECK_CLOSE(3., (accumulators::mean_of_variates<int, tag::covariate1>(acc)), 1e-5);
 
     acc(0, weight = 4, covariate1 = 4);
     BOOST_CHECK_CLOSE(0.33333333333333333, mean(acc), 1e-5);
     BOOST_CHECK_EQUAL(2u, count(acc));
     BOOST_CHECK_EQUAL(2, sum(acc));
     BOOST_CHECK_CLOSE(3., mean_of_weights(acc), 1e-5);
-    BOOST_CHECK_CLOSE(3.5, (mean_of_variates<int, tag::covariate1>(acc)), 1e-5);
+    BOOST_CHECK_CLOSE(3.5, (accumulators::mean_of_variates<int, tag::covariate1>(acc)), 1e-5);
 
     acc(2, weight = 9, covariate1 = 8);
     BOOST_CHECK_CLOSE(1.33333333333333333, mean(acc), 1e-5);
     BOOST_CHECK_EQUAL(3u, count(acc));
     BOOST_CHECK_EQUAL(20, sum(acc));
     BOOST_CHECK_CLOSE(5., mean_of_weights(acc), 1e-5);
-    BOOST_CHECK_CLOSE(5., (mean_of_variates<int, tag::covariate1>(acc)), 1e-5);
+    BOOST_CHECK_CLOSE(5., (accumulators::mean_of_variates<int, tag::covariate1>(acc)), 1e-5);
 
     accumulator_set<
         int
@@ -1515,19 +1517,19 @@ is the default. For more implementation details, see
     BOOST_CHECK_CLOSE(1., mean(acc2), 1e-5);
     BOOST_CHECK_EQUAL(1u, count(acc2));
     BOOST_CHECK_CLOSE(2., mean_of_weights(acc2), 1e-5);
-    BOOST_CHECK_CLOSE(3., (mean_of_variates<int, tag::covariate1>(acc2)), 1e-5);
+    BOOST_CHECK_CLOSE(3., (accumulators::mean_of_variates<int, tag::covariate1>(acc2)), 1e-5);
         
     acc2(0, weight = 4, covariate1 = 4);
     BOOST_CHECK_CLOSE(0.33333333333333333, mean(acc2), 1e-5);
     BOOST_CHECK_EQUAL(2u, count(acc2));
     BOOST_CHECK_CLOSE(3., mean_of_weights(acc2), 1e-5);
-    BOOST_CHECK_CLOSE(3.5, (mean_of_variates<int, tag::covariate1>(acc2)), 1e-5);
+    BOOST_CHECK_CLOSE(3.5, (accumulators::mean_of_variates<int, tag::covariate1>(acc2)), 1e-5);
     
     acc2(2, weight = 9, covariate1 = 8);
     BOOST_CHECK_CLOSE(1.33333333333333333, mean(acc2), 1e-5);
     BOOST_CHECK_EQUAL(3u, count(acc2));
     BOOST_CHECK_CLOSE(5., mean_of_weights(acc2), 1e-5);
-    BOOST_CHECK_CLOSE(5., (mean_of_variates<int, tag::covariate1>(acc2)), 1e-5);
+    BOOST_CHECK_CLOSE(5., (accumulators::mean_of_variates<int, tag::covariate1>(acc2)), 1e-5);
 
 [*See also]
 
@@ -1682,7 +1684,7 @@ samples over the count of samples.
     acc1(5); // + 25
              // = 45 / 3 = 15
 
-    BOOST_CHECK_CLOSE(15., moment<2>(acc1), 1e-5);
+    BOOST_CHECK_CLOSE(15., accumulators::moment<2>(acc1), 1e-5);
 
     accumulator_set<int, stats<tag::moment<5> > > acc2;
 
@@ -1692,7 +1694,7 @@ samples over the count of samples.
     acc2(5); // + 3125
              // = 4424 / 4 = 1106
 
-    BOOST_CHECK_CLOSE(1106., moment<5>(acc2), 1e-5);
+    BOOST_CHECK_CLOSE(1106., accumulators::moment<5>(acc2), 1e-5);
 
 [*See also]
 
@@ -1728,7 +1730,7 @@ For more implementation details, see
 ]
 
 [*Header]
-[def _P_SQUARE_CUMULATIVE_DISTRIBUTION_HPP_ [headerref boost/accumulators/statistics/p_square_cumulative_distribution.hpp]]
+[def _P_SQUARE_CUMULATIVE_DISTRIBUTION_HPP_ [headerref boost/accumulators/statistics/p_square_cumul_dist.hpp]]
 
     #include <_P_SQUARE_CUMULATIVE_DISTRIBUTION_HPP_>
 
@@ -2203,8 +2205,8 @@ of the 2nd central moment (the variance) of the sampless 3. For implementation d
     acc2(3);
     
     BOOST_CHECK_EQUAL( mean(acc2), 5 );
-    BOOST_CHECK_EQUAL( moment<2>(acc2), 159./5. );
-    BOOST_CHECK_EQUAL( moment<3>(acc2), 1171./5. );
+    BOOST_CHECK_EQUAL( accumulators::moment<2>(acc2), 159./5. );
+    BOOST_CHECK_EQUAL( accumulators::moment<3>(acc2), 1171./5. );
     BOOST_CHECK_CLOSE( skewness(acc2), 0.406040288214, 1e-6 );
 
 [*See also]
@@ -2217,7 +2219,8 @@ of the 2nd central moment (the variance) of the sampless 3. For implementation d
 
 [section:sum sum ['and variants]]
 
-For summing the samples, weights or variates. 
+For summing the samples, weights or variates. The default implementation uses the standard sum operation, 
+but variants using the Kahan summation algorithm are also provided.
 
 [variablelist
     [[Result Type] [`_sample_type_` for summing samples \n
@@ -2226,19 +2229,26 @@ For summing the samples, weights or variates.
     [[Depends On] [['none]]]
     [[Variants] [`tag::sum` \n
                  `tag::sum_of_weights` \n
-                 `tag::sum_of_variates<_variate_type_, _variate_tag_>`]]
+                 `tag::sum_of_variates<_variate_type_, _variate_tag_>` \n
+		 `tag::sum_kahan` (a.k.a. `tag::sum(kahan)`) \n
+		 `tag::sum_of_weights_kahan` (a.k.a. `tag::sum_of_weights(kahan)`) \n
+		 `tag::sum_of_variates_kahan<_variate_type_, _variate_tag_>` \n]]
     [[Initialization Parameters] [['none]]]
     [[Accumulator Parameters] [`weight` for summing weights \n
                                `_variate_tag_` for summing variates]]
     [[Extractor Parameters] [['none]]]
-    [[Accumulator Complexity] [O(1)]] 
+    [[Accumulator Complexity] [O(1). Note that the Kahan sum performs four floating-point sum 
+    		  	       operations per accumulated value, whereas the naive sum 
+			       performs only one.]] 
     [[Extractor Complexity] [O(1)]] 
 ]
 
 [*Header]
 [def _SUM_HPP_ [headerref boost/accumulators/statistics/sum.hpp]]
+[def _SUM_KAHAN_HPP_ [headerref boost/accumulators/statistics/sum_kahan.hpp]]
 
     #include <_SUM_HPP_>
+    #include <_SUM_KAHAN_HPP_>
 
 [*Example]
 
@@ -2267,9 +2277,18 @@ For summing the samples, weights or variates.
     BOOST_CHECK_EQUAL(12, sum_of_weights(acc));
     BOOST_CHECK_EQUAL(18, sum_of_variates(acc));
 
+    // demonstrate Kahan summation
+    accumulator_set<float, stats<tag::sum_kahan> > acc;
+    BOOST_CHECK_EQUAL(0.0f, sum_kahan(acc));
+    for (size_t i = 0; i < 1e6; ++i) {
+      acc(1e-6f);
+    }
+    BOOST_CHECK_EQUAL(1.0f, sum_kahan(acc));
+
 [*See also]
 
 * [classref boost::accumulators::impl::sum_impl [^sum_impl]]
+* [classref boost::accumulators::impl::sum_kahan_impl [^sum_kahan_impl]]
 
 [endsect]
 
@@ -2791,7 +2810,7 @@ using the `tag::variance()` extractor. For more implementation details, see
 
     BOOST_CHECK_EQUAL(5u, count(acc1));
     BOOST_CHECK_CLOSE(3., mean(acc1), 1e-5);
-    BOOST_CHECK_CLOSE(11., moment<2>(acc1), 1e-5);
+    BOOST_CHECK_CLOSE(11., accumulators::moment<2>(acc1), 1e-5);
     BOOST_CHECK_CLOSE(2., variance(acc1), 1e-5);
 
     // immediate variance
@@ -3048,9 +3067,9 @@ details, see [classref boost::accumulators::impl::weighted_kurtosis_impl [^weigh
     acc2(3, weight = 2);
     
     BOOST_CHECK_EQUAL( weighted_mean(acc2), 42./11. );
-    BOOST_CHECK_EQUAL( weighted_moment<2>(acc2), 212./11. );
-    BOOST_CHECK_EQUAL( weighted_moment<3>(acc2), 1350./11. );
-    BOOST_CHECK_EQUAL( weighted_moment<4>(acc2), 9956./11. );
+    BOOST_CHECK_EQUAL( accumulators::weighted_moment<2>(acc2), 212./11. );
+    BOOST_CHECK_EQUAL( accumulators::weighted_moment<3>(acc2), 1350./11. );
+    BOOST_CHECK_EQUAL( accumulators::weighted_moment<4>(acc2), 9956./11. );
     BOOST_CHECK_CLOSE( weighted_kurtosis(acc2), 0.58137026432, 1e-6 );
 
 [*See also]
@@ -3115,7 +3134,7 @@ is the default. For more implementation details, see
                                                   //= 84  / 14 = 6
 
     BOOST_CHECK_EQUAL(6., weighted_mean(acc));
-    BOOST_CHECK_EQUAL(52./7., (weighted_mean_of_variates<int, tag::covariate1>(acc)));
+    BOOST_CHECK_EQUAL(52./7., (accumulators::weighted_mean_of_variates<int, tag::covariate1>(acc)));
 
     accumulator_set<
         int
@@ -3140,7 +3159,7 @@ is the default. For more implementation details, see
                                                   //= 84  / 14 = 6
 
     BOOST_CHECK_EQUAL(6., weighted_mean(acc2));
-    BOOST_CHECK_EQUAL(52./7., (weighted_mean_of_variates<int, tag::covariate1>(acc2)));
+    BOOST_CHECK_EQUAL(52./7., (accumulators::weighted_mean_of_variates<int, tag::covariate1>(acc2)));
 
 [*See also]
 
@@ -3265,8 +3284,8 @@ power of the samples over the sum of the weights.
     acc7(2.7, weight = 1.4);
     acc7(1.8, weight = 0.9);
     
-    BOOST_CHECK_CLOSE(5.403, weighted_moment<2>(acc2), 1e-5);
-    BOOST_CHECK_CLOSE(548.54182, weighted_moment<7>(acc7), 1e-5);
+    BOOST_CHECK_CLOSE(5.403, accumulators::weighted_moment<2>(acc2), 1e-5);
+    BOOST_CHECK_CLOSE(548.54182, accumulators::weighted_moment<7>(acc7), 1e-5);
 
 [*See also]
 
@@ -3304,7 +3323,7 @@ For more implementation details, see
 ]
 
 [*Header]
-[def _WEIGHTED_P_SQUARE_CUMULATIVE_DISTRIBUTION_HPP_ [headerref boost/accumulators/statistics/weighted_p_square_cumulative_distribution.hpp]]
+[def _WEIGHTED_P_SQUARE_CUMULATIVE_DISTRIBUTION_HPP_ [headerref boost/accumulators/statistics/weighted_p_square_cumul_dist.hpp]]
 
     #include <_WEIGHTED_P_SQUARE_CUMULATIVE_DISTRIBUTION_HPP_>
 
@@ -3556,8 +3575,8 @@ For implementation details, see
     acc2(3, weight = 2);
     
     BOOST_CHECK_EQUAL( weighted_mean(acc2), 42./11. );
-    BOOST_CHECK_EQUAL( weighted_moment<2>(acc2), 212./11. );
-    BOOST_CHECK_EQUAL( weighted_moment<3>(acc2), 1350./11. );
+    BOOST_CHECK_EQUAL( accumulators::weighted_moment<2>(acc2), 212./11. );
+    BOOST_CHECK_EQUAL( accumulators::weighted_moment<3>(acc2), 1350./11. );
     BOOST_CHECK_CLOSE( weighted_skewness(acc2), 1.30708406282, 1e-6 );
 
 [*See also]
@@ -3571,26 +3590,34 @@ For implementation details, see
 [section:weighted_sum weighted_sum ['and variants]]
 
 For summing the weighted samples or variates. All of the `tag::weighted_sum_of_variates<>` features 
-can be extracted with the `weighted_sum_of_variates()` extractor.
+can be extracted with the `weighted_sum_of_variates()` extractor. Variants that implement the Kahan 
+summation algorithm are also provided.
 
 [variablelist
     [[Result Type] [`numeric::functional::multiplies<_sample_type_, _weight_type_>::result_type` for summing weighted samples \n
                     `numeric::functional::multiplies<_variate_type_, _weight_type_>::result_type` for summing weighted variates]]
     [[Depends On] [['none]]]
     [[Variants] [`tag::weighted_sum` \n
-                 `tag::weighted_sum_of_variates<_variate_type_, _variate_tag_>`]]
+                 `tag::weighted_sum_of_variates<_variate_type_, _variate_tag_>` \n
+		 `tag::weighted_sum_kahan` (a.k.a. tag::weighted_sum(kahan)) \n
+		 `tag::weighted_sum_of_variates_kahan<_variate_type_, _variate_tag_>` \n]]
     [[Initialization Parameters] [['none]]]
     [[Accumulator Parameters] [`weight` \n
                                `_variate_tag_` for summing variates]]
     [[Extractor Parameters] [['none]]]
-    [[Accumulator Complexity] [O(1)]] 
+    [[Accumulator Complexity] [O(1). Note that the Kahan sum performs four floating-point sum 
+    		  	       operations per accumulated value, whereas the naive sum 
+			       performs only one.]] 
     [[Extractor Complexity] [O(1)]] 
 ]
 
 [*Header]
 [def _WEIGHTED_SUM_HPP_ [headerref boost/accumulators/statistics/weighted_sum.hpp]]
+[def _WEIGHTED_SUM_KAHAN_HPP_ [headerref boost/accumulators/statistics/weighted_sum_kahan.hpp]]
 
     #include <_WEIGHTED_SUM_HPP_>
+    #include <_WEIGHTED_SUM_KAHAN_HPP_>
+
 
 [*Example]
 
@@ -3608,9 +3635,18 @@ can be extracted with the `weighted_sum_of_variates()` extractor.
     BOOST_CHECK_EQUAL(32, weighted_sum(acc));
     BOOST_CHECK_EQUAL(78, weighted_sum_of_variates(acc));
 
+    // demonstrate weighted Kahan summation
+    accumulator_set<float, stats<tag::weighted_sum_kahan>, float > acc;
+    BOOST_CHECK_EQUAL(0.0f, weighted_sum_kahan(acc));
+    for (size_t i = 0; i < 1e6; ++i) {
+      acc(1.0f, weight = 1e-6f);
+    }
+    BOOST_CHECK_EQUAL(1.0f, weighted_sum_kahan(acc));
+
 [*See also]
 
 * [classref boost::accumulators::impl::weighted_sum_impl [^weighted_sum_impl]]
+* [classref boost::accumulators::impl::weighted_sum_impl [^weighted_sum_kahan_impl]]
 
 [endsect]
 
@@ -3953,7 +3989,7 @@ using the `tag::weighted_variance()` extractor. For more implementation details,
 
     BOOST_CHECK_EQUAL(5u, count(acc1));
     BOOST_CHECK_CLOSE(2.9090909, weighted_mean(acc1), 1e-5);
-    BOOST_CHECK_CLOSE(10.1818182, weighted_moment<2>(acc1), 1e-5);
+    BOOST_CHECK_CLOSE(10.1818182, accumulators::weighted_moment<2>(acc1), 1e-5);
     BOOST_CHECK_CLOSE(1.7190083, weighted_variance(acc1), 1e-5);
 
     // immediate weighted_variance
@@ -4011,6 +4047,9 @@ implementation. I would also like to thank David Abrahams and Matthias Troyer fo
 their key contributions to the design of the library. Many thanks are due to Michael 
 Gauckler and Olivier Gygi, who, along with Daniel Egloff, implemented many of the 
 statistical accumulators.
+
+I would also like to thank Simon West for all his assistance maintaining
+Boost.Accumulators.
 
 Finally, I would like to thank _ZKB_ for sponsoring the work on Boost.Accumulators 
 and graciously donating it to the community. 

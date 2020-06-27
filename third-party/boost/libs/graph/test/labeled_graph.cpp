@@ -8,8 +8,6 @@
 #include <string>
 #include <set>
 
-#define BOOST_NO_HASH
-
 #include <boost/assert.hpp>
 #include <boost/range.hpp>
 
@@ -64,7 +62,7 @@ void label_graph(Graph& g)
     typedef typename graph_traits<Graph>::vertex_iterator Iter;
     Iter f, l;
     int x = 0;
-    for(tie(f, l) = vertices(g); f != l; ++f, ++x) {
+    for(boost::tie(f, l) = vertices(g); f != l; ++f, ++x) {
         label_vertex(*f, x, g);
     }
 }

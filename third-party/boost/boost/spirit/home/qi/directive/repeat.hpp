@@ -1,5 +1,6 @@
 /*=============================================================================
-    Copyright (c) 2001-2009 Joel de Guzman
+    Copyright (c) 2001-2011 Joel de Guzman
+    Copyright (c) 2001-2011 Hartmut Kaiser
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,9 +18,14 @@
 #include <boost/spirit/home/qi/operator/kleene.hpp>
 #include <boost/spirit/home/support/container.hpp>
 #include <boost/spirit/home/support/common_terminals.hpp>
-#include <boost/spirit/home/support/attributes.hpp>
+#include <boost/spirit/home/qi/detail/attributes.hpp>
+#include <boost/spirit/home/qi/detail/fail_function.hpp>
+#include <boost/spirit/home/qi/detail/pass_container.hpp>
 #include <boost/spirit/home/support/info.hpp>
+#include <boost/spirit/home/support/has_semantic_action.hpp>
+#include <boost/spirit/home/support/handles_container.hpp>
 #include <boost/fusion/include/at.hpp>
+#include <vector>
 
 namespace boost { namespace spirit
 {
@@ -65,9 +71,11 @@ namespace boost { namespace spirit
 
 namespace boost { namespace spirit { namespace qi
 {
+#ifndef BOOST_SPIRIT_NO_PREDEFINED_TERMINALS
     using spirit::repeat;
-    using spirit::repeat_type;
     using spirit::inf;
+#endif
+    using spirit::repeat_type;
     using spirit::inf_type;
 
     template <typename T>
@@ -148,46 +156,47 @@ namespace boost { namespace spirit { namespace qi
         repeat_parser(Subject const& subject, LoopIter const& iter)
           : subject(subject), iter(iter) {}
 
+        template <typename F>
+        bool parse_container(F f) const
+        {
+            typename LoopIter::type i = iter.start();
+            for (/**/; !iter.got_min(i); ++i)
+            {
+                if (f (subject))
+                    return false;
+            }
+
+            // parse some more up to the maximum specified
+            typename F::iterator_type save = f.f.first;
+            for (/**/; !iter.got_max(i); ++i)
+            {
+                if (f (subject))
+                    break;
+                save = f.f.first;
+            }
+
+            f.f.first = save;
+            return true;
+        }
+
         template <typename Iterator, typename Context
           , typename Skipper, typename Attribute>
         bool parse(Iterator& first, Iterator const& last
           , Context& context, Skipper const& skipper
           , Attribute& attr) const
         {
-            // create a local value if Attribute is not unused_type
-            typedef typename traits::container_value<Attribute>::type 
-                value_type;
-            value_type val = value_type();
-            typename LoopIter::type i = iter.start();
+            typedef detail::fail_function<Iterator, Context, Skipper>
+                fail_function;
 
-            // parse the minimum required
-            { // this scope allows save and save_attr to be reclaimed immediately
-              // after we're done with the required minimum iteration.
-                Iterator save = first;
-                Attribute save_attr; traits::swap_impl(save_attr, attr);
-                for (; !iter.got_min(i); ++i)
-                {
-                    if (!subject.parse(first, last, context, skipper, val))
-                    {
-                        // if we fail before reaching the minimum iteration
-                        // required, restore the iterator and the attribute
-                        // then return false
-                        first = save;
-                        traits::swap_impl(save_attr, attr);
-                        return false;
-                    }
-                    traits::push_back(attr, val);
-                    traits::clear(val);
-                }
-            }
-            // parse some more up to the maximum specified
-            for (; !iter.got_max(i); ++i)
-            {
-                if (!subject.parse(first, last, context, skipper, val))
-                    break;
-                traits::push_back(attr, val);
-                traits::clear(val);
-            }
+            // ensure the attribute is actually a container type
+            traits::make_container(attr);
+
+            Iterator iter = first;
+            fail_function f(iter, last, context, skipper);
+            if (!parse_container(detail::make_pass_container(f, attr)))
+                return false;
+
+            first = f.first;
             return true;
         }
 
@@ -272,9 +281,17 @@ namespace boost { namespace spirit { namespace qi
 
 namespace boost { namespace spirit { namespace traits
 {
+    ///////////////////////////////////////////////////////////////////////////
     template <typename Subject, typename LoopIter>
     struct has_semantic_action<qi::repeat_parser<Subject, LoopIter> >
       : unary_has_semantic_action<Subject> {};
+
+    ///////////////////////////////////////////////////////////////////////////
+    template <typename Subject, typename LoopIter, typename Attribute
+      , typename Context, typename Iterator>
+    struct handles_container<qi::repeat_parser<Subject, LoopIter>
+          , Attribute, Context, Iterator>
+      : mpl::true_ {};
 }}}
 
 #endif

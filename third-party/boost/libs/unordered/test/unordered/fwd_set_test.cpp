@@ -3,7 +3,9 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+#include "../helpers/prefix.hpp"
 #include <boost/unordered/unordered_set_fwd.hpp>
+#include "../helpers/postfix.hpp"
 
 struct true_type { char x[100]; };
 struct false_type { char x; };
@@ -14,38 +16,56 @@ template <class Value, class Hash, class Pred, class Alloc>
 true_type is_unordered_set_impl(
         boost::unordered_set<Value, Hash, Pred, Alloc>*);
 
-typedef boost::unordered_set<int> int_set;
-
-void call_swap(int_set& x, int_set& y) {
+template<typename T>
+void call_swap(boost::unordered_set<T>& x,
+    boost::unordered_set<T>& y)
+{
     swap(x,y);
 }
 
-bool call_equals(int_set& x, int_set& y) {
+template<typename T>
+bool call_equals(boost::unordered_set<T>& x,
+    boost::unordered_set<T>& y)
+{
     return x == y;
 }
 
-bool call_not_equals(int_set& x, int_set& y) {
+template<typename T>
+bool call_not_equals(boost::unordered_set<T>& x,
+    boost::unordered_set<T>& y)
+{
     return x != y;
 }
 
-typedef boost::unordered_multiset<int> int_multiset;
-
-void call_swap(int_multiset& x, int_multiset& y) {
+template<typename T>
+void call_swap(boost::unordered_multiset<T>& x,
+    boost::unordered_multiset<T>& y)
+{
     swap(x,y);
 }
 
-bool call_equals(int_multiset& x, int_multiset& y) {
+template<typename T>
+bool call_equals(boost::unordered_multiset<T>& x,
+    boost::unordered_multiset<T>& y)
+{
     return x == y;
 }
 
-bool call_not_equals(int_multiset& x, int_multiset& y) {
+template<typename T>
+bool call_not_equals(boost::unordered_multiset<T>& x,
+    boost::unordered_multiset<T>& y)
+{
     return x != y;
 }
 
 #include "../helpers/test.hpp"
 
+typedef boost::unordered_set<int> int_set;
+typedef boost::unordered_multiset<int> int_multiset;
+
 UNORDERED_AUTO_TEST(use_fwd_declared_trait_without_definition) {
-    BOOST_TEST(sizeof(is_unordered_set_impl((int_set*) 0)) == sizeof(true_type));
+    BOOST_TEST(sizeof(is_unordered_set_impl((int_set*) 0))
+        == sizeof(true_type));
 }
 
 #include <boost/unordered_set.hpp>
@@ -54,8 +74,7 @@ UNORDERED_AUTO_TEST(use_fwd_declared_trait) {
     boost::unordered_set<int> x;
     BOOST_TEST(sizeof(is_unordered_set_impl(&x)) == sizeof(true_type));
 
-    int dummy;
-    BOOST_TEST(sizeof(is_unordered_set_impl(&dummy)) == sizeof(false_type));
+    BOOST_TEST(sizeof(is_unordered_set_impl((int*) 0)) == sizeof(false_type));
 }
 
 UNORDERED_AUTO_TEST(use_set_fwd_declared_function) {

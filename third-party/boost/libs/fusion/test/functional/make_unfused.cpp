@@ -42,7 +42,7 @@ struct test_func
 
     template <class Self, class Seq> 
     struct result< Self(Seq &) >
-        : mpl::if_< mpl::and_< fusion::result_of::empty<Seq>, RemoveNullary >, 
+        : mpl::if_< mpl::and_< boost::fusion::result_of::empty<Seq>, RemoveNullary >, 
                     boost::blank, mpl::identity<long> >::type
     { };
 
@@ -67,7 +67,7 @@ struct test_func
         typedef long result_type;
 
         template <typename T>
-        long operator()(T & elem, long value) const
+        long operator()(long value, T & elem) const
         {
           elem += sizeof(T);
           return value + elem;
@@ -86,14 +86,14 @@ int main()
     test_func<> f;
     test_func<noncopyable> f_nc;
 
-    fusion::result_of::make_unfused< test_func<> >::type unfused_func =
+    boost::fusion::result_of::make_unfused< test_func<> >::type unfused_func =
         fusion::make_unfused(f);
 
-    fusion::result_of::make_unfused< boost::reference_wrapper< 
+    boost::fusion::result_of::make_unfused< boost::reference_wrapper< 
         test_func<noncopyable> > >::type unfused_func_ref = 
             fusion::make_unfused(ref(f_nc));
 
-    fusion::result_of::make_unfused< boost::reference_wrapper< 
+    boost::fusion::result_of::make_unfused< boost::reference_wrapper< 
         test_func<noncopyable> const> >::type unfused_func_c_ref = 
             fusion::make_unfused(cref(f_nc));
 

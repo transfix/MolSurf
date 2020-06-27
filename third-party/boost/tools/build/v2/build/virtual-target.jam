@@ -760,7 +760,20 @@ class action
 
             DEPENDS $(actual-targets) : $(self.actual-sources)
                 $(self.dependency-only-sources) ;
-
+            
+            # This works around a bug with -j and actions that
+            # produce multiple target, where:
+            # - dependency on the first output is found, and
+            #   the action is started
+            # - dependency on the second output is found, and
+            #   bjam noticed that command is already running
+            # - instead of waiting for the command, dependents
+            #   of the second targets are immediately updated.
+            if $(actual-targets[2])
+            {                
+                INCLUDES $(actual-targets) : $(actual-targets) ;
+            }
+            
             # Action name can include additional argument to rule, which should
             # not be passed to 'set-target-variables'
             toolset.set-target-variables
@@ -1218,7 +1231,7 @@ class subvariant
     # referred to using the dependency property are returned as properties, not
     # targets.
     #
-    rule all-referenced-targets ( )
+    rule all-referenced-targets ( theset )
     {
         # Find directly referenced targets.
         local deps = [ $(self.build-properties).dependency ] ;
@@ -1228,17 +1241,20 @@ class subvariant
         local r ;
         for local t in $(all-targets)
         {
-            r += [ $(t:G=).creating-subvariant ] ;
+            if ! [ $(theset).contains $(t) ]
+            {
+                $(theset).add $(t) ;
+                r += [ $(t:G=).creating-subvariant ] ;
+            }            
         }
         r = [ sequence.unique $(r) ] ;
         for local s in $(r)
         {
             if $(s) != $(__name__)
             {
-                all-targets += [ $(s).all-referenced-targets ] ;
+                $(s).all-referenced-targets $(theset) ;
             }
         }
-        return $(all-targets) ;
     }
 
     # Returns the properties specifying implicit include paths to generated

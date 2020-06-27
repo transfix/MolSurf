@@ -2,7 +2,7 @@
     Boost.Wave: A Standard compliant C++ preprocessor library
     http://www.boost.org/
 
-    Copyright (c) 2001-2009 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2012 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
@@ -24,7 +24,7 @@
 
 //H 10: t_6_067.cpp(20): #include "t_6_067.hpp"
 //H 04: "t_6_067.hpp"
-//H 05: $B(t_6_067.hpp) ($B(t_6_067.hpp))
+//H 05: $S(t_6_067.hpp) ($B(t_6_067.hpp))
 //H 18: boost::wave::lexing_exception
 
 /*-

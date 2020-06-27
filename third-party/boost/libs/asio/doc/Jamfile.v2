@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+# Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 #
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,13 +15,6 @@ xml standalone_doc
     asio.qbk
   ;
 
-install css
-  :
-    /boost//doc/html/boostbook.css
-  :
-    <location>html
-  ;
-
 install images
   :
     overview/proactor.png
@@ -32,10 +25,10 @@ install images
     <location>html/boost_asio
   ;
 
-local example-names = allocation buffers chat echo http/client http/server
-  http/server2 http/server3 icmp invocation iostreams local multicast
-  nonblocking porthopper serialization services socks4 ssl timeouts timers
-  windows ;
+local example-names = allocation buffers chat echo fork http/client http/server
+  http/server2 http/server3 http/server4 icmp invocation iostreams local
+  multicast nonblocking porthopper serialization services socks4 ssl timeouts
+  timers windows ;
 
 for local l in $(example-names)
 {
@@ -47,8 +40,6 @@ boostbook standalone
     standalone_doc
   :
     <xsl:param>boost.root=../../../..
-    <xsl:param>boost.libraries=../../../../libs/libraries.htm
-    <xsl:param>navig.graphics.path="../../../../doc/html/images/"
     <xsl:param>chapter.autolabel=0
     <xsl:param>chunk.section.depth=8
     <xsl:param>chunk.first.sections=1
@@ -106,9 +97,12 @@ boostbook asio
     <xsl:param>generate.toc="chapter nop section nop"
     <xsl:param>root.filename=boost_asio
     <format>pdf:<xsl:param>img.src.path=$(images_location)/
+    <format>pdf:<xsl:param>boost.url.prefix=http://www.boost.org/doc/libs/release/libs/asio/doc/html
   :
     <dependency>asio_doc_images
     <dependency>asio_examples
   ;
 
 explicit asio ;
+
+

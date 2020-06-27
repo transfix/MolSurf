@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile$
 //
-//  Version     : $Revision$
+//  Version     : $Revision: 49313 $
 //
 //  Description : tests an ability of the Program Execution Monitor to catch 
 //  user fatal exceptions. Should fail during run. But not crash.

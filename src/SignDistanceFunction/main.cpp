@@ -211,7 +211,7 @@ SimpleVolumeData* SDFLibrary::getSDF(Geometry* geometry, int size)
 	SDFLibrary::RAWIV_header* volInfo = SDFLibrary::getVolumeInfo();
 	if(!volInfo)
 	{
-		return false;
+		return 0;
 	}
 	SimpleVolumeData* sData = 0;
 	{

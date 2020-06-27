@@ -172,6 +172,7 @@ void test_simple_repeats()
    TEST_REGEX_SEARCH("^a{0,1}?$", perl, "aaaaa", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("^(?:a){0,1}?$", perl, "aaaaa", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("^a(?:bc)?", perl, "abcbc", match_any|match_all, make_array(-2, -2));
+   test_simple_repeats2();
 }
 
 void test_simple_repeats2()
@@ -475,5 +476,12 @@ void test_pocessive_repeats()
    TEST_REGEX_SEARCH("x{1,5}+\\w", perl, "xxxxxa", match_default, make_array(0, 6, -2, -2));
    TEST_REGEX_SEARCH("x{1,4}+\\w", perl, "xxxxxa", match_default, make_array(0, 5, -2, -2));
    TEST_REGEX_SEARCH("x{1,3}+\\w", perl, "xxxxxa", match_default, make_array(0, 4, -2, 4, 6, -2, -2));
+   TEST_INVALID_REGEX("\\d+++", perl);
+   TEST_INVALID_REGEX("\\d++*", perl);
+   TEST_INVALID_REGEX("\\d++?", perl);
+   TEST_INVALID_REGEX("\\d++{3}", perl);
+   TEST_INVALID_REGEX("\\d*++", perl);
+   TEST_INVALID_REGEX("\\d?++", perl);
+   TEST_INVALID_REGEX("\\d{1,2}++", perl);
 }
 

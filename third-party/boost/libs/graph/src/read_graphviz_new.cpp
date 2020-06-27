@@ -25,6 +25,8 @@
 //         Ronald Garcia
 //
 
+#define BOOST_GRAPH_SOURCE
+#include <boost/assert.hpp>
 #include <boost/ref.hpp>
 #include <boost/function/function2.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
@@ -44,6 +46,7 @@
 #include <boost/regex.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
+#include <boost/graph/dll_import_export.hpp>
 #include <boost/graph/graphviz.hpp>
 
 namespace boost {
@@ -75,7 +78,8 @@ namespace read_graphviz_detail {
       quoted_string, // Only used internally in tokenizer
       eof,
       invalid
-    } type;
+    };
+    token_type type;
     std::string normalized_value; // May have double-quotes removed and/or some escapes replaced
     token(token_type type, const std::string& normalized_value)
       : type(type), normalized_value(normalized_value) {}
@@ -164,10 +168,10 @@ namespace read_graphviz_detail {
 #endif
         boost::regex_search(begin, end, results, stuff_to_skip);
 #ifndef NDEBUG
-      assert (found);
+      BOOST_ASSERT (found);
 #endif
       boost::sub_match<std::string::const_iterator> sm1 = results.suffix();
-      assert (sm1.second == end);
+      BOOST_ASSERT (sm1.second == end);
       begin = sm1.first;
     }
 
@@ -224,10 +228,10 @@ namespace read_graphviz_detail {
             switch (str[1]) {
               case '-': return token(token::dash_dash, str);
               case '>': return token(token::dash_greater, str);
-              default: assert (!"Definition of punctuation_token does not match switch statement");
+              default: BOOST_ASSERT (!"Definition of punctuation_token does not match switch statement");
             }
           }
-          default: assert (!"Definition of punctuation_token does not match switch statement"); std::abort();
+          default: BOOST_ASSERT (!"Definition of punctuation_token does not match switch statement");
         }
       }
       found = boost::regex_search(begin, end, results, number_token);
@@ -241,7 +245,7 @@ namespace read_graphviz_detail {
         std::string str = results[1].str();
         begin = results.suffix().first;
         // Remove the beginning and ending quotes
-        assert (str.size() >= 2);
+        BOOST_ASSERT (str.size() >= 2);
         str.erase(str.begin());
         str.erase(str.end() - 1);
         // Unescape quotes in the middle, but nothing else (see format spec)
@@ -497,7 +501,7 @@ namespace read_graphviz_detail {
         case token::kw_graph: parse_attr_list(current_graph_props()); break;
         case token::kw_node: parse_attr_list(current().def_node_props); break;
         case token::kw_edge: parse_attr_list(current().def_edge_props); break;
-        default: assert (!"Bad attr_stmt case"); std::abort();
+        default: BOOST_ASSERT (!"Bad attr_stmt case");
       }
     }
 
@@ -634,7 +638,7 @@ namespace read_graphviz_detail {
       }
       properties this_edge_props = current().def_edge_props;
       if (peek().type == token::left_bracket) parse_attr_list(this_edge_props);
-      assert (nodes_in_chain.size() >= 2); // Should be in node parser otherwise
+      BOOST_ASSERT (nodes_in_chain.size() >= 2); // Should be in node parser otherwise
       for (size_t i = 0; i + 1 < nodes_in_chain.size(); ++i) {
         do_orig_edge(nodes_in_chain[i], nodes_in_chain[i + 1], this_edge_props);
       }
@@ -714,7 +718,7 @@ namespace read_graphviz_detail {
               std::string rhs = "true";
               if (peek().type == token::equal) {
                 get();
-                if (peek().type != token::identifier) error("Wanted identifier as value of attributed");
+                if (peek().type != token::identifier) error("Wanted identifier as value of attribute");
                 rhs = get().normalized_value;
               }
               props[lhs] = rhs;
@@ -761,7 +765,7 @@ namespace read_graphviz_detail {
     typedef boost::detail::graph::node_t vertex;
     typedef boost::detail::graph::edge_t edge;
     for (std::map<node_name, properties>::const_iterator i = r.nodes.begin(); i != r.nodes.end(); ++i) {
-      std::cerr << i->first << " " << props_to_string(i->second) << std::endl;
+      // std::cerr << i->first << " " << props_to_string(i->second) << std::endl;
       mg->do_add_vertex(i->first);
       for (properties::const_iterator j = i->second.begin(); j != i->second.end(); ++j) {
         mg->set_node_property(j->first, i->first, j->second);
@@ -769,7 +773,7 @@ namespace read_graphviz_detail {
     }
     for (std::vector<edge_info>::const_iterator i = r.edges.begin(); i != r.edges.end(); ++i) {
       const edge_info& ei = *i;
-      std::cerr << ei.source << " -> " << ei.target << " " << props_to_string(ei.props) << std::endl;
+      // std::cerr << ei.source << " -> " << ei.target << " " << props_to_string(ei.props) << std::endl;
       edge e = edge::new_edge();
       mg->do_add_edge(e, ei.source.name, ei.target.name);
       for (properties::const_iterator j = ei.props.begin(); j != ei.props.end(); ++j) {
@@ -777,12 +781,13 @@ namespace read_graphviz_detail {
       }
     }
     std::map<subgraph_name, properties>::const_iterator root_graph_props_i = r.graph_props.find("___root___");
-    assert (root_graph_props_i != r.graph_props.end()); // Should not happen
+    BOOST_ASSERT (root_graph_props_i != r.graph_props.end()); // Should not happen
     const properties& root_graph_props = root_graph_props_i->second;
-    std::cerr << "ending graph " << props_to_string(root_graph_props) << std::endl;
+    // std::cerr << "ending graph " << props_to_string(root_graph_props) << std::endl;
     for (properties::const_iterator i = root_graph_props.begin(); i != root_graph_props.end(); ++i) {
       mg->set_graph_property(i->first, i->second);
     }
+    mg->finish_building_graph();
   }
 
 } // end namespace read_graphviz_detail
@@ -790,7 +795,7 @@ namespace read_graphviz_detail {
 namespace detail {
   namespace graph {
 
-    bool read_graphviz(const std::string& str, boost::detail::graph::mutate_graph* mg) {
+    BOOST_GRAPH_DECL bool read_graphviz_new(const std::string& str, boost::detail::graph::mutate_graph* mg) {
       read_graphviz_detail::parser_result parsed_file;
       read_graphviz_detail::parse_graphviz_from_string(str, parsed_file, mg->is_directed());
       read_graphviz_detail::translate_results_to_graph(parsed_file, mg);

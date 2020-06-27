@@ -7,6 +7,13 @@
 #include "check_integral_constant.hpp"
 #include <boost/type_traits/has_new_operator.hpp>
 
+#ifdef BOOST_INTEL
+//  remark #1720: function "class_with_new_op::operator new" has no corresponding member operator delete (to be called if an exception is thrown during initialization of an allocated object)
+//      void * operator new(std::size_t);
+//             ^
+#pragma warning(disable:1720)
+#endif
+
 struct class_with_new_op {
     void * operator new(std::size_t);
 };
@@ -33,6 +40,16 @@ struct class_with_new_op6 {
    void* operator new[] (std::size_t size, void* ptr);
 };
 
+struct class_with_all_ops
+{
+   void * operator new(std::size_t);
+   void* operator new(std::size_t size, const std::nothrow_t&);
+   void* operator new[](std::size_t size);
+   void* operator new[](std::size_t size, const std::nothrow_t&);
+   void* operator new (std::size_t size, void* ptr);
+   void* operator new[] (std::size_t size, void* ptr);
+};
+
 TT_TEST_BEGIN(has_new_operator)
 
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<class_with_new_op>::value, true);
@@ -42,6 +59,7 @@ BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<class_with_new_op3>::value,
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<class_with_new_op4>::value, true);
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<class_with_new_op5>::value, true);
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<class_with_new_op6>::value, true);
+BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<class_with_all_ops>::value, true);
 
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<bool>::value, false);
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<bool const>::value, false);
@@ -170,6 +188,9 @@ BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<cmf>::value, false);
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<enum_UDT>::value, false);
 
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<int&>::value, false);
+#ifndef BOOST_NO_RVALUE_REFERENCES
+BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<int&&>::value, false);
+#endif
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<const int&>::value, false);
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<int[2]>::value, false);
 BOOST_CHECK_INTEGRAL_CONSTANT(::tt::has_new_operator<int[3][2]>::value, false);

@@ -1,6 +1,6 @@
 /*=============================================================================
     Copyright (C) 1999-2003 Jaakko Jarvi
-    Copyright (c) 2001-2006 Joel de Guzman
+    Copyright (c) 2001-2011 Joel de Guzman
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -21,7 +21,7 @@
 #endif
 
 #if !defined(FUSION_SIZE)
-#define FUSION_SIZE result_of::size
+#define FUSION_SIZE boost::fusion::result_of::size
 #endif
 
 template <typename S1, typename S2>
@@ -144,14 +144,14 @@ test()
 
         BOOST_STATIC_ASSERT(FUSION_SIZE<t1>::value == 3);
         BOOST_STATIC_ASSERT(FUSION_SIZE<t2>::value == 0);
-        BOOST_STATIC_ASSERT(!result_of::empty<t1>::value);
-        BOOST_STATIC_ASSERT(result_of::empty<t2>::value);
+        BOOST_STATIC_ASSERT(!boost::fusion::result_of::empty<t1>::value);
+        BOOST_STATIC_ASSERT(boost::fusion::result_of::empty<t2>::value);
     }
 
     {   // testing front & back
 
         typedef FUSION_SEQUENCE<int, float, std::string> tup;
-        tup t(1, 2.2, "Kimpo");
+        tup t(1, 2.2f, "Kimpo");
 
         BOOST_TEST(front(t) == 1);
 #if !defined(FUSION_FORWARD_ONLY) // list has no back

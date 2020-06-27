@@ -9,7 +9,7 @@
 -->
 
 
-<section id="string_algo.usage" last-revision="$Date$">
+<section id="string_algo.usage" last-revision="$Date: 2012-09-28 11:34:12 -0700 (Fri, 28 Sep 2012) $">
     <title>Usage</title>
 
     <using-namespace name="boost"/>
@@ -57,7 +57,7 @@
                     The magic of <ulink url="../../libs/range/index.html">Boost.Range</ulink> 
                     provides a uniform way of handling different string types. 
                     If there is a need to pass a pair of iterators, 
-                    <ulink url="../../libs/range/doc/utility_class.html"><code>boost::iterator_range</code></ulink>
+                    <ulink url="../../libs/range/doc/html/range/reference/utilities/iterator_range.html"><code>boost::iterator_range</code></ulink>
                     can be used to package iterators into a structure with a compatible interface.
                 </para>
             </listitem>
@@ -130,17 +130,17 @@
     string str1("command.com");
     cout 
         &lt;&lt; str1
-        &lt;&lt; (is_executable("command.com")? "is": "is not") 
+        &lt;&lt; (is_executable(str1)? "is": "is not") 
         &lt;&lt; "an executable" 
         &lt;&lt; endl; // prints "command.com is an executable"
     
     //..
-    char text1[]="hello world!";
+    char text1[]="hello";
     cout 
         &lt;&lt; text1 
-        &lt;&lt; (all( text1, is_lower() )? "is": "is not")
+        &lt;&lt; (all( text1, is_lower() )? " is": " is not")
         &lt;&lt; " written in the lower case" 
-        &lt;&lt; endl; // prints "hello world! is written in the lower case"
+        &lt;&lt; endl; // prints "hello is written in the lower case"
         </programlisting>
         <para>
             The predicates determine whether if a substring is contained in the input string
@@ -148,6 +148,11 @@
             ends with the substring, 
             simply contains the substring or if both strings are equal. See the reference for 
             <headername>boost/algorithm/string/predicate.hpp</headername> for more details. 
+        </para>
+        <para>  
+            Note that if we had used "hello world" as the input to the test, it would have
+            output "hello world is not written in the lower case" because the space in the
+            input string is not a lower case letter.
         </para>
         <para>  
             In addition the algorithm <functionname>all()</functionname> checks
@@ -163,13 +168,13 @@
         <title>Trimming</title>
         
         <para>
-            When parsing the input from a user, strings usually have unwanted leading or trailing 
+            When parsing the input from a user, strings often have unwanted leading or trailing 
             characters. To get rid of them, we need trim functions:
         </para>
         <programlisting>
     string str1="     hello world!     ";
     string str2=trim_left_copy(str1);   // str2 == "hello world!     "
-    string str3=trim_right_copy(str2);  // str3 == "     hello world!"
+    string str3=trim_right_copy(str1);  // str3 == "     hello world!"
     trim(str1);                         // str1 == "hello world!"
 
     string phone="00423333444";
@@ -208,7 +213,7 @@
         </programlisting>
         <para>
             We have used <functionname>find_last()</functionname> to search the <code>text</code> for "ll".
-            The result is given in the <ulink url="../../libs/range/doc/utility_class.html"><code>boost::iterator_range</code></ulink>. 
+            The result is given in the <ulink url="../../libs/range/doc/html/range/reference/utilities/iterator_range.html"><code>boost::iterator_range</code></ulink>. 
             This range delimits the
             part of the input which satisfies the find criteria. In our example it is the last occurrence of "ll".
             
@@ -217,7 +222,7 @@
             <ulink url="../../libs/range/index.html">Boost.Range</ulink>.
 
             The following lines transform the result. Notice that 
-            <ulink url="../../libs/range/doc/utility_class.html"><code>boost::iterator_range</code></ulink> has familiar 
+            <ulink url="../../libs/range/doc/html/range/reference/utilities/iterator_range.html"><code>boost::iterator_range</code></ulink> has familiar 
             <code>begin()</code> and <code>end()</code> methods, so it can be used like any other STL container.
             Also it is convertible to bool therefore it is easy to use find algorithms for a simple containment checking.
         </para>
@@ -264,7 +269,7 @@
             the find iterator allows us to iterate over the substrings matching the specified criteria.
             This facility is using the <link linkend="string_algo.finder_concept">Finder</link> to incrementally
             search the string. 
-            Dereferencing a find iterator yields an <ulink url="../../libs/range/doc/utility_class.html"><code>boost::iterator_range</code></ulink> 
+            Dereferencing a find iterator yields an <ulink url="../../libs/range/doc/html/range/reference/utilities/iterator_range.html"><code>boost::iterator_range</code></ulink> 
             object, that delimits the current match.
         </para>
         <para>
@@ -339,7 +344,7 @@
     typedef vector&lt; string &gt; split_vector_type;
     
     split_vector_type SplitVec; // #2: Search for tokens
-    split( SplitVec, str1, is_any_of("-*") ); // SplitVec == { "hello abc","ABC","aBc goodbye" }
+    split( SplitVec, str1, is_any_of("-*"), token_compress_on ); // SplitVec == { "hello abc","ABC","aBc goodbye" }
         </programlisting>
         <para>
             <code>[hello]</code> designates an <code>iterator_range</code> delimiting this substring.                       

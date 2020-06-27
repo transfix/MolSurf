@@ -7,7 +7,10 @@
 // (See accompanying file LICENSE_1_0.txt
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <pch.hpp>
+//
+// This must appear *before* any #includes, and precludes pch usage:
+//
+#define BOOST_MATH_ASSERT_UNDEFINED_POLICY false
 
 #ifdef _MSC_VER
 #pragma warning (disable:4127 4512)
@@ -22,7 +25,7 @@
 
 #include <boost/math/concepts/real_concept.hpp> // for real_concept
 #include <boost/math/distributions/non_central_beta.hpp> // for chi_squared_distribution
-#include <boost/math/distributions/poisson.hpp> // for chi_squared_distribution
+#include <boost/math/distributions/poisson.hpp> // for poisson_distribution
 #include <boost/test/test_exec_monitor.hpp> // for test_main
 #include <boost/test/results_collector.hpp>
 #include <boost/test/unit_test.hpp>
@@ -31,6 +34,7 @@
 #include "functor.hpp"
 #include "handle_test_result.hpp"
 #include "test_ncbeta_hooks.hpp"
+#include "table_type.hpp"
 
 #include <iostream>
 using std::cout;
@@ -216,6 +220,7 @@ void test_spots(RealType)
    RealType tolerance = (std::max)(
       boost::math::tools::epsilon<RealType>() * 100,
       (RealType)1e-6) * 100;
+   RealType abs_tolerance = boost::math::tools::epsilon<RealType>() * 100;
 
    cout << "Tolerance = " << tolerance << "%." << endl;
 
@@ -260,6 +265,18 @@ void test_spots(RealType)
      RealType(8.020935),            // PDF
      RealType(tolerance));
 
+   BOOST_MATH_STD_USING
+   boost::math::non_central_beta_distribution<RealType> dist(100, 3, 63);
+   BOOST_CHECK_CLOSE(mean(dist), RealType(4.82280451915522329944315287538684030781836554279474240490936e13L) * exp(-RealType(31.5)) * 100 / 103, tolerance);
+   // Variance only guarentees small absolute error:
+   BOOST_CHECK_SMALL(variance(dist) 
+      - static_cast<RealType>(RealType(4.85592267707818899235900237275021938334418424134218087127572e13L)
+      * exp(RealType(-31.5)) * 100 * 101 / (103 * 104) - 
+      RealType(4.82280451915522329944315287538684030781836554279474240490936e13L) * RealType(4.82280451915522329944315287538684030781836554279474240490936e13L) 
+      * exp(RealType(-63)) * 10000 / (103 * 103)), abs_tolerance);
+   BOOST_CHECK_THROW(skewness(dist), boost::math::evaluation_error);
+   BOOST_CHECK_THROW(kurtosis(dist), boost::math::evaluation_error);
+   BOOST_CHECK_THROW(kurtosis_excess(dist), boost::math::evaluation_error);
 } // template <class RealType>void test_spots(RealType)
 
 template <class T>
@@ -274,38 +291,38 @@ T nc_beta_ccdf(T a, T b, T nc, T x)
    return cdf(complement(boost::math::non_central_beta_distribution<T>(a, b, nc), x));
 }
 
-template <typename T>
+template <typename Real, typename T>
 void do_test_nc_chi_squared(T& data, const char* type_name, const char* test)
 {
    typedef typename T::value_type row_type;
-   typedef typename row_type::value_type value_type;
+   typedef Real                   value_type;
 
    std::cout << "Testing: " << test << std::endl;
 
    value_type (*fp1)(value_type, value_type, value_type, value_type) = nc_beta_cdf;
    boost::math::tools::test_result<value_type> result;
 
-   result = boost::math::tools::test(
+   result = boost::math::tools::test_hetero<Real>(
       data,
-      bind_func(fp1, 0, 1, 2, 3),
-      extract_result(4));
+      bind_func<Real>(fp1, 0, 1, 2, 3),
+      extract_result<Real>(4));
    handle_test_result(result, data[result.worst()], result.worst(),
       type_name, "CDF", test);
 
    fp1 = nc_beta_ccdf;
-   result = boost::math::tools::test(
+   result = boost::math::tools::test_hetero<Real>(
       data,
-      bind_func(fp1, 0, 1, 2, 3),
-      extract_result(5));
+      bind_func<Real>(fp1, 0, 1, 2, 3),
+      extract_result<Real>(5));
    handle_test_result(result, data[result.worst()], result.worst(),
       type_name, "CCDF", test);
 
 #ifdef TEST_OTHER
    fp1 = other::ncbeta_cdf;
-   result = boost::math::tools::test(
+   result = boost::math::tools::test_hetero<Real>(
       data,
-      bind_func(fp1, 0, 1, 2, 3),
-      extract_result(4));
+      bind_func<Real>(fp1, 0, 1, 2, 3),
+      extract_result<Real>(4));
    handle_test_result(result, data[result.worst()], result.worst(),
       type_name, "Other::CDF", test);
 #endif
@@ -313,11 +330,11 @@ void do_test_nc_chi_squared(T& data, const char* type_name, const char* test)
 
 }
 
-template <typename T>
+template <typename Real, typename T>
 void quantile_sanity_check(T& data, const char* type_name, const char* test)
 {
    typedef typename T::value_type row_type;
-   typedef typename row_type::value_type value_type;
+   typedef Real                   value_type;
 
    //
    // Tests with type real_concept take rather too long to run, so
@@ -399,12 +416,12 @@ void test_accuracy(T, const char* type_name)
 {
 #if !defined(TEST_DATA) || (TEST_DATA == 1)
 #include "ncbeta.ipp"
-    do_test_nc_chi_squared(ncbeta, type_name, "Non Central Beta, medium parameters");
-    quantile_sanity_check(ncbeta, type_name, "Non Central Beta, medium parameters");
+    do_test_nc_chi_squared<T>(ncbeta, type_name, "Non Central Beta, medium parameters");
+    quantile_sanity_check<T>(ncbeta, type_name, "Non Central Beta, medium parameters");
 #endif
 #if !defined(TEST_DATA) || (TEST_DATA == 2)
 #include "ncbeta_big.ipp"
-    do_test_nc_chi_squared(ncbeta_big, type_name, "Non Central Beta, large parameters");
+    do_test_nc_chi_squared<T>(ncbeta_big, type_name, "Non Central Beta, large parameters");
     // Takes too long to run:
     // quantile_sanity_check(ncbeta_big, type_name, "Non Central Beta, large parameters");
 #endif
@@ -414,7 +431,7 @@ int test_main(int, char* [])
 {
    BOOST_MATH_CONTROL_FP;
    // Basic sanity-check spot values.
-   expected_results();
+    expected_results();
    // (Parameter value, arbitrarily zero, only communicates the floating point type).
 #ifdef TEST_FLOAT
    test_spots(0.0F); // Test float.

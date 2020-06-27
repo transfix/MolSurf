@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (c) 2001-2009 Joel de Guzman
+    Copyright (c) 2001-2010 Joel de Guzman
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -39,9 +39,10 @@ namespace boost { namespace spirit { namespace traits
     template <>
     struct push_back_container<x_attr, char>
     {
-        static void call(x_attr& /*c*/, char /*val*/)
+        static bool call(x_attr& /*c*/, char /*val*/)
         {
             // push back value type into container
+            return true;
         }
     };
 }}}
@@ -93,16 +94,10 @@ main()
     }
 
     {
-        // The following 4 tests show that omit does not inhibit explicit attributes
+        // The following 2 tests show that omit does not inhibit explicit attributes
 
         std::string s;
-        BOOST_TEST(test_attr("bbbb", +omit[char_('b')], s) && s == "bbbb");
-
-        s.clear();
         BOOST_TEST(test_attr("bbbb", omit[+char_('b')], s) && s == "bbbb");
-
-        s.clear();
-        BOOST_TEST(test_attr("b b b b ", +omit[char_('b')], s, space) && s == "bbbb");
 
         s.clear();
         BOOST_TEST(test_attr("b b b b ", omit[+char_('b')], s, space) && s == "bbbb");

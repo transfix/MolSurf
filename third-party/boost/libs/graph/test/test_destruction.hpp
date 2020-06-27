@@ -7,6 +7,7 @@
 #ifndef TEST_DESTRUCTION_HPP
 #define TEST_DESTRUCTION_HPP
 
+#include <boost/concept/assert.hpp>
 #include <utility>
 
 /** @name Destroy Graph
@@ -15,7 +16,7 @@
 //@{
 // This will basically catch adjacency matrices, which don't get torn down.
 template <typename Graph, typename VertexSet, typename Remove, typename Label>
-void destroy_graph(Graph& g, VertexSet const& verts, Remove, Label)
+void destroy_graph(Graph&, VertexSet const&, Remove, Label)
 { }
 
 // This matches MutableGraph, so just remove a vertex and then clear.
@@ -33,10 +34,10 @@ void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::true_, boost::m
 
 // This will match labeled graphs.
 template <typename Graph, typename VertexSet>
-void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::false_, boost::mpl::true_) {
+void destroy_graph(Graph& g, VertexSet const&, boost::mpl::false_, boost::mpl::true_) {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
-    // function_requires< VeretexMutableGraphConcept<Graph> >();
+    // BOOST_CONCEPT_ASSERT(( VeretexMutableGraphConcept<Graph> ));
 
     std::cout << "...destroy_labeled\n";
     // Remove the roof vertex
@@ -84,7 +85,7 @@ void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_) {
 }
 
 template <typename Graph, typename VertexSet>
-void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::true_) {
+void disconnect_graph(Graph& g, VertexSet const&, boost::mpl::true_) {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph>));
     // BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept<Graph>));

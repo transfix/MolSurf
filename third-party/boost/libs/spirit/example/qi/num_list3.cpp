@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (c) 2002-2009 Joel de Guzman
+    Copyright (c) 2002-2010 Joel de Guzman
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -42,13 +42,12 @@ namespace client
         using qi::_1;
         using ascii::space;
         using phoenix::push_back;
-        using phoenix::ref;
 
         bool r = phrase_parse(first, last,
 
             //  Begin grammar
             (
-                double_[push_back(ref(v), _1)] % ','
+                double_[push_back(phoenix::ref(v), _1)] % ','
             )
             ,
             //  End grammar

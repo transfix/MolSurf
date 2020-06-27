@@ -17,6 +17,23 @@
 
 namespace test
 {
+    template <typename It1, typename It2>
+    bool equal(It1 begin, It1 end, It2 compare)
+    {
+        for(;begin != end; ++begin, ++compare)
+            if(*begin != *compare) return false;
+        return true;
+    }
+
+    template <typename It1, typename It2, typename Pred>
+    bool equal(It1 begin, It1 end, It2 compare, Pred predicate)
+    {
+        for(;begin != end; ++begin, ++compare)
+            if(!predicate(*begin, *compare)) return false;
+        return true;
+    }
+
+
     template <typename T> class list;
 
     namespace test_detail
@@ -77,7 +94,7 @@ namespace test
 
             node* ptr_;
         public:
-            list_iterator() : ptr_(0) {};
+            list_iterator() : ptr_(0) {}
             explicit list_iterator(node* x) : ptr_(x) {}
 
             T& operator*() const { return ptr_->value_; }
@@ -109,12 +126,29 @@ namespace test
 
             T const& operator*() const { return ptr_->value_; }
             T const* operator->() const { return &ptr_->value_; }
-            list_const_iterator& operator++() {
-                ptr_ = ptr_->next_; return *this; }
-            list_const_iterator operator++(int) {
-                list_const_iterator tmp = *this; ptr_ = ptr_->next_; return tmp; }
-            bool operator==(const_iterator y) const { return ptr_ == y.ptr_; }
-            bool operator!=(const_iterator y) const { return ptr_ != y.ptr_; }
+
+            list_const_iterator& operator++()
+            {
+                ptr_ = ptr_->next_;
+                return *this;
+            }
+
+            list_const_iterator operator++(int)
+            {
+                list_const_iterator tmp = *this;
+                ptr_ = ptr_->next_;
+                return tmp;
+            }
+
+            bool operator==(const_iterator y) const
+            {
+                return ptr_ == y.ptr_;
+            }
+
+            bool operator!=(const_iterator y) const
+            {
+                return ptr_ != y.ptr_;
+            }
         };
     }
 
@@ -185,14 +219,14 @@ namespace test
             data_.last_ptr_ = &data_.first_;
         }
 
-        void erase(const_iterator start, const_iterator end) {
+        void erase(const_iterator i, const_iterator j) {
             node** ptr = &data_.first_;
 
-            while(*ptr != start.ptr_) {
+            while(*ptr != i.ptr_) {
                 ptr = &(*ptr)->next_;
             }
 
-            while(*ptr != end.ptr_) {
+            while(*ptr != j.ptr_) {
                 node* to_delete = *ptr;
                 *ptr = (*ptr)->next_;
                 --data_.size_;
@@ -222,7 +256,7 @@ namespace test
 
         bool operator==(list const& y) const {
             return size() == y.size() &&
-                std::equal(begin(), end(), y.begin());
+                test::equal(begin(), end(), y.begin());
         }
 
         bool operator!=(list const& y) const {

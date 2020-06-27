@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2012 Eric Niebler
+
+  Distributed under the Boost
+  Software License, Version 1.0. (See accompanying
+  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+  -->
 <header name="boost/proto/transform/call.hpp">
   <para>Contains definition of the call&lt;&gt; transform. </para>
   <namespace name="boost">
@@ -40,6 +47,12 @@
           <typedef name="result_type">
             <type><replaceable>see-below</replaceable></type>
             <description>
+              <para>
+                In the description that follows, a type <computeroutput>T</computeroutput> is determined to model the
+                <conceptname>PrimitiveTransform</conceptname> concept if
+                <computeroutput><classname>proto::is_transform</classname>&lt;T&gt;::value</computeroutput> is
+                <computeroutput>true</computeroutput>.
+              </para>
               <para>
                 <computeroutput><classname>proto::call</classname>&lt;T&gt;::impl&lt;Expr,State,Data&gt;::result_type</computeroutput>
                 is computed as follows:
@@ -92,13 +105,24 @@
                   <listitem>
                     <para>
                       If <computeroutput>T</computeroutput> is of the form
-                      <computeroutput><conceptname>PolymorphicFunctionObject</conceptname>(A<subscript>0</subscript>,...A<subscript>n</subscript>)</computeroutput>, then
+                      <computeroutput><conceptname>PolymorphicFunctionObject</conceptname>(A<subscript>0</subscript>,…A<subscript>n</subscript>)</computeroutput>, then
                       <computeroutput>result_type</computeroutput> is:
                       <programlisting>typename boost::result_of&lt;PolymorphicFunctionObject(
   typename boost::result_of&lt;<classname>when</classname>&lt;<classname>_</classname>,A<subscript>0</subscript>&gt;(Expr, State, Data)&gt;::type,
-  ...
+  …
   typename boost::result_of&lt;<classname>when</classname>&lt;<classname>_</classname>,A<subscript>n</subscript>&gt;(Expr, State, Data)&gt;::type
 &gt;::type</programlisting>
+                    </para>
+                  </listitem>
+                  <listitem>
+                    <para>
+                      If <computeroutput>T</computeroutput> is of the form
+                      <computeroutput><conceptname>PolymorphicFunctionObject</conceptname>(A<subscript>0</subscript>,…A<subscript>n</subscript> ...)</computeroutput>, then
+                      let <computeroutput>T&apos;</computeroutput> be <computeroutput><conceptname>PolymorphicFunctionObject</conceptname>(A<subscript>0</subscript>,…A<subscript>n-1</subscript>, <replaceable>S</replaceable>)</computeroutput>,
+                      where <replaceable>S</replaceable> is a type sequence computed from the unpacking expression <computeroutput>A<subscript>n</subscript></computeroutput>
+                      as described in the reference for <computeroutput><classname>proto::pack</classname></computeroutput>.
+                      Then, <computeroutput>result_type</computeroutput> is:
+                      <programlisting><computeroutput>typename <classname>proto::call</classname>&lt;T&apos;&gt;::impl&lt;Expr,State,Data&gt;::result_type</computeroutput></programlisting>
                     </para>
                   </listitem>
                 </itemizedlist>
@@ -118,68 +142,85 @@
                 <paramtype>typename impl::data_param</paramtype>
               </parameter>
               <description>
-              <para>
-                <computeroutput><classname>proto::call</classname>&lt;T&gt;::impl&lt;Expr,State,Data&gt;::operator()</computeroutput> behaves as follows:
-                <itemizedlist>
-                  <listitem>
-                    <para>
-                      If <computeroutput>T</computeroutput> if of the form
-                      <computeroutput><conceptname>PrimitiveTransform</conceptname></computeroutput> or
-                      <computeroutput><conceptname>PrimitiveTransform</conceptname>()</computeroutput>, then
-                      return
-                      <programlisting>PrimitiveTransform()(expr, state, data)</programlisting>
-                    </para>
-                  </listitem>
-                  <listitem>
-                    <para>
-                      If <computeroutput>T</computeroutput> is of the form
-                      <computeroutput><conceptname>PrimitiveTransform</conceptname>(A<subscript>0</subscript>)</computeroutput>, then
-                      return
-                      <programlisting>PrimitiveTransform()(
+                <para>
+                  In the description that follows, a type <computeroutput>T</computeroutput> is determined to model the
+                  <conceptname>PrimitiveTransform</conceptname> concept if
+                  <computeroutput><classname>proto::is_transform</classname>&lt;T&gt;::value</computeroutput> is
+                  <computeroutput>true</computeroutput>.
+                </para>
+                <para>
+                  <computeroutput><classname>proto::call</classname>&lt;T&gt;::impl&lt;Expr,State,Data&gt;::operator()</computeroutput> behaves as follows:
+                  <itemizedlist>
+                    <listitem>
+                      <para>
+                        If <computeroutput>T</computeroutput> if of the form
+                        <computeroutput><conceptname>PrimitiveTransform</conceptname></computeroutput> or
+                        <computeroutput><conceptname>PrimitiveTransform</conceptname>()</computeroutput>, then
+                        return
+                        <programlisting>PrimitiveTransform()(expr, state, data)</programlisting>
+                      </para>
+                    </listitem>
+                    <listitem>
+                      <para>
+                        If <computeroutput>T</computeroutput> is of the form
+                        <computeroutput><conceptname>PrimitiveTransform</conceptname>(A<subscript>0</subscript>)</computeroutput>, then
+                        return
+                        <programlisting>PrimitiveTransform()(
   <classname>when</classname>&lt;<classname>_</classname>,A<subscript>0</subscript>&gt;()(expr, state, data),
   state, 
   sata
 )</programlisting>
-                    </para>
-                  </listitem>
-                  <listitem>
-                    <para>
-                      If <computeroutput>T</computeroutput> is of the form
-                      <computeroutput><conceptname>PrimitiveTransform</conceptname>(A<subscript>0</subscript>, A<subscript>1</subscript>)</computeroutput>, then
-                      return:
-                      <programlisting>PrimitiveTransform()(
+                      </para>
+                    </listitem>
+                    <listitem>
+                      <para>
+                        If <computeroutput>T</computeroutput> is of the form
+                        <computeroutput><conceptname>PrimitiveTransform</conceptname>(A<subscript>0</subscript>, A<subscript>1</subscript>)</computeroutput>, then
+                        return:
+                        <programlisting>PrimitiveTransform()(
   <classname>when</classname>&lt;<classname>_</classname>,A<subscript>0</subscript>&gt;()(expr, state, data),
   <classname>when</classname>&lt;<classname>_</classname>,A<subscript>1</subscript>&gt;()(expr, state, data),
   Data
 )</programlisting>
-                    </para>
-                  </listitem>
-                  <listitem>
-                    <para>
-                      If <computeroutput>T</computeroutput> is of the form
-                      <computeroutput><conceptname>PrimitiveTransform</conceptname>(A<subscript>0</subscript>, A<subscript>1</subscript>, A<subscript>2</subscript>)</computeroutput>, then
-                      return
-                      <programlisting>PrimitiveTransform()(
+                      </para>
+                    </listitem>
+                    <listitem>
+                      <para>
+                        If <computeroutput>T</computeroutput> is of the form
+                        <computeroutput><conceptname>PrimitiveTransform</conceptname>(A<subscript>0</subscript>, A<subscript>1</subscript>, A<subscript>2</subscript>)</computeroutput>, then
+                        return
+                        <programlisting>PrimitiveTransform()(
   <classname>when</classname>&lt;<classname>_</classname>,A<subscript>0</subscript>&gt;()(expr, state, data),
   <classname>when</classname>&lt;<classname>_</classname>,A<subscript>1</subscript>&gt;()(expr, state, data),
   <classname>when</classname>&lt;<classname>_</classname>,A<subscript>2</subscript>&gt;()(expr, state, data)
 )</programlisting>
-                    </para>
-                  </listitem>
-                  <listitem>
-                    <para>
-                      If <computeroutput>T</computeroutput> is of the form
-                      <computeroutput><conceptname>PolymorphicFunctionObject</conceptname>(A<subscript>0</subscript>,...A<subscript>n</subscript>)</computeroutput>, then
-                      return:
-                      <programlisting>PolymorphicFunctionObject()(
+                      </para>
+                    </listitem>
+                    <listitem>
+                      <para>
+                        If <computeroutput>T</computeroutput> is of the form
+                        <computeroutput><conceptname>PolymorphicFunctionObject</conceptname>(A<subscript>0</subscript>,…A<subscript>n</subscript>)</computeroutput>, then
+                        return:
+                        <programlisting>PolymorphicFunctionObject()(
   <classname>when</classname>&lt;<classname>_</classname>,A<subscript>0</subscript>&gt;()(expr, state, data),
   ...
   <classname>when</classname>&lt;<classname>_</classname>,A<subscript>n</subscript>&gt;()(expr, state, data)
 )</programlisting>
+                      </para>
+                    </listitem>
+                  <listitem>
+                    <para>
+                      If <computeroutput>T</computeroutput> is of the form
+                      <computeroutput><conceptname>PolymorphicFunctionObject</conceptname>(A<subscript>0</subscript>,…A<subscript>n</subscript> ...)</computeroutput>, then
+                      let <computeroutput>T&apos;</computeroutput> be <computeroutput><conceptname>PolymorphicFunctionObject</conceptname>(A<subscript>0</subscript>,…A<subscript>n-1</subscript>, <replaceable>S</replaceable>)</computeroutput>,
+                      where <replaceable>S</replaceable> is a type sequence computed from the unpacking expression <computeroutput>A<subscript>n</subscript></computeroutput>
+                      as described in the reference for <computeroutput><classname>proto::pack</classname></computeroutput>.
+                      Then, return:
+                      <programlisting><computeroutput><classname>proto::call</classname>&lt;T&apos;&gt;()(expr, state, data)</computeroutput></programlisting>
                     </para>
                   </listitem>
-                </itemizedlist>
-              </para>
+                  </itemizedlist>
+                </para>
               </description>
             </method>
           </method-group>

@@ -26,6 +26,7 @@ t.write("empty.cpp", "\n")
 
 t.run_build_system()
 t.expect_addition("bin/$toolset/debug/hello.exe")
+t.rm(".")
 
 # Test a contrived case. There, absolute name is used in a standalone project
 # (not Jamfile). Moreover, the target with an absolute name is returned by
@@ -50,6 +51,21 @@ project standalone ;
 
 local pwd = [ PWD ] ;
 alias a : $(pwd)/a.cpp ;
+""")
+
+t.write("standalone.py", """
+from b2.manager import get_manager
+
+# FIXME: this is ugly as death
+get_manager().projects().initialize(__name__)
+
+import os ;
+
+# This use of list as parameter is also ugly.
+project(['standalone'])
+
+pwd = os.getcwd()
+alias('a', [os.path.join(pwd, 'a.cpp')])
 """)
 
 t.run_build_system()

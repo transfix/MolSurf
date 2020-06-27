@@ -2,7 +2,7 @@
 // v6_only.cpp
 // ~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,7 +16,9 @@
 // Test that header file is self-contained.
 #include <boost/asio/ip/v6_only.hpp>
 
-#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ip/udp.hpp>
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -45,9 +47,9 @@ void test()
     ip::v6_only v6_only2;
     sock.get_option(v6_only2);
     v6_only1 = true;
-    static_cast<bool>(v6_only1);
-    static_cast<bool>(!v6_only1);
-    static_cast<bool>(v6_only1.value());
+    (void)static_cast<bool>(v6_only1);
+    (void)static_cast<bool>(!v6_only1);
+    (void)static_cast<bool>(v6_only1.value());
   }
   catch (std::exception&)
   {

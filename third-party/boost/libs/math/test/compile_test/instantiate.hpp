@@ -1,5 +1,5 @@
 //  Copyright John Maddock 2006.
-//  Copyright Paul A. Bristow 2007.
+//  Copyright Paul A. Bristow 2007, 2010.
 //  Use, modification and distribution are subject to the
 //  Boost Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -18,7 +18,7 @@
 
 #ifndef BOOST_MATH_INSTANTIATE_MINIMUM
 
-typedef boost::math::policies::policy<> test_policy;
+typedef boost::math::policies::policy<boost::math::policies::promote_float<false>, boost::math::policies::promote_double<false> > test_policy;
 
 namespace test{
 
@@ -32,25 +32,6 @@ BOOST_MATH_DECLARE_DISTRIBUTIONS(double, test_policy)
 
 }
 #endif
-
-namespace boost{ namespace math{
-//
-// The non central beta doesn't define some properties,
-// define some stub methods here so that we can concept
-// check everything else:
-//
-template <class T, class Policy>
-inline T mean(const non_central_beta_distribution<T, Policy>&){ return 0; }
-template <class T, class Policy>
-inline T variance(const non_central_beta_distribution<T, Policy>&){ return 0; }
-template <class T, class Policy>
-inline T skewness(const non_central_beta_distribution<T, Policy>&){ return 0; }
-template <class T, class Policy>
-inline T kurtosis_excess(const non_central_beta_distribution<T, Policy>&){ return 0; }
-template <class T, class Policy>
-inline T kurtosis(const non_central_beta_distribution<T, Policy>&){ return 0; }
-
-}} // namespaces
 
 template <class RealType>
 void instantiate(RealType)
@@ -68,23 +49,28 @@ void instantiate(RealType)
    function_requires<DistributionConcept<extreme_value_distribution<RealType> > >();
    function_requires<DistributionConcept<fisher_f_distribution<RealType> > >();
    function_requires<DistributionConcept<gamma_distribution<RealType> > >();
+   function_requires<DistributionConcept<geometric_distribution<RealType> > >();
+   function_requires<DistributionConcept<hypergeometric_distribution<RealType> > >();
+   function_requires<DistributionConcept<inverse_chi_squared_distribution<RealType> > >();
+   function_requires<DistributionConcept<inverse_gamma_distribution<RealType> > >();
+   function_requires<DistributionConcept<inverse_gaussian_distribution<RealType> > >();
    function_requires<DistributionConcept<laplace_distribution<RealType> > >();
    function_requires<DistributionConcept<logistic_distribution<RealType> > >();
    function_requires<DistributionConcept<lognormal_distribution<RealType> > >();
    function_requires<DistributionConcept<negative_binomial_distribution<RealType> > >();
-   function_requires<DistributionConcept<normal_distribution<RealType> > >();
-   function_requires<DistributionConcept<rayleigh_distribution<RealType> > >();
-   function_requires<DistributionConcept<pareto_distribution<RealType> > >();
-   function_requires<DistributionConcept<poisson_distribution<RealType> > >();
-   function_requires<DistributionConcept<students_t_distribution<RealType> > >();
-   function_requires<DistributionConcept<triangular_distribution<RealType> > >();
-   function_requires<DistributionConcept<uniform_distribution<RealType> > >();
-   function_requires<DistributionConcept<weibull_distribution<RealType> > >();
    function_requires<DistributionConcept<non_central_chi_squared_distribution<RealType> > >();
    function_requires<DistributionConcept<non_central_beta_distribution<RealType> > >();
    function_requires<DistributionConcept<non_central_f_distribution<RealType> > >();
    function_requires<DistributionConcept<non_central_t_distribution<RealType> > >();
-   function_requires<DistributionConcept<hypergeometric_distribution<RealType> > >();
+   function_requires<DistributionConcept<normal_distribution<RealType> > >();
+   function_requires<DistributionConcept<pareto_distribution<RealType> > >();
+   function_requires<DistributionConcept<poisson_distribution<RealType> > >();
+   function_requires<DistributionConcept<rayleigh_distribution<RealType> > >();
+   function_requires<DistributionConcept<students_t_distribution<RealType> > >();
+   function_requires<DistributionConcept<skew_normal_distribution<RealType> > >();
+   function_requires<DistributionConcept<triangular_distribution<RealType> > >();
+   function_requires<DistributionConcept<uniform_distribution<RealType> > >();
+   function_requires<DistributionConcept<weibull_distribution<RealType> > >();
 #ifndef BOOST_MATH_INSTANTIATE_MINIMUM
    function_requires<DistributionConcept<bernoulli_distribution<RealType, test_policy> > >();
    function_requires<DistributionConcept<beta_distribution<RealType, test_policy> > >();
@@ -95,23 +81,28 @@ void instantiate(RealType)
    function_requires<DistributionConcept<extreme_value_distribution<RealType, test_policy> > >();
    function_requires<DistributionConcept<fisher_f_distribution<RealType, test_policy> > >();
    function_requires<DistributionConcept<gamma_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<geometric_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<hypergeometric_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<inverse_chi_squared_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<inverse_gamma_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<inverse_gaussian_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<laplace_distribution<RealType, test_policy> > >();
    function_requires<DistributionConcept<logistic_distribution<RealType, test_policy> > >();
    function_requires<DistributionConcept<lognormal_distribution<RealType, test_policy> > >();
-   function_requires<DistributionConcept<non_central_chi_squared_distribution<RealType, test_policy> > >();
    function_requires<DistributionConcept<negative_binomial_distribution<RealType, test_policy> > >();
-   function_requires<DistributionConcept<normal_distribution<RealType, test_policy> > >();
-   function_requires<DistributionConcept<rayleigh_distribution<RealType, test_policy> > >();
-   function_requires<DistributionConcept<pareto_distribution<RealType, test_policy> > >();
-   function_requires<DistributionConcept<poisson_distribution<RealType, test_policy> > >();
-   function_requires<DistributionConcept<students_t_distribution<RealType, test_policy> > >();
-   function_requires<DistributionConcept<triangular_distribution<RealType, test_policy> > >();
-   function_requires<DistributionConcept<uniform_distribution<RealType, test_policy> > >();
-   function_requires<DistributionConcept<weibull_distribution<RealType, test_policy> > >();
    function_requires<DistributionConcept<non_central_chi_squared_distribution<RealType, test_policy> > >();
    function_requires<DistributionConcept<non_central_beta_distribution<RealType, test_policy> > >();
    function_requires<DistributionConcept<non_central_f_distribution<RealType, test_policy> > >();
    function_requires<DistributionConcept<non_central_t_distribution<RealType, test_policy> > >();
-   function_requires<DistributionConcept<hypergeometric_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<normal_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<pareto_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<poisson_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<rayleigh_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<skew_normal_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<students_t_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<triangular_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<uniform_distribution<RealType, test_policy> > >();
+   function_requires<DistributionConcept<weibull_distribution<RealType, test_policy> > >();
 
    function_requires<DistributionConcept<dist_test::bernoulli > >();
    function_requires<DistributionConcept<dist_test::beta > >();
@@ -122,21 +113,27 @@ void instantiate(RealType)
    function_requires<DistributionConcept<dist_test::extreme_value > >();
    function_requires<DistributionConcept<dist_test::fisher_f > >();
    function_requires<DistributionConcept<dist_test::gamma > >();
+   function_requires<DistributionConcept<dist_test::geometric > >();
+   function_requires<DistributionConcept<dist_test::hypergeometric > >();
+   function_requires<DistributionConcept<dist_test::inverse_chi_squared > >();
+   function_requires<DistributionConcept<dist_test::inverse_gamma > >();
+   function_requires<DistributionConcept<dist_test::inverse_gaussian > >();
+   function_requires<DistributionConcept<dist_test::laplace > >();
    function_requires<DistributionConcept<dist_test::logistic > >();
    function_requires<DistributionConcept<dist_test::lognormal > >();
    function_requires<DistributionConcept<dist_test::negative_binomial > >();
-   function_requires<DistributionConcept<dist_test::normal > >();
-   function_requires<DistributionConcept<dist_test::rayleigh > >();
-   function_requires<DistributionConcept<dist_test::pareto > >();
-   function_requires<DistributionConcept<dist_test::poisson > >();
-   function_requires<DistributionConcept<dist_test::students_t > >();
-   function_requires<DistributionConcept<dist_test::triangular > >();
-   function_requires<DistributionConcept<dist_test::uniform > >();
-   function_requires<DistributionConcept<dist_test::weibull > >();
    function_requires<DistributionConcept<dist_test::non_central_chi_squared > >();
    function_requires<DistributionConcept<dist_test::non_central_beta > >();
    function_requires<DistributionConcept<dist_test::non_central_f > >();
    function_requires<DistributionConcept<dist_test::non_central_t > >();
+   function_requires<DistributionConcept<dist_test::normal > >();
+   function_requires<DistributionConcept<dist_test::pareto > >();
+   function_requires<DistributionConcept<dist_test::poisson > >();
+   function_requires<DistributionConcept<dist_test::rayleigh > >();
+   function_requires<DistributionConcept<dist_test::students_t > >();
+   function_requires<DistributionConcept<dist_test::triangular > >();
+   function_requires<DistributionConcept<dist_test::uniform > >();
+   function_requires<DistributionConcept<dist_test::weibull > >();
    function_requires<DistributionConcept<dist_test::hypergeometric > >();
 #endif
    int i;
@@ -184,6 +181,10 @@ void instantiate(RealType)
    (boost::math::isnormal)(v1);
    (boost::math::isnan)(v1);
    (boost::math::isinf)(v1);
+   (boost::math::signbit)(v1);
+   (boost::math::copysign)(v1, v2);
+   (boost::math::changesign)(v1);
+   (boost::math::sign)(v1);
    boost::math::log1p(v1);
    boost::math::expm1(v1);
    boost::math::cbrt(v1);
@@ -213,6 +214,19 @@ void instantiate(RealType)
    boost::math::ellint_rd(v1, v2, v3);
    boost::math::ellint_rf(v1, v2, v3);
    boost::math::ellint_rj(v1, v2, v3, v1);
+   boost::math::jacobi_elliptic(v1, v2, &v1, &v2);
+   boost::math::jacobi_cd(v1, v2);
+   boost::math::jacobi_cn(v1, v2);
+   boost::math::jacobi_cs(v1, v2);
+   boost::math::jacobi_dc(v1, v2);
+   boost::math::jacobi_dn(v1, v2);
+   boost::math::jacobi_ds(v1, v2);
+   boost::math::jacobi_nc(v1, v2);
+   boost::math::jacobi_nd(v1, v2);
+   boost::math::jacobi_ns(v1, v2);
+   boost::math::jacobi_sc(v1, v2);
+   boost::math::jacobi_sd(v1, v2);
+   boost::math::jacobi_sn(v1, v2);
    boost::math::hypot(v1, v2);
    boost::math::sinc_pi(v1);
    boost::math::sinhc_pi(v1);
@@ -233,12 +247,27 @@ void instantiate(RealType)
    boost::math::sph_bessel(i, 1);
    boost::math::sph_neumann(i, v2);
    boost::math::sph_neumann(i, i);
+#ifdef TEST_COMPLEX
+   boost::math::cyl_hankel_1(v1, v2);
+   boost::math::cyl_hankel_1(i, v2);
+   boost::math::cyl_hankel_2(v1, v2);
+   boost::math::cyl_hankel_2(i, v2);
+   boost::math::sph_hankel_1(v1, v2);
+   boost::math::sph_hankel_1(i, v2);
+   boost::math::sph_hankel_2(v1, v2);
+   boost::math::sph_hankel_2(i, v2);
+#endif
+   boost::math::airy_ai(v1);
+   boost::math::airy_bi(v1);
+   boost::math::airy_ai_prime(v1);
+   boost::math::airy_bi_prime(v1);
    boost::math::expint(v1);
    boost::math::expint(i);
    boost::math::expint(i, v2);
    boost::math::expint(i, i);
    boost::math::zeta(v1);
    boost::math::zeta(i);
+   boost::math::owens_t(v1, v2);
    boost::math::trunc(v1);
    boost::math::itrunc(v1);
    boost::math::ltrunc(v1);
@@ -303,11 +332,6 @@ void instantiate(RealType)
    boost::math::ibetac_invb(v1, v2, v3, pol);
    boost::math::gamma_p_derivative(v2, v3, pol);
    boost::math::ibeta_derivative(v1, v2, v3, pol);
-   (boost::math::fpclassify)(v1);
-   (boost::math::isfinite)(v1);
-   (boost::math::isnormal)(v1);
-   (boost::math::isnan)(v1);
-   (boost::math::isinf)(v1);
    boost::math::log1p(v1, pol);
    boost::math::expm1(v1, pol);
    boost::math::cbrt(v1, pol);
@@ -336,6 +360,19 @@ void instantiate(RealType)
    boost::math::ellint_rd(v1, v2, v3, pol);
    boost::math::ellint_rf(v1, v2, v3, pol);
    boost::math::ellint_rj(v1, v2, v3, v1, pol);
+   boost::math::jacobi_elliptic(v1, v2, &v1, &v2, pol);
+   boost::math::jacobi_cd(v1, v2, pol);
+   boost::math::jacobi_cn(v1, v2, pol);
+   boost::math::jacobi_cs(v1, v2, pol);
+   boost::math::jacobi_dc(v1, v2, pol);
+   boost::math::jacobi_dn(v1, v2, pol);
+   boost::math::jacobi_ds(v1, v2, pol);
+   boost::math::jacobi_nc(v1, v2, pol);
+   boost::math::jacobi_nd(v1, v2, pol);
+   boost::math::jacobi_ns(v1, v2, pol);
+   boost::math::jacobi_sc(v1, v2, pol);
+   boost::math::jacobi_sd(v1, v2, pol);
+   boost::math::jacobi_sn(v1, v2, pol);
    boost::math::hypot(v1, v2, pol);
    boost::math::sinc_pi(v1, pol);
    boost::math::sinhc_pi(v1, pol);
@@ -356,12 +393,27 @@ void instantiate(RealType)
    boost::math::sph_bessel(i, 1, pol);
    boost::math::sph_neumann(i, v2, pol);
    boost::math::sph_neumann(i, i, pol);
+#ifdef TEST_COMPLEX
+   boost::math::cyl_hankel_1(v1, v2, pol);
+   boost::math::cyl_hankel_1(i, v2, pol);
+   boost::math::cyl_hankel_2(v1, v2, pol);
+   boost::math::cyl_hankel_2(i, v2, pol);
+   boost::math::sph_hankel_1(v1, v2, pol);
+   boost::math::sph_hankel_1(i, v2, pol);
+   boost::math::sph_hankel_2(v1, v2, pol);
+   boost::math::sph_hankel_2(i, v2, pol);
+#endif
+   boost::math::airy_ai(v1, pol);
+   boost::math::airy_bi(v1, pol);
+   boost::math::airy_ai_prime(v1, pol);
+   boost::math::airy_bi_prime(v1, pol);
    boost::math::expint(v1, pol);
    boost::math::expint(i, pol);
    boost::math::expint(i, v2, pol);
    boost::math::expint(i, i, pol);
    boost::math::zeta(v1, pol);
    boost::math::zeta(i, pol);
+   boost::math::owens_t(v1, v2, pol);
    //
    // These next functions are intended to be found via ADL:
    //
@@ -433,6 +485,10 @@ void instantiate(RealType)
    (test::isnormal)(v1);
    (test::isnan)(v1);
    (test::isinf)(v1);
+   (test::signbit)(v1);
+   (test::copysign)(v1, v2);
+   (test::changesign)(v1);
+   (test::sign)(v1);
    test::log1p(v1);
    test::expm1(v1);
    test::cbrt(v1);
@@ -461,6 +517,19 @@ void instantiate(RealType)
    test::ellint_rd(v1, v2, v3);
    test::ellint_rf(v1, v2, v3);
    test::ellint_rj(v1, v2, v3, v1);
+   test::jacobi_elliptic(v1, v2, &v1, &v2);
+   test::jacobi_cd(v1, v2);
+   test::jacobi_cn(v1, v2);
+   test::jacobi_cs(v1, v2);
+   test::jacobi_dc(v1, v2);
+   test::jacobi_dn(v1, v2);
+   test::jacobi_ds(v1, v2);
+   test::jacobi_nc(v1, v2);
+   test::jacobi_nd(v1, v2);
+   test::jacobi_ns(v1, v2);
+   test::jacobi_sc(v1, v2);
+   test::jacobi_sd(v1, v2);
+   test::jacobi_sn(v1, v2);
    test::hypot(v1, v2);
    test::sinc_pi(v1);
    test::sinhc_pi(v1);
@@ -481,12 +550,27 @@ void instantiate(RealType)
    test::sph_bessel(i, 1);
    test::sph_neumann(i, v2);
    test::sph_neumann(i, i);
+#ifdef TEST_COMPLEX
+   test::cyl_hankel_1(v1, v2);
+   test::cyl_hankel_1(i, v2);
+   test::cyl_hankel_2(v1, v2);
+   test::cyl_hankel_2(i, v2);
+   test::sph_hankel_1(v1, v2);
+   test::sph_hankel_1(i, v2);
+   test::sph_hankel_2(v1, v2);
+   test::sph_hankel_2(i, v2);
+#endif
+   boost::math::airy_ai(i);
+   boost::math::airy_bi(i);
+   boost::math::airy_ai_prime(i);
+   boost::math::airy_bi_prime(i);
    test::expint(v1);
    test::expint(i);
    test::expint(i, v2);
    test::expint(i, i);
    test::zeta(v1);
    test::zeta(i);
+   test::owens_t(v1, v2);
    test::trunc(v1);
    test::itrunc(v1);
    test::ltrunc(v1);
@@ -617,6 +701,18 @@ void instantiate_mixed(RealType)
    boost::math::ellint_rf(fr, dr, lr);
    boost::math::ellint_rj(i, i, s, l);
    boost::math::ellint_rj(i, fr, dr, lr);
+   boost::math::jacobi_cd(i, fr);
+   boost::math::jacobi_cn(i, fr);
+   boost::math::jacobi_cs(i, fr);
+   boost::math::jacobi_dc(i, fr);
+   boost::math::jacobi_dn(i, fr);
+   boost::math::jacobi_ds(i, fr);
+   boost::math::jacobi_nc(i, fr);
+   boost::math::jacobi_nd(i, fr);
+   boost::math::jacobi_ns(i, fr);
+   boost::math::jacobi_sc(i, fr);
+   boost::math::jacobi_sd(i, fr);
+   boost::math::jacobi_sn(i, fr);
    boost::math::hypot(i, s);
    boost::math::hypot(fr, lr);
    boost::math::sinc_pi(i);
@@ -638,6 +734,8 @@ void instantiate_mixed(RealType)
    boost::math::sph_bessel(i, 1);
    boost::math::sph_neumann(i, lr);
    boost::math::sph_neumann(i, i);
+   boost::math::owens_t(fr, dr);
+   boost::math::owens_t(i, s);
 
    boost::math::policies::policy<> pol;
 
@@ -728,6 +826,18 @@ void instantiate_mixed(RealType)
    boost::math::ellint_rf(fr, dr, lr, pol);
    boost::math::ellint_rj(i, i, s, l, pol);
    boost::math::ellint_rj(i, fr, dr, lr, pol);
+   boost::math::jacobi_cd(i, fr, pol);
+   boost::math::jacobi_cn(i, fr, pol);
+   boost::math::jacobi_cs(i, fr, pol);
+   boost::math::jacobi_dc(i, fr, pol);
+   boost::math::jacobi_dn(i, fr, pol);
+   boost::math::jacobi_ds(i, fr, pol);
+   boost::math::jacobi_nc(i, fr, pol);
+   boost::math::jacobi_nd(i, fr, pol);
+   boost::math::jacobi_ns(i, fr, pol);
+   boost::math::jacobi_sc(i, fr, pol);
+   boost::math::jacobi_sd(i, fr, pol);
+   boost::math::jacobi_sn(i, fr, pol);
    boost::math::hypot(i, s, pol);
    boost::math::hypot(fr, lr, pol);
    boost::math::sinc_pi(i, pol);
@@ -749,6 +859,8 @@ void instantiate_mixed(RealType)
    boost::math::sph_bessel(i, 1, pol);
    boost::math::sph_neumann(i, lr, pol);
    boost::math::sph_neumann(i, i, pol);
+   boost::math::owens_t(fr, dr, pol);
+   boost::math::owens_t(i, s, pol);
 
 
    test::tgamma(i);
@@ -863,6 +975,12 @@ void instantiate_mixed(RealType)
    test::sph_bessel(i, 1);
    test::sph_neumann(i, lr);
    test::sph_neumann(i, i);
+   test::airy_ai(i);
+   test::airy_bi(i);
+   test::airy_ai_prime(i);
+   test::airy_bi_prime(i);
+   test::owens_t(fr, dr);
+   test::owens_t(i, s);
 #endif
 }
 

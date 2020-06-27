@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile$
 //
-//  Version     : $Revision$
+//  Version     : $Revision: 49313 $
 //
 //  Description : unit test for custon user exception translator registry
 // ***************************************************************************

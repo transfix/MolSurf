@@ -22,7 +22,17 @@
 #include <boost/serialization/type_info_implementation.hpp>
 #include <boost/serialization/extended_type_info_no_rtti.hpp>
 
-class polymorphic_base
+#include "test_decl.hpp"
+
+#if defined(POLYMORPHIC_DERIVED_IMPORT)
+    #define DLL_DECL IMPORT_DECL
+#elif defined(POLYMORPHIC_DERIVED_EXPORT)
+    #define DLL_DECL EXPORT_DECL
+#else
+    #define DLL_DECL(x)
+#endif
+
+class DLL_DECL(BOOST_PP_EMPTY()) polymorphic_base
 {
     friend class boost::serialization::access;
     template<class Archive>
@@ -34,7 +44,7 @@ public:
     // note that since this class uses the "no_rtti"
     // extended_type_info implementation, it MUST
     // implement this function
-    virtual const char * get_key() const;
+    virtual const char * get_key() const = 0;
     virtual ~polymorphic_base(){};
 };
 

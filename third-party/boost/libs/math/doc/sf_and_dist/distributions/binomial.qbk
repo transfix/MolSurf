@@ -17,7 +17,7 @@
       typedef RealType  value_type;
       typedef Policy    policy_type;
       
-      static const ``['unspecified-type]`` cloppper_pearson_exact_interval;
+      static const ``['unspecified-type]`` clopper_pearson_exact_interval;
       static const ``['unspecified-type]`` jeffreys_prior_interval;
       
       // construct:
@@ -58,7 +58,7 @@ The class type `binomial_distribution` represents a
 it is used when there are exactly two mutually 
 exclusive outcomes of a trial. These outcomes are labelled 
 "success" and "failure". The
-[@ binomial distribution] is used to obtain 
+__binomial_distrib is used to obtain 
 the probability of observing k successes in N trials, with the 
 probability of success on a single trial denoted by p. The 
 binomial distribution assumes that p is fixed for all trials.
@@ -323,7 +323,7 @@ the context of this distribution:
    is a real-number, and not an integer.  Depending on the use case you may
    want to take either the floor or ceiling of the result. For example:
 
-`quantile(complement(binomial(n, p), P))``]]
+`quantile(complement(binomial(n, p), P))`]]
 ]
 
 [h4 Examples]
@@ -394,7 +394,7 @@ There are also various special cases: refer to the code for details. ]]
 * [@http://en.wikipedia.org/wiki/Beta_distribution Wikipedia binomial distribution]. 
 * [@http://www.itl.nist.gov/div898/handbook/eda/section3/eda366i.htm  NIST Explorary Data Analysis]. 
 
-[endsect][/section:binomial_dist Binomial]
+[endsect] [/section:binomial_dist Binomial]
 
 [/ binomial.qbk
   Copyright 2006 John Maddock and Paul A. Bristow.

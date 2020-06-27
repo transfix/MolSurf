@@ -18,7 +18,7 @@ macro(SetupBoost TargetName)
   set(Boost_FOUND FOUND)
   set(Boost_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/third-party/boost)
 # if (NOT DEFINED Boost_USE_MULTITHREADED)
-  set(Boost_LIBRARIES boost_thread-mt boost_date_time-mt boost_regex-mt boost_filesystem-mt boost_system-mt boost_program_options-mt)
+  set(Boost_LIBRARIES boost_thread boost_date_time boost_regex boost_filesystem boost_system boost_program_options)
   target_link_libraries(${TargetName} ${Boost_LIBRARIES}) 
 endmacro(SetupBoost)
 

@@ -16,10 +16,10 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/dijkstra_shortest_paths_no_color_map.hpp>
-#include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/test/minimal.hpp>
+#include <boost/graph/iteration_macros.hpp>
 
 #define INITIALIZE_VERTEX 0
 #define DISCOVER_VERTEX 1
@@ -109,8 +109,6 @@ int test_main(int argc, char* argv[])
     put(index_map, current_vertex, vertex_index++);
   }
 
-  typedef property_map<graph_t, edge_weight_t>::type weight_map_t;
-  weight_map_t weight_map = get(edge_weight, graph);
   randomize_property<edge_weight_t>(graph, generator);
 
   // Run comparison test with original dijkstra_shortest_paths

@@ -1,6 +1,6 @@
 [/==============================================================================
-    Copyright (C) 2001-2009 Joel de Guzman
-    Copyright (C) 2001-2009 Hartmut Kaiser
+    Copyright (C) 2001-2011 Joel de Guzman
+    Copyright (C) 2001-2011 Hartmut Kaiser
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -71,7 +71,7 @@ no_match (false). It can be one of:
 ]
 
 
-`rule` is the rule we attach the handler to. In our case, we are attaching to the
+`rule` is the rule to which the handler is attached. In our case, we are attaching to the
 `xml` rule.
 
 `handler` is the actual error handling function. It expects 4 arguments:
@@ -80,8 +80,8 @@ no_match (false). It can be one of:
     [[Arg]          [Description]]
     [[first]        [The position of the iterator when the rule with the handler was entered.]]
     [[last]         [The end of input.]]
-    [[error-pos]    [The actual position of the iterator where the error occurred.]]
-    [[what]         [What failed: a string decribing the failure.]]
+    [[error-pos]    [The actual position of the iterator where the error occured.]]
+    [[what]         [What failed: a string describing the failure.]]
 ]
 
 [heading Expectation Points]
@@ -100,7 +100,7 @@ points" in the grammar. Those are the places where backtracking *cannot* occur.
 For our example above, when you get a `"</"`, you definitely must see a valid
 end-tag label next. It should be the one you got from the start-tag. After that,
 you definitely must have a `'>'` next. Otherwise, there is no point in
-proceeding forward and trying other branches, regardless where they are. The
+proceeding and trying other branches, regardless where they are. The
 input is definitely erroneous. When this happens, an expectation_failure
 exception is thrown. Somewhere outward, the error handler will catch the
 exception.

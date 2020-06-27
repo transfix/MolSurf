@@ -1,6 +1,6 @@
 [/==============================================================================
-    Copyright (C) 2001-2009 Hartmut Kaiser
-    Copyright (C) 2001-2009 Joel de Guzman
+    Copyright (C) 2001-2011 Hartmut Kaiser
+    Copyright (C) 2001-2011 Joel de Guzman
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,9 +16,9 @@ Parsers and generators in __spirit__ are fully attributed. __qi__ parsers always
 attribute/ as it is returned from a successful match representing the matched 
 input sequence. For instance, numeric parsers, such as `int_` or `double_`, 
 return the `int` or `double` value converted from the matched input sequence.
-Other primitive parser components have other intuitive attribute types, such as for instance `int_` which has `int`, or `ascii::char_` which has `char`. Forprimitive parsers apply the normal C++ convertibility rules: you can use any Other primitive parser components have other intuitive attribute types, e.g. 
-the parser `ascii::char_` has `char` as attribute type. For
-primitive parsers the normal C++ convertibility rules apply: you can use any 
+Other primitive parser components have other intuitive attribute types, such as 
+for instance `int_` which has `int`, or `ascii::char_` which has `char`. For 
+primitive parsers apply the normal C++ convertibility rules: you can use any 
 C++ type to receive the parsed value as long as the attribute type of the 
 parser is convertible to the type provided. The following example shows how a 
 synthesized parser attribute (the `int` value) is extracted by calling the 
@@ -26,7 +26,8 @@ API function `qi::parse`:
 
     int value = 0;
     std::string str("123");
-    qi::parse(str.begin(), str.end(), int_, value);   // value == 123
+    std::string::iterator strbegin = str.begin();
+    qi::parse(strbegin, str.end(), int_, value);   // value == 123
 
 The attribute type of a generator defines what data types this generator is 
 able to consume in order to produce its output. __karma__ generators always 
@@ -110,8 +111,9 @@ attribute:
 
     // the following parses "1.0 2.0" into a pair of double
     std::string input("1.0 2.0");
+    std::string::iterator strbegin = input.begin();
     std::pair<double, double> p;
-    qi::phrase_parse(input.begin(), input.end(), 
+    qi::phrase_parse(strbegin, input.end(), 
         qi::double_ >> qi::double_,       // parser grammar 
         qi::space,                        // delimiter grammar
         p);                               // attribute to fill while parsing
@@ -188,8 +190,9 @@ sequence. As said, they just don't expose any attribute and don't produce
 
     // the following parses "(1.0, 2.0)" into a pair of double
     std::string input("(1.0, 2.0)");
+    std::string::iterator strbegin = input.begin();
     std::pair<double, double> p;
-    qi::parse(input.begin(), input.end(), 
+    qi::parse(strbegin, input.end(), 
         '(' >> qi::double_ >> ", " >> qi::double_ >> ')', // parser grammar 
         p);                                               // attribute to fill while parsing
 
@@ -210,13 +213,13 @@ This behavior should be familiar as it conforms to the way other input and
 output formatting libraries such as `scanf`, `printf` or `boost::format` are 
 handling their variable parts. In this context you can think about __qi__'s 
 and __karma__'s primitive components (such as the `double_` above) as of being 
-typesafe placeholders for the attribute values.
+type safe placeholders for the attribute values.
 
 [tip  Similarly to the tip provided above, this example could be rewritten 
       using /Spirit's/ multi-attribute API function:
       ``
           double d1 = 0.0, d2 = 0.0;
-          qi::parse(begin, end, '(' >> qi::double_ >> ", " >> qi::double_ << ')', d1, d2);
+          qi::parse(begin, end, '(' >> qi::double_ >> ", " >> qi::double_ >> ')', d1, d2);
           karma::generate(out, '(' << karma::double_ << ", " << karma::double_ << ')', d1, d2);
       ``
       which provides a clear and comfortable syntax, more similar to the 
@@ -244,7 +247,7 @@ This rule is the key to the understanding of the attribute handling in
 sequences as soon as literals are involved. It is as if elements with 
 `unused_type` attributes 'disappeared' during attribute propagation. Notably, 
 this is not only true for sequences but for any compound components. For 
-instance, for alternative componets the corresponding rule is:
+instance, for alternative components the corresponding rule is:
 
     a: A, b: Unused --> (a | b): A
 
@@ -265,7 +268,7 @@ recognized. Parser nonterminals in __qi__ may accept /parameters/ (inherited
 attributes) and usually return a value (the synthesized attribute). 
 
 Both, the types of the inherited and the synthesized attributes have to be 
-explicitely specified while defining the particular `grammar` or the `rule`
+explicitly specified while defining the particular `grammar` or the `rule`
 (the Spirit __repo__ additionally has `subrules` which conform to a similar
 interface). As an example, the following code declares a __qi__ `rule` 
 exposing an `int` as its synthesized attribute, while expecting a single 
@@ -290,7 +293,6 @@ a __karma__ `rule` consuming a `double` while not expecting any additional
 inherited attributes.
 
     karma::rule<OutputIterator, double()> r;
-
 
 The inherited attributes of nonterminal parsers and generators are normally
 passed to the component during its invocation. These are the /parameters/ the

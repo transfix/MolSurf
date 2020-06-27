@@ -143,7 +143,7 @@ test_main(int /* argc */, char * /* argv */[]) {
         ifs.imbue(*utf8_locale);
         ifs.open("test.dat");
 
-        wchar_t item = 0;
+        std::wint_t item = 0;
         // note can't use normal vector from iterator constructor because
         // dinkumware doesn't have it.
         for(;;){
@@ -200,7 +200,7 @@ test_main(int /* argc */, char * /* argv */[]) {
 
     // some libraries have trouble that only shows up with longer strings
     
-    wchar_t * test3_data = L"\
+    const wchar_t * test3_data = L"\
     <?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\
     <!DOCTYPE boost_serialization>\
     <boost_serialization signature=\"serialization::archive\" version=\"3\">\

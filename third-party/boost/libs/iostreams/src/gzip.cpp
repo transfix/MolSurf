@@ -15,7 +15,8 @@
 #define BOOST_IOSTREAMS_SOURCE 
 
 #include <boost/iostreams/detail/config/dyn_link.hpp>
-#include <boost/iostreams/filter/gzip.hpp> 
+#include <boost/iostreams/filter/gzip.hpp>
+#include <boost/throw_exception.hpp>
 
 namespace boost { namespace iostreams {
 
@@ -29,17 +30,17 @@ void gzip_header::process(char c)
     switch (state_) {
     case s_id1:
         if (value != gzip::magic::id1)
-            throw gzip_error(gzip::bad_header);
+            boost::throw_exception(gzip_error(gzip::bad_header));
         state_ = s_id2;
         break;
     case s_id2:
         if (value != gzip::magic::id2)
-            throw gzip_error(gzip::bad_header);
+            boost::throw_exception(gzip_error(gzip::bad_header));
         state_ = s_cm;
         break;
     case s_cm:
         if (value != gzip::method::deflate)
-            throw gzip_error(gzip::bad_method);
+            boost::throw_exception(gzip_error(gzip::bad_method));
         state_ = s_flg;
         break;
     case s_flg:
@@ -61,7 +62,7 @@ void gzip_header::process(char c)
     case s_os:
         os_ = value;
         if (flags_ & gzip::flags::extra) {
-            state_ = s_extra;
+            state_ = s_xlen;
         } else if (flags_ & gzip::flags::name) {
             state_ = s_name;
         } else if (flags_ & gzip::flags::comment) {
@@ -123,7 +124,7 @@ void gzip_header::process(char c)
         }
         break;
     default:
-        assert(0);
+        BOOST_ASSERT(0);
     }
 }
 
@@ -158,7 +159,7 @@ void gzip_footer::process(char c)
             ++offset_;
         }
     } else {
-        assert(0);
+        BOOST_ASSERT(0);
     }
 }
 

@@ -19,11 +19,11 @@ bool bcp_implementation::is_source_file(const fs::path& p)
    static const boost::regex e(
       ".*\\."
       "(?:"
-         "c|cxx|h|hxx|inc|.?pp|yy?"
+         "c|cxx|h|hxx|inc|inl|.?pp|yy?"
       ")", 
       boost::regex::perl | boost::regex::icase
       );
-   return boost::regex_match(p.string(), e);
+   return boost::regex_match(p.filename().generic_string(), e);
 }
 
 bool bcp_implementation::is_html_file(const fs::path& p)
@@ -34,7 +34,7 @@ bool bcp_implementation::is_html_file(const fs::path& p)
          "html?|css"
       ")"
       );
-   return boost::regex_match(p.string(), e);
+   return boost::regex_match(p.filename().generic_string(), e);
 }
 
 bool bcp_implementation::is_binary_file(const fs::path& p)
@@ -52,6 +52,21 @@ bool bcp_implementation::is_binary_file(const fs::path& p)
       "|"
       "(Jamfile|makefile|configure)",
       boost::regex::perl | boost::regex::icase);
-   return !boost::regex_match(p.leaf(), e);
+   return !boost::regex_match(p.leaf().generic_string(), e);
 
 }
+
+bool bcp_implementation::is_jam_file(const fs::path& p)
+{
+   static const boost::regex e(
+      ".*\\."
+      "(?:"
+         "jam|v2"
+      ")"
+      "|"
+      "(Jamfile|Jamroot)\\.?", 
+      boost::regex::perl | boost::regex::icase
+      );
+   return boost::regex_match(p.filename().generic_string(), e);
+}
+

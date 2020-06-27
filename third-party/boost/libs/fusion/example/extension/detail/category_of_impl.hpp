@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (c) 2001-2006 Joel de Guzman
+    Copyright (c) 2001-2011 Joel de Guzman
     Copyright (c) 2005-2006 Dan Marsden
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying 
@@ -25,7 +25,7 @@ namespace boost { namespace fusion {
             template<typename Sequence>
             struct apply
             {
-                struct type : random_access_traversal_tag, associative_sequence_tag {};
+                struct type : random_access_traversal_tag, associative_tag {};
             };
         };
     }

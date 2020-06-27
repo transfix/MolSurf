@@ -914,6 +914,21 @@ void test_get_child_put_child(PTREE *)
 
 }
 
+void test_equal_range(PTREE *)
+{
+    PTREE pt;
+    pt.add_child(T("k1"), PTREE());
+    pt.add_child(T("k2"), PTREE());
+    pt.add_child(T("k1"), PTREE());
+    pt.add_child(T("k3"), PTREE());
+    pt.add_child(T("k1"), PTREE());
+    pt.add_child(T("k2"), PTREE());
+
+    BOOST_CHECK(boost::distance(pt.equal_range(T("k1"))) == 3);
+    BOOST_CHECK(boost::distance(pt.equal_range(T("k2"))) == 2);
+    BOOST_CHECK(boost::distance(pt.equal_range(T("k3"))) == 1);
+}
+
 void test_path_separator(PTREE *)
 {
 
@@ -1273,6 +1288,31 @@ void test_char(PTREE *)
     BOOST_CHECK(pt.get<unsigned char>(T("unsigned char max")) ==
         (std::numeric_limits<unsigned char>::max)());
 
+}
+
+void test_sort(PTREE *)
+{
+  PTREE pt;
+  pt.put(T("one"), T("v1"));
+  pt.put(T("two"), T("v2"));
+  pt.put(T("three"), T("v3"));
+  pt.put(T("four"), T("v4"));
+
+  pt.sort();
+
+  PTREE::iterator it = pt.begin();
+  BOOST_CHECK(std::distance(it, pt.end()) == 4);
+  BOOST_CHECK(it->first == T("four"));
+  BOOST_CHECK(it->second.data() == T("v4"));
+  ++it;
+  BOOST_CHECK(it->first == T("one"));
+  BOOST_CHECK(it->second.data() == T("v1"));
+  ++it;
+  BOOST_CHECK(it->first == T("three"));
+  BOOST_CHECK(it->second.data() == T("v3"));
+  ++it;
+  BOOST_CHECK(it->first == T("two"));
+  BOOST_CHECK(it->second.data() == T("v2"));
 }
 
 void test_leaks(PTREE *)

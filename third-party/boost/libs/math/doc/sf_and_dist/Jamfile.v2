@@ -4,8 +4,11 @@
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 using quickbook ;
+using auto-index ;
+import modules ;
 
 path-constant images_location : html ;
+path-constant here : . ;
 
 xml math : math.qbk ;
 boostbook standalone
@@ -14,10 +17,6 @@ boostbook standalone
     :
         # Path for links to Boost:
         <xsl:param>boost.root=../../../../..
-        # Path for libraries index:
-        <xsl:param>boost.libraries=../../../../../libs/libraries.htm
-        # Use the main Boost stylesheet:
-        <xsl:param>html.stylesheet=../../../../../doc/html/boostbook.css
         
         # Some general style settings:
         <xsl:param>table.footnote.number.format=1
@@ -69,7 +68,22 @@ boostbook standalone
         <format>pdf:<xsl:param>img.src.path=$(images_location)/
         <format>pdf:<xsl:param>draft.mode="no"
         <format>pdf:<xsl:param>boost.url.prefix=http://www.boost.org/doc/libs/release/libs/math/doc/sf_and_dist/html
+        <auto-index>on <format>pdf:<auto-index-internal>off
+        <format>html:<auto-index-internal>on
+        <auto-index-script>$(here)/index.idx
+        <auto-index-prefix>$(here)/../../../.. 
+        <auto-index-verbose>on
+        <quickbook-define>enable_index 
+        <format>pdf:<xsl:param>index.on.type=1
     ;
 
-install pdf-install : standalone : <location>. <install-type>PDF ;
+install pdfinstall : standalone/<format>pdf : <location>. <install-type>PDF <name>math.pdf ;
+explicit pdfinstall ;
+
+
+
+
+
+
+
 

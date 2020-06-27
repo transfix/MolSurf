@@ -184,7 +184,7 @@ class Tn_vertex : public Vb
 			// for robust cocone
 			v_on_smooth_surface = false;
 			nnd_vector.clear();
-			nnd_vector.resize(3, HUGE);
+			nnd_vector.resize(3, HUGE_VAL);
 		}
 
 		Vector v_normal;// Estimated normal at the vertex.

@@ -18,10 +18,7 @@ int main() {}
 #endif
 
 #include <boost/detail/lightweight_test.hpp>
-
 #include <boost/limits.hpp>
-#include <boost/mpl/assert.hpp>
-#include <boost/type_traits/is_base_and_derived.hpp>
 #include <vector>
 
 void hash_range_tests()
@@ -70,10 +67,12 @@ void hash_range_tests()
     BOOST_TEST(HASH_NAMESPACE::hash_range(values3.begin(), values3.end())
         == HASH_NAMESPACE::hash_range(x.begin(), x.end()));
 
-    std::size_t seed = HASH_NAMESPACE::hash_range(values3.begin(), values3.end());
+    std::size_t seed =
+        HASH_NAMESPACE::hash_range(values3.begin(), values3.end());
     HASH_NAMESPACE::hash_range(seed, values4.begin(), values4.end());
     HASH_NAMESPACE::hash_range(seed, x.begin(), x.end());
-    BOOST_TEST(seed == HASH_NAMESPACE::hash_range(values5.begin(), values5.end()));
+    BOOST_TEST(seed ==
+        HASH_NAMESPACE::hash_range(values5.begin(), values5.end()));
 }
 
 int main()

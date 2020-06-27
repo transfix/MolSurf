@@ -8,8 +8,15 @@
 
 //  See http://www.boost.org/libs/filesystem for documentation.
 
+#define BOOST_FILESYSTEM_VERSION 3
+
 //  As an example program, we don't want to use any deprecated features
-#define BOOST_FILESYSTEM_NO_DEPRECATED
+#ifndef BOOST_FILESYSTEM_NO_DEPRECATED 
+#  define BOOST_FILESYSTEM_NO_DEPRECATED
+#endif
+#ifndef BOOST_SYSTEM_NO_DEPRECATED 
+#  define BOOST_SYSTEM_NO_DEPRECATED
+#endif
 
 #include "boost/filesystem/operations.hpp"
 #include "boost/filesystem/path.hpp"
@@ -18,14 +25,12 @@
 
 namespace fs = boost::filesystem;
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
-  boost::progress_timer t( std::clog );
+  fs::path p(fs::current_path());
 
-  fs::path full_path( fs::initial_path<fs::path>() );
-
-  if ( argc > 1 )
-    full_path = fs::system_complete( fs::path( argv[1] ) );
+  if (argc > 1)
+    p = fs::system_complete(argv[1]);
   else
     std::cout << "\nusage:   simple_ls [path]" << std::endl;
 
@@ -34,29 +39,28 @@ int main( int argc, char* argv[] )
   unsigned long other_count = 0;
   unsigned long err_count = 0;
 
-  if ( !fs::exists( full_path ) )
+  if (!fs::exists(p))
   {
-    std::cout << "\nNot found: " << full_path.file_string() << std::endl;
+    std::cout << "\nNot found: " << p << std::endl;
     return 1;
   }
 
-  if ( fs::is_directory( full_path ) )
+  if (fs::is_directory(p))
   {
-    std::cout << "\nIn directory: "
-              << full_path.directory_string() << "\n\n";
+    std::cout << "\nIn directory: " << p << "\n\n";
     fs::directory_iterator end_iter;
-    for ( fs::directory_iterator dir_itr( full_path );
+    for (fs::directory_iterator dir_itr(p);
           dir_itr != end_iter;
-          ++dir_itr )
+          ++dir_itr)
     {
       try
       {
-        if ( fs::is_directory( dir_itr->status() ) )
+        if (fs::is_directory(dir_itr->status()))
         {
           ++dir_count;
           std::cout << dir_itr->path().filename() << " [directory]\n";
         }
-        else if ( fs::is_regular_file( dir_itr->status() ) )
+        else if (fs::is_regular_file(dir_itr->status()))
         {
           ++file_count;
           std::cout << dir_itr->path().filename() << "\n";
@@ -68,7 +72,7 @@ int main( int argc, char* argv[] )
         }
 
       }
-      catch ( const std::exception & ex )
+      catch (const std::exception & ex)
       {
         ++err_count;
         std::cout << dir_itr->path().filename() << " " << ex.what() << std::endl;
@@ -81,7 +85,7 @@ int main( int argc, char* argv[] )
   }
   else // must be a file
   {
-    std::cout << "\nFound: " << full_path.file_string() << "\n";    
+    std::cout << "\nFound: " << p << "\n";    
   }
   return 0;
 }

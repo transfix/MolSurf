@@ -104,7 +104,7 @@ Thanks to <A HREF="mailto:jloup@gailly.net">Jean-loup Gailly</A> and <A HREF="ma
 <TR><TH>Constant</TH><TH>Interpretation</TH></TR>
     <TR>
         <TD VALIGN="top"><A NAME="zlib_error"></A><CODE>zlib_error</CODE></TD>
-        <TD>A zlib error has occured; use <A HREF="#gzip_error_zlib_error_code"><CODE>gzip_error::zlib_error_code</CODE></A> to obtain an error code.</TD>
+        <TD>A zlib error has occurred; use <A HREF="#gzip_error_zlib_error_code"><CODE>gzip_error::zlib_error_code</CODE></A> to obtain an error code.</TD>
     </TR>
     <TR>
         <TD VALIGN="top"><A NAME="bad_crc"></A><CODE>bad_crc</CODE></TD>
@@ -248,7 +248,7 @@ Thanks to <A HREF="mailto:jloup@gailly.net">Jean-loup Gailly</A> and <A HREF="ma
 
 <H4>Description</H4>
 
-<P>Model of <A HREF="../concepts/input_filter.html">InputFilter</A> which decompresses data in the G<SPAN STYLE="font-size:80%">ZIP</SPAN> format (<A CLASS="bib_ref" HREF="../bibliography.html#deutsch3">[Deutsch3]</A>).</P>
+<P>Model of <A HREF="../concepts/dual_use_filter.html">DualUseFilter</A> which decompresses data in the G<SPAN STYLE="font-size:80%">ZIP</SPAN> format (<A CLASS="bib_ref" HREF="../bibliography.html#deutsch3">[Deutsch3]</A>).</P>
 
 <H4>Synopsis</H4>
 
@@ -307,7 +307,7 @@ Used by the gzip Filters to report errors.
 <H4><CODE>gzip_error::gzip_error</CODE></H4>
 
 <PRE CLASS="broken_ie">    gzip_error(<SPAN CLASS="keyword">int</SPAN> error);
-    gzip_error(<SPAN CLASS="keyword">const</SPAN> <A NAME="gzip_error_zlib_error_code"></A>zlib_error& e);</PRE>
+    gzip_error(<SPAN CLASS="keyword">const</SPAN> <A HREF="#zlib_error">zlib_error</A>& e);</PRE>
 
 <P>The first member constructs an instance of <CODE>gzip_error</CODE> with the given error code from the namespace <A HREF="#constants"><CODE>boost::iostreams::gzip</CODE></A>. The second constructs an instance of <CODE>gzip_error</CODE> based on an instance of <A HREF="zlib.html#zlib_error"><CODE>zlib_error</CODE></A>.</P>
 
@@ -357,7 +357,6 @@ int main()
 <!-- Begin Footer -->
 
 <HR>
-<P CLASS="copyright">Revised 02 Feb 2008</P>
 
 <P CLASS="copyright">&copy; Copyright 2008 <a href="http://www.coderage.com/" target="_top">CodeRage, LLC</a><br/>&copy; Copyright 2004-2007 <a href="http://www.coderage.com/turkanis/" target="_top">Jonathan Turkanis</a></P>
 <P CLASS="copyright"> 

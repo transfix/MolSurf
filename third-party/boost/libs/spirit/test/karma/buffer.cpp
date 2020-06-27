@@ -1,4 +1,4 @@
-//  Copyright (c) 2001-2009 Hartmut Kaiser
+//  Copyright (c) 2001-2011 Hartmut Kaiser
 // 
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying 
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -31,6 +31,7 @@ main()
         v.push_back(1.0);
         v.push_back(2.0);
         BOOST_TEST(test("[1.02.0]", buffer['[' << +double_ << ']'], v));
+        BOOST_TEST(test("[1.02.0]", buffer[buffer['[' << +double_ << ']']], v));
     }
 
     {

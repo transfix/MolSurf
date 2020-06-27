@@ -8,6 +8,9 @@
   -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 version="1.0">
+
+  <xsl:param name="template.param.brief" select="false()"/>
+  
   <!-- Determine the length of a template header synopsis -->
   <xsl:template name="template.synopsis.length">
     <xsl:variable name="text">
@@ -72,18 +75,31 @@
         <xsl:call-template name="highlight-keyword">
           <xsl:with-param name="keyword" select="'template'"/>
         </xsl:call-template>
+        <xsl:call-template name="highlight-special">
+          <xsl:with-param name="text" select="'&lt;'"/>
+        </xsl:call-template>
       </xsl:when>
       <xsl:otherwise>
         <xsl:text>template</xsl:text>
+        <xsl:text>&lt;</xsl:text>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:text>&lt;</xsl:text>
     <xsl:call-template name="template.synopsis.parameters">
       <xsl:with-param name="indentation" select="$indentation + 9"/>
       <xsl:with-param name="wrap" select="$wrap"/>
       <xsl:with-param name="highlight" select="$highlight"/>
     </xsl:call-template>
-    <xsl:text>&gt; </xsl:text>
+    <xsl:choose>
+      <xsl:when test="$highlight">
+        <xsl:call-template name="highlight-special">
+          <xsl:with-param name="text" select="'&gt;'"/>
+        </xsl:call-template>
+        <xsl:text> </xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>&gt; </xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Display a list of template parameters for a synopsis (no comments) -->
@@ -100,7 +116,16 @@
     <xsl:if test="$parameters">
       <!-- Emit the prefix (either a comma-space, or empty if this is
            the first parameter) -->
-      <xsl:value-of select="$prefix"/>
+      <xsl:choose>
+        <xsl:when test="$highlight">
+          <xsl:call-template name="highlight-text">
+            <xsl:with-param name="text" select="$prefix"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$prefix"/>
+        </xsl:otherwise>
+      </xsl:choose>
 
       <!-- Get the actual parameter and its attributes -->
       <xsl:variable name="parameter" select="$parameters[position()=1]"/>
@@ -179,17 +204,30 @@
           <xsl:call-template name="highlight-keyword">
             <xsl:with-param name="keyword" select="'template'"/>
           </xsl:call-template>
+          <xsl:call-template name="highlight-special">
+            <xsl:with-param name="text" select="'&lt;'"/>
+          </xsl:call-template>
         </xsl:when>
         <xsl:otherwise>
           <xsl:text>template</xsl:text>
+          <xsl:text>&lt;</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:text>&lt;</xsl:text>
       <xsl:call-template name="template.reference.parameters">
         <xsl:with-param name="indentation" select="$indentation + 9"/>
         <xsl:with-param name="highlight" select="$highlight"/>
       </xsl:call-template>
-      <xsl:text>&gt; </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$highlight">
+          <xsl:call-template name="highlight-special">
+            <xsl:with-param name="text" select="'&gt;'"/>
+          </xsl:call-template>
+          <xsl:text> </xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>&gt; </xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
   </xsl:template>
 
@@ -200,7 +238,7 @@
     <xsl:param name="parameters" select="template-type-parameter|template-varargs|template-nontype-parameter"/>
 
     <xsl:choose>
-      <xsl:when test="$parameters/purpose">
+      <xsl:when test="$parameters/purpose and $template.param.brief">
         <xsl:call-template name="template.reference.parameters.comments">
           <xsl:with-param name="indentation" select="$indentation"/>
           <xsl:with-param name="highlight" select="$highlight"/>
@@ -236,16 +274,44 @@
       </xsl:call-template>
 
       <xsl:if test="$rest">
-        <xsl:text>, </xsl:text>
+        <xsl:choose>
+          <xsl:when test="$highlight">
+            <xsl:call-template name="highlight-text">
+              <xsl:with-param name="text" select="', '"/>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:text>, </xsl:text>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:if>
 
       <!-- Display the comment -->
       <xsl:if test="$parameter/purpose">
+        <xsl:variable name="param-text">
+          <!-- Display the parameter -->
+          <xsl:call-template name="template.parameter">
+            <xsl:with-param name="parameter" select="$parameter"/>
+            <xsl:with-param name="is-last" select="not($rest)"/>
+            <xsl:with-param name="highlight" select="false()"/>
+          </xsl:call-template>
+        </xsl:variable>
         <xsl:call-template name="highlight-comment">
           <xsl:with-param name="text">
             <xsl:text>  // </xsl:text>
-            <xsl:apply-templates 
-              select="$parameter/purpose/*|$parameter/purpose/text()"/>
+            <xsl:apply-templates
+              select="$parameter/purpose/*|$parameter/purpose/text()" mode="comment">
+              <xsl:with-param name="wrap" select="true()"/>
+              <xsl:with-param name="prefix">
+                <xsl:call-template name="indent">
+                  <xsl:with-param name="indentation" select="$indentation + string-length($param-text)"/>
+                </xsl:call-template>
+                <xsl:if test="$rest">
+                  <xsl:text>  </xsl:text>
+                </xsl:if>
+                <xsl:text>  // </xsl:text>
+              </xsl:with-param>
+            </xsl:apply-templates>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:if>
@@ -314,7 +380,18 @@
         <xsl:text>typename</xsl:text>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:if test="$parameter/@pack=1"><xsl:text>...</xsl:text></xsl:if>
+    <xsl:if test="$parameter/@pack=1">
+      <xsl:choose>
+        <xsl:when test="$highlight">
+          <xsl:call-template name="highlight-text">
+            <xsl:with-param name="text" select="'...'"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>...</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
     <xsl:text> </xsl:text>
 
     <xsl:call-template name="template.parameter.name">
@@ -358,7 +435,16 @@
     </xsl:variable>
 
     <xsl:if test="not($def='')">
-      <xsl:text> = </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$highlight">
+          <xsl:call-template name="highlight-text">
+            <xsl:with-param name="text" select="' = '"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text> = </xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
 
       <xsl:copy-of select="$def"/>
 
@@ -389,7 +475,18 @@
         <xsl:value-of select="$parameter/type/*|$parameter/type/text()"/>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:if test="$parameter/@pack=1"><xsl:text>...</xsl:text></xsl:if>
+    <xsl:if test="$parameter/@pack=1">
+      <xsl:choose>
+        <xsl:when test="$highlight">
+          <xsl:call-template name="highlight-text">
+            <xsl:with-param name="text" select="'...'"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>...</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
     <xsl:text> </xsl:text>
 
     <xsl:call-template name="template.parameter.name">
@@ -402,7 +499,16 @@
     </xsl:variable>
 
     <xsl:if test="not($def='')">
-      <xsl:text> = </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$highlight">
+          <xsl:call-template name="highlight-text">
+            <xsl:with-param name="text" select="' = '"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text> = </xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
 
       <xsl:choose>
         <xsl:when test="$highlight">
@@ -423,25 +529,72 @@
   </xsl:template>
 
   <xsl:template match="template-varargs" mode="print.parameter">
-    <xsl:text>...</xsl:text>
+    <xsl:param name="highlight" select="true()"/>
+    <xsl:choose>
+      <xsl:when test="$highlight">
+        <xsl:call-template name="highlight-text">
+          <xsl:with-param name="text" select="'...'"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>...</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="specialization">
     <xsl:param name="highlight" select="true()"/>
-    <xsl:text>&lt;</xsl:text>
+    <xsl:choose>
+      <xsl:when test="$highlight">
+        <xsl:call-template name="highlight-text">
+          <xsl:with-param name="text" select="'&lt;'"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>&lt;</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:apply-templates select="template-arg">
       <xsl:with-param name="highlight" select="$highlight"/>
     </xsl:apply-templates>
-    <xsl:text>&gt;</xsl:text>
+    <xsl:choose>
+      <xsl:when test="$highlight">
+        <xsl:call-template name="highlight-text">
+          <xsl:with-param name="text" select="'&gt;'"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>&gt;</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="template-arg">
+    <xsl:param name="highlight" select="true()"/>
     <xsl:if test="position() &gt; 1">
-      <xsl:text>, </xsl:text>
+      <xsl:choose>
+        <xsl:when test="$highlight">
+          <xsl:call-template name="highlight-text">
+            <xsl:with-param name="text" select="', '"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>, </xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
     <xsl:apply-templates mode="highlight"/>
     <xsl:if test="@pack=1">
-      <xsl:text>...</xsl:text>
+      <xsl:choose>
+        <xsl:when test="$highlight">
+          <xsl:call-template name="highlight-text">
+            <xsl:with-param name="text" select="'...'"/>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>...</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
   </xsl:template>
 </xsl:stylesheet>

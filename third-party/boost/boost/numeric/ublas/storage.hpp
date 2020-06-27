@@ -1564,7 +1564,6 @@ namespace boost { namespace numeric { namespace ublas {
 
     template <class V>
     class index_pair :
-        private boost::noncopyable,
         public container_reference<V> {
 
         typedef index_pair<V> self_type;
@@ -1598,13 +1597,13 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         BOOST_UBLAS_INLINE
-        void swap(self_type rhs) {
+        void swap(self_type& rhs) {
             self_type tmp(rhs);
             rhs = *this;
             *this = tmp;
         }
         BOOST_UBLAS_INLINE
-        friend void swap(self_type lhs, self_type rhs) {
+        friend void swap(self_type& lhs, self_type& rhs) {
             lhs.swap(rhs);
         }
 
@@ -1734,7 +1733,6 @@ namespace boost { namespace numeric { namespace ublas {
 
     template <class M>
     class index_triple :
-        private boost::noncopyable,
         public container_reference<M> {
 
         typedef index_triple<M> self_type;
@@ -1770,13 +1768,13 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
         BOOST_UBLAS_INLINE
-        void swap(self_type rhs) {
+        void swap(self_type& rhs) {
             self_type tmp(rhs);
             rhs = *this;
             *this = tmp;
         }
         BOOST_UBLAS_INLINE
-        friend void swap(self_type lhs, self_type rhs) {
+        friend void swap(self_type& lhs, self_type& rhs) {
             lhs.swap(rhs);
         }
 

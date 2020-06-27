@@ -1,6 +1,6 @@
-// negative_binomial_example3.cpp
+// normal_misc_examples.cpp
 
-// Copyright Paul A. Bristow 2007.
+// Copyright Paul A. Bristow 2007, 2010.
 
 // Use, modification and distribution are subject to the
 // Boost Software License, Version 1.0.
@@ -40,6 +40,10 @@ int main()
       double step = 1.; // in z 
       double range = 4; // min and max z = -range to +range.
       int precision = 17; // traditional tables are only computed to much lower precision.
+      // but std::numeric_limits<double>::max_digits10; on new Standard Libraries gives
+      // 17, the maximum number of digits that can possibly be significant.
+      // std::numeric_limits<double>::digits10; == 15 is number of guaranteed digits,
+      // the other two digits being 'noisy'.
 
       // Construct a standard normal distribution s
         normal s; // (default mean = zero, and standard deviation = unity)
@@ -504,6 +508,3 @@ Fraction too long [ P(X > 4.10) ] is 0.0668
 95% of bolts are shorter than 4.11
 
 */
-
-
-

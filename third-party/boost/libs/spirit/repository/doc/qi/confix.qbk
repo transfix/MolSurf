@@ -1,6 +1,6 @@
 [/==============================================================================
-    Copyright (C) 2001-2009 Hartmut Kaiser
-    Copyright (C) 2001-2009 Joel de Guzman
+    Copyright (C) 2001-2011 Hartmut Kaiser
+    Copyright (C) 2001-2011 Joel de Guzman
     Copyright (C) 2009 Chris Hoeppler
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -52,7 +52,7 @@ Now, the comment parsers can be written as
     cpp_comment[*(char_ - eol)]   // C++ style comment
 
 [note While the `confix_p(prefix, subject, suffix)` parser in __classic__
-      was equivalent to the sequence `prefix >> (subject - suffix) >> suffix,
+      was equivalent to the sequence `prefix >> *(subject - suffix) >> suffix,
       the __qi__ `confix` directive will not perform this refactoring any more.
       This simplifies the code and makes things more explicit.]
 

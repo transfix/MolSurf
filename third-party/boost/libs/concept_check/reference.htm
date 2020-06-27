@@ -279,6 +279,10 @@ struct <a href=
 template &lt;class C&gt;
 struct <a href=
 "http://www.sgi.com/tech/stl/SortedAssociativeContainer.html">SortedAssociativeContainer</a>;
+
+template &lt;class C&gt;
+struct <a href=
+"../utility/Collection.html">Collection</a>;
 </pre>
 
   <h3><a name="basic-archetype" id="basic-archetype">Basic Archetype
@@ -361,6 +365,12 @@ UNDER CONSTRUCTION
 template &lt;class Concept&gt;
 void function_requires();
 </pre>
+
+  <p><code>function_requires()</code> has been deprecated in favor of <code>BOOST_CONCEPT_ASSERT</code>.
+   This means that <del><code>function_requires< Concept<Type> >();</code></del>
+   becomes <code>BOOST_CONCEPT_ASSERT((Concept<Type>));</code>
+   (don't forget to <code>#include &quot;boost/concept/assert.hpp&quot;</code>).
+
 
   <h3><a name="deprecated-macros" id="deprecated-macros">Deprecated
   Macros</a></h3>

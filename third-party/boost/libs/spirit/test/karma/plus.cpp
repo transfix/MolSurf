@@ -1,4 +1,4 @@
-//  Copyright (c) 2001-2009 Hartmut Kaiser
+//  Copyright (c) 2001-2011 Hartmut Kaiser
 // 
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying 
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,6 +16,7 @@
 #include <boost/spirit/include/karma_action.hpp>
 #include <boost/spirit/include/karma_nonterminal.hpp>
 #include <boost/spirit/include/karma_auxiliary.hpp>
+#include <boost/spirit/include/karma_directive.hpp>
 #include <boost/fusion/include/vector.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
@@ -25,6 +26,24 @@
 #include "test.hpp"
 
 using namespace spirit_test;
+
+///////////////////////////////////////////////////////////////////////////////
+struct action 
+{
+    action (std::vector<char>& vec) 
+      : vec(vec), it(vec.begin()) 
+    {}
+
+    void operator()(unsigned& value, boost::spirit::unused_type, bool& pass) const
+    {
+       pass = (it != vec.end());
+       if (pass)
+           value = *it++;
+    }
+
+    std::vector<char>& vec;
+    mutable std::vector<char>::iterator it;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 int main()
@@ -45,6 +64,55 @@ int main()
         std::string s3("");
         BOOST_TEST(!test("", +char_, s2));
         BOOST_TEST(!test_delimited("", +char_, s3, ' '));
+    }
+
+    {
+        std::string s1("aaaaa");
+        BOOST_TEST(test("aaaaa", char_ << +(char_ << char_), s1));
+        BOOST_TEST(test_delimited("a a a a a ", 
+            char_ << +(char_ << char_), s1, ' '));
+
+        s1 = "a";
+        BOOST_TEST(!test("", char_ << +(char_ << char_), s1));
+        s1 = "aa";
+        BOOST_TEST(!test("", char_ << +(char_ << char_), s1));
+        s1 = "aaaa";
+        BOOST_TEST(!test("", char_ << +(char_ << char_), s1));
+    }
+
+    {
+        using boost::spirit::karma::strict;
+        using boost::spirit::karma::relaxed;
+        using namespace boost::assign;
+
+        typedef std::pair<char, char> data;
+        std::vector<data> v1;
+        v1 += std::make_pair('a', 'a'), 
+              std::make_pair('b', 'b'), 
+              std::make_pair('c', 'c'), 
+              std::make_pair('d', 'd'), 
+              std::make_pair('e', 'e'), 
+              std::make_pair('f', 'f'), 
+              std::make_pair('g', 'g'); 
+
+        karma::rule<spirit_test::output_iterator<char>::type, data()> r;
+        r = &char_('a') << char_;
+
+        BOOST_TEST(!test("", r << +(r << r), v1));
+        BOOST_TEST(!test("", relaxed[r << +(r << r)], v1));
+        BOOST_TEST(!test("", strict[r << +(r << r)], v1));
+
+         v1 += std::make_pair('a', 'a');
+
+        BOOST_TEST(!test("", r << *(r << r), v1));
+        BOOST_TEST(!test("", relaxed[r << +(r << r)], v1));
+        BOOST_TEST(!test("", strict[r << +(r << r)], v1));
+
+         v1 += std::make_pair('a', 'a');
+
+        BOOST_TEST(test("aaa", r << +(r << r), v1));
+        BOOST_TEST(test("aaa", relaxed[r << +(r << r)], v1));
+        BOOST_TEST(!test("", strict[r << +(r << r)], v1));
     }
 
     {
@@ -90,6 +158,9 @@ int main()
 
     // failing sub-generators
     {
+        using boost::spirit::karma::strict;
+        using boost::spirit::karma::relaxed;
+
         using namespace boost::assign;
 
         typedef std::pair<char, char> data;
@@ -106,24 +177,46 @@ int main()
 
         r = &char_('d') << char_;
         BOOST_TEST(test("d", +r, v2));
+        BOOST_TEST(test("d", relaxed[+r], v2));
+        BOOST_TEST(!test("", strict[+r], v2));
 
         r = &char_('a') << char_;
-        BOOST_TEST(test("a",+r, v2));
+        BOOST_TEST(test("a", +r, v2));
+        BOOST_TEST(test("a", relaxed[+r], v2));
+        BOOST_TEST(test("a", strict[+r], v2));
 
         r = &char_('g') << char_;
         BOOST_TEST(test("g", +r, v2));
+        BOOST_TEST(test("g", relaxed[+r], v2));
+        BOOST_TEST(!test("", strict[+r], v2));
 
         r = !char_('d') << char_;
         BOOST_TEST(test("abcefg", +r, v2));
+        BOOST_TEST(test("abcefg", relaxed[+r], v2));
+        BOOST_TEST(test("abc", strict[+r], v2));
 
         r = !char_('a') << char_;
         BOOST_TEST(test("bcdefg", +r, v2));
+        BOOST_TEST(test("bcdefg", relaxed[+r], v2));
+        BOOST_TEST(!test("", strict[+r], v2));
 
         r = !char_('g') << char_;
+        BOOST_TEST(test("abcdef", +r, v2));
+        BOOST_TEST(test("abcdef", +r, v2));
         BOOST_TEST(test("abcdef", +r, v2));
 
         r = &char_('A') << char_;
         BOOST_TEST(!test("", +r, v2));
+    }
+
+    {
+        // make sure user defined end condition is applied if no attribute
+        // is passed in
+        using namespace boost::assign;
+
+        std::vector<char> v;
+        v += 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h';
+        BOOST_TEST(test("[6162636465666768]", '[' << +hex[action(v)] << ']'));
     }
 
     return boost::report_errors();

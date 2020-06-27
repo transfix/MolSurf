@@ -7,6 +7,12 @@
 #ifndef TT_TEST_HPP
 #define TT_TEST_HPP
 
+#include <boost/config.hpp>
+
+#if defined(_WIN32_WCE) && defined(BOOST_MSVC)
+#pragma warning(disable:4201)
+#endif
+
 #ifdef USE_UNIT_TEST
 #  include <boost/test/unit_test.hpp>
 #endif
@@ -22,6 +28,17 @@
 #ifdef _MSC_VER
 // We have to turn off warnings that occur within the test suite:
 #pragma warning(disable:4127)
+#endif
+#ifdef BOOST_INTEL
+// remark #1418: external function definition with no prior declaration
+// remark #981: operands are evaluated in unspecified order
+#pragma warning(disable:1418 981)
+#endif
+
+#ifdef BOOST_INTEL
+// turn off warnings from this header:
+#pragma warning(push)
+#pragma warning(disable:444)
 #endif
 
 //
@@ -50,7 +67,7 @@
 // global unit, this is not safe, but until the unit test framework uses
 // shared_ptr throughout this is about as good as it gets :-(
 //
-boost::unit_test_framework::test_suite* get_master_unit(const char* name = 0);
+boost::unit_test::test_suite* get_master_unit(const char* name = 0);
 
 //
 // initialisation class:
@@ -96,7 +113,7 @@ int error_count = 0;
    }\
    }while(0)
 
-#define BOOST_MESSAGE(message)\
+#define BOOST_TEST_MESSAGE(message)\
    do{ std::cout << __FILE__ << ":" << __LINE__ << ": " << message << std::endl; }while(0)
 
 #define BOOST_CHECK(pred)\
@@ -156,8 +173,8 @@ void name(){ TRANSFORM_CHECK(type, BOOST_DUMMY_MACRO_PARAM, BOOST_DUMMY_MACRO_PA
 enum enum_UDT{ one, two, three };
 struct UDT
 {
-   UDT(){};
-   ~UDT(){};
+   UDT();
+   ~UDT();
    UDT(const UDT&);
    UDT& operator=(const UDT&);
    int i;
@@ -195,7 +212,12 @@ typedef int (UDT::*cmf)(int) const;
 // on some compilers):
 //
 typedef int& r_type;
+#ifndef BOOST_INTEL
 typedef const r_type cr_type;
+#else
+// recent Intel compilers generate a hard error on the above:
+typedef r_type cr_type;
+#endif
 # ifdef BOOST_MSVC
 #  pragma warning(pop)
 # elif defined(BOOST_INTEL)
@@ -206,12 +228,11 @@ typedef const r_type cr_type;
 struct POD_UDT { int x; };
 struct empty_UDT
 {
-   empty_UDT(){};
-   empty_UDT(const empty_UDT&){};
-   ~empty_UDT(){};
-   empty_UDT& operator=(const empty_UDT&){ return *this; }
-   bool operator==(const empty_UDT&)const
-   { return true; }
+   empty_UDT();
+   empty_UDT(const empty_UDT&);
+   ~empty_UDT();
+   empty_UDT& operator=(const empty_UDT&);
+   bool operator==(const empty_UDT&)const;
 };
 struct empty_POD_UDT
 {
@@ -240,7 +261,7 @@ struct nothrow_copy_UDT
    nothrow_copy_UDT();
    nothrow_copy_UDT(const nothrow_copy_UDT&)throw();
    ~nothrow_copy_UDT(){};
-   nothrow_copy_UDT& operator=(const nothrow_copy_UDT&){ return *this; }
+   nothrow_copy_UDT& operator=(const nothrow_copy_UDT&);
    bool operator==(const nothrow_copy_UDT&)const
    { return true; }
 };
@@ -289,7 +310,7 @@ struct VB
    virtual ~VB(){};
 };
 
-struct VD : VB
+struct VD : public VB
 {
    ~VD(){};
 };
@@ -356,21 +377,21 @@ struct polymorphic_base
    virtual void method();
 };
 
-struct polymorphic_derived1 : polymorphic_base
+struct polymorphic_derived1 : public polymorphic_base
 {
 };
 
-struct polymorphic_derived2 : polymorphic_base
+struct polymorphic_derived2 : public polymorphic_base
 {
    virtual void method();
 };
 
-struct virtual_inherit1 : virtual Base { };
-struct virtual_inherit2 : virtual_inherit1 { };
+struct virtual_inherit1 : public virtual Base { };
+struct virtual_inherit2 : public virtual_inherit1 { };
 struct virtual_inherit3 : private virtual Base {};
-struct virtual_inherit4 : virtual boost::noncopyable {};
-struct virtual_inherit5 : virtual int_convertible {};
-struct virtual_inherit6 : virtual Base { virtual ~virtual_inherit6()throw(); };
+struct virtual_inherit4 : public virtual boost::noncopyable {};
+struct virtual_inherit5 : public virtual int_convertible {};
+struct virtual_inherit6 : public virtual Base { virtual ~virtual_inherit6()throw(); };
 
 typedef void foo0_t();
 typedef void foo1_t(int);
@@ -407,8 +428,15 @@ struct wrap
 {
    T t;
    int j;
+protected:
+   wrap();
+   wrap(const wrap&);
+   wrap& operator=(const wrap&);
 };
 
+#ifdef BOOST_INTEL
+#pragma warning(pop)
+#endif
 
 #endif
 

@@ -9,6 +9,9 @@ Handling of errors by this library is split into two orthogonal parts:
 * What kind of error has been raised?
 * What should be done when the error is raised?
 
+[warning The default error actions are to throw an exception with an informative error message.
+If you do not try to catch the exception, you will not see the message!]
+
 The kinds of errors that can be raised are:
 
 [variablelist
@@ -27,9 +30,10 @@ The kinds of errors that can be raised are:
    the function.]]
 [[Denormalisation Error][Occurs when the returned result would be a denormalised value.]]
 [[Rounding Error][Occurs when the argument to one of the rounding functions __trunc, 
-   __round and __modf can not be represented as an integer type, is is
-   outide the range of the result type.]]
-[[Evaluation Error][Occurs when an internal error occured that prevented the
+   __round and __modf can not be represented as an integer type, is
+   outside the range of the result type.]]
+[[Evaluation Error][Occurs if no method of evaluation is known,
+   or when an internal error occurred that prevented the
    result from being evaluated: this should never occur, but if it does, then
    it's likely to be due to an iterative method not converging fast enough.]]
 [[Indeterminate Result Error][Occurs when the result of a function is not
@@ -53,7 +57,7 @@ appropriate result]]
 ]
 
 The following tables show all the permutations of errors and actions, 
-with the default action for each error shown in bold:
+with the *default action for each error shown in bold*:
 
 [table Possible Actions for Domain Errors
 [[Action]         [Behaviour]]
@@ -108,8 +112,10 @@ with the default action for each error shown in bold:
 [table Possible Actions for Rounding Errors
 [[Action]   [Behaviour]]
 [[throw_on_error][Throws `boost::math::rounding_error`]]
-[[errno_on_error][Sets `::errno` to `ERANGE` and returns an unspecified value.]]
-[[ignore_error][[*Returns the an unspecified value.]]]
+[[errno_on_error][Sets `::errno` to `ERANGE` and returns the largest representable value of the target integer type 
+(or the most negative value if the argument to the function was less than zero).]]
+[[ignore_error][[*Returns the largest representable value of the target integer type 
+(or the most negative value if the argument to the function was less than zero).]]]
 [[user_error][Returns the result of `boost::math::policies::user_rounding_error`: 
             [link math_toolkit.policy.pol_tutorial.user_def_err_pol 
             this function must be defined by the user].]]
@@ -135,16 +141,23 @@ with the default action for each error shown in bold:
             this function must be defined by the user].]]
 ]
 
+All these error conditions are in namespace boost::math::policies,
+made available, for example, a by namespace declaration
+using `namespace boost::math::policies;` or individual using declarations
+`using boost::math::policies::overflow_error;`.
+
 [heading Rationale]
 
-The flexibility of the current implementation should be reasonably obvious, the
+The flexibility of the current implementation should be reasonably obvious: the
 default behaviours were chosen based on feedback during the formal review of 
 this library.  It was felt that: 
 
 * Genuine errors should be flagged with exceptions
-rather than following C-compatible behaviour and setting ::errno.
+rather than following C-compatible behaviour and setting `::errno`.
 * Numeric underflow and denormalised results were not considered to be
 fatal errors in most cases, so it was felt that these should be ignored.
+* If there is more than one error,
+only the first detected will be reported in the throw message.
 
 [heading Finding More Information]
 
@@ -179,7 +192,7 @@ in use for the function that was called.
 
 The default policy behaviour of this function is to throw a 
 std::domain_error C++ exception.  But if the __Policy is to ignore
-the error, or set global ::errno, then a NaN will be returned.
+the error, or set global `::errno`, then a NaN will be returned.
 
 This behaviour is chosen to assist compatibility with the behaviour of 
 ['ISO/IEC 9899:1999 Programming languages - C]
@@ -327,8 +340,8 @@ Where
 `T` is the floating-point type passed to the function, `FunctionName` is the 
 name of the function, `Message` is an error message describing the problem,
 Val is the value for which the result is indeterminate, Default is an
-alternative default result that must be returned for ignore_error and
-errno_on_error policies, and __Policy is the current policy in use for the
+alternative default result that must be returned for `ignore_error` and
+`errno_on_erro` policies, and __Policy is the current policy in use for the
 function that was called.
 
 The default policy for this function is `ignore_error`: note that this error
@@ -350,8 +363,7 @@ Where
 `T` is the floating point type passed to the function, `FunctionName` is the 
 name of the function, `Message` is an error message describing the problem,
 `Val` is the erroneous argument,
-and __Policy is the current policy
-in use for the called function.
+and __Policy is the current policy in use for the called function.
 
 The default behaviour of this function is to throw a `boost::math::rounding_error`.
 
@@ -383,7 +395,7 @@ listed above on [link overflow_error overflow],
 [endsect][/section:error_handling Error Handling]
 
 [/ 
-  Copyright 2006 John Maddock and Paul A. Bristow.
+  Copyright 2006 - 2012 John Maddock and Paul A. Bristow.
   Distributed under the Boost Software License, Version 1.0.
   (See accompanying file LICENSE_1_0.txt or copy at
   http://www.boost.org/LICENSE_1_0.txt).

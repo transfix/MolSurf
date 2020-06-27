@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -41,17 +41,17 @@ and the name of the service, in this case <tt>"daytime"</tt>.
 \until tcp::resolver::query
 
 The list of endpoints is returned using an iterator of type
-boost::asio::ip::tcp::resolver::iterator. A default constructed
-boost::asio::ip::tcp::resolver::iterator object is used as the end iterator.
+boost::asio::ip::tcp::resolver::iterator. (Note that a default constructed
+boost::asio::ip::tcp::resolver::iterator object can be used as an end iterator.)
 
-\until tcp::resolver::iterator end;
+\until tcp::resolver::iterator
 
 Now we create and connect the socket. The list of endpoints obtained above may
 contain both IPv4 and IPv6 endpoints, so we need to try each of them until we
 find one that works. This keeps the client program independent of a specific IP
-version.
+version. The boost::asio::connect() function does this for us automatically.
 
-\until throw
+\until boost::asio::connect
 
 The connection is open. All we need to do now is read the response from the
 daytime service.
@@ -195,8 +195,8 @@ operation that refers to it.
 \until }
 \until }
 
-In the function <tt>start()</tt>, we call boost::asio::async_write() to serve the data to
-the client. Note that we are using boost::asio::async_write(), rather than
+In the function <tt>start()</tt>, we call boost::asio::async_write() to serve the data
+to the client. Note that we are using boost::asio::async_write(), rather than
 boost::asio::ip::tcp::socket::async_write_some(), to ensure that the entire block of
 data is sent.
 
@@ -233,7 +233,8 @@ that it looks like:
   }
 \endcode
 
-The boost::asio::async_write() call used to initiate the call can then be changed to just:
+The boost::asio::async_write() call used to initiate the call can then be changed to
+just:
 
 \code
   boost::asio::async_write(socket_, boost::asio::buffer(message_),

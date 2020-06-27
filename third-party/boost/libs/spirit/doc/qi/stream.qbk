@@ -1,12 +1,12 @@
 [/==============================================================================
-    Copyright (C) 2001-2009 Hartmut Kaiser
-    Copyright (C) 2001-2009 Joel de Guzman
+    Copyright (C) 2001-2011 Hartmut Kaiser
+    Copyright (C) 2001-2011 Joel de Guzman
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ===============================================================================/]
 
-[section Stream]
+[section:stream Stream Parsers]
 
 This module includes the description of the different variants of the `stream` 
 parser. It can be used to utilize existing streaming operators 
@@ -19,7 +19,7 @@ parser. It can be used to utilize existing streaming operators
 
 Also, see __include_structure__.
 
-[section:stream Stream (`stream`, `wstream`, etc.)]
+[section:stream Stream Parsers (`stream`, `wstream`, etc.)]
 
 [heading Description]
 
@@ -61,7 +61,7 @@ Also, see __include_structure__.
                  assigning the generated characters to the 
                  underlying input iterator.]           [`char`]]
     [[`Attrib`] [The type of the attribute the `stream_parser` is
-                 expected to parse its input into.]    [`spirit::hold_any`]]
+                 expected to parse its input into.]    [`spirit::basic_hold_any<Char>`]]
 ]
 
 [heading Model of]
@@ -134,11 +134,11 @@ value to recognize while parse):
 This operator will be called by the stream parsers to gather the input for
 the attribute of type `attribute_type`. 
 
-[note   If the `stream` parser is invoked inside a [qi_format `match`] 
-        (or [qi_format `phrase_match`]) stream manipulator the `Istream` 
+[note   If the `stream` parser is invoked inside a [qi_match `match`] 
+        (or [qi_match `phrase_match`]) stream manipulator the `Istream` 
         passed to the `operator>>()` will have registered (imbued) the same 
-        standard locale instance as the stream the [qi_format `match`] (or 
-        [qi_format `phrase_match`]) manipulator has been used with. 
+        standard locale instance as the stream the [qi_match `match`] (or 
+        [qi_match `phrase_match`]) manipulator has been used with. 
         This ensures all facets registered (imbued) with the original I/O 
         stream object are used during input parsing.
 ]
@@ -148,7 +148,7 @@ the attribute of type `attribute_type`.
 [table
     [[Expression]           [Attribute]]
     [[`stream`]             [`spirit::hold_any`]]
-    [[`wstream`]            [`spirit::hold_any`]]
+    [[`wstream`]            [`spirit::whold_any`]]
     [[`stream_parser<Char, Attrib>()`]    [`Attrib`]]
 ]
 
@@ -170,6 +170,7 @@ __qi_basics_examples__ section.]
 
 A class definition used in the examples:
 
+[reference_qi_complex]
 [reference_qi_stream_complex]
 
 [reference_qi_stream]

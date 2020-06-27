@@ -5,7 +5,7 @@
     
     http://www.boost.org/
 
-    Copyright (c) 2001-2009 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2012 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -133,7 +133,7 @@ typename lex_iterator_functor_shim<TokenT>::result_type const
 //            a third parameter containing the name of the parsed input file 
 //            and a 4th parameter of the type boost::wave::language_support
 //            which specifies, which language subset should be supported (C++,
-//            C99, C++0x etc.).
+//            C99, C++11 etc.).
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -201,12 +201,12 @@ public:
         typedef typename TokenT::position_type position_type;
 
     // set the new position in the current token
-    token_type& currtoken = this->base_type::dereference(*this);
+    token_type const& currtoken = this->base_type::dereference(*this);
     position_type currpos = currtoken.get_position();
 
         currpos.set_file(pos.get_file());
         currpos.set_line(pos.get_line());
-        currtoken.set_position(currpos);
+        const_cast<token_type&>(currtoken).set_position(currpos);
 
     // set the new position for future tokens as well
         if (token_type::string_type::npos != 

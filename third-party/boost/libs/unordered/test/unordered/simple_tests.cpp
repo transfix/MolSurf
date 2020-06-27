@@ -5,8 +5,11 @@
 
 // This test checks the runtime requirements of containers.
 
+#include "../helpers/prefix.hpp"
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
+#include "../helpers/postfix.hpp"
+
 #include "../helpers/test.hpp"
 #include <cstdlib>
 #include <algorithm>
@@ -70,7 +73,8 @@ void simple_test(X const& a)
 
     {
         BOOST_TEST(a.size() ==
-                (BOOST_DEDUCED_TYPENAME X::size_type) std::distance(a.begin(), a.end()));
+            static_cast<BOOST_DEDUCED_TYPENAME X::size_type>(
+                std::distance(a.begin(), a.end())));
     }
 
     {

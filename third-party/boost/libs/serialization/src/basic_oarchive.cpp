@@ -10,7 +10,7 @@
 
 #include <boost/config.hpp> // msvc 6.0 needs this for warning suppression
 
-#include <cassert>
+#include <boost/assert.hpp>
 #include <set>
 #include <cstddef> // NULL
 
@@ -21,8 +21,11 @@
 // including this here to work around an ICC in intel 7.0
 // normally this would be part of basic_oarchive.hpp below.
 #define BOOST_ARCHIVE_SOURCE
+// include this to prevent linker errors when the
+// same modules are marked export and import.
 #define BOOST_SERIALIZATION_SOURCE
 
+#include <boost/archive/detail/decl.hpp>
 #include <boost/archive/basic_archive.hpp>
 #include <boost/archive/detail/basic_oserializer.hpp>
 #include <boost/archive/detail/basic_pointer_oserializer.hpp>
@@ -56,8 +59,8 @@ class basic_oarchive_impl {
 
         bool operator<(const aobject &rhs) const
         {
-            assert(NULL != address);
-            assert(NULL != rhs.address);
+            BOOST_ASSERT(NULL != address);
+            BOOST_ASSERT(NULL != rhs.address);
             if( address < rhs.address )
                 return true;
             if( address > rhs.address )
@@ -91,26 +94,26 @@ class basic_oarchive_impl {
     // keyed on type_info
     struct cobject_type
     {
-        const basic_oserializer * bos_ptr;
-        const class_id_type class_id;
-        bool initialized;
+        const basic_oserializer * m_bos_ptr;
+        const class_id_type m_class_id;
+        bool m_initialized;
         cobject_type(
-            std::size_t class_id_,
-            const basic_oserializer & bos_
+            std::size_t class_id,
+            const basic_oserializer & bos
         ) :
-            bos_ptr(& bos_),
-            class_id(class_id_),
-            initialized(false)
+            m_bos_ptr(& bos),
+            m_class_id(class_id),
+            m_initialized(false)
         {}
-        cobject_type(const basic_oserializer & bos_)
-            : bos_ptr(& bos_)
+        cobject_type(const basic_oserializer & bos)
+            : m_bos_ptr(& bos)
         {}
         cobject_type(
             const cobject_type & rhs
         ) :
-            bos_ptr(rhs.bos_ptr),
-            class_id(rhs.class_id),
-            initialized(rhs.initialized)
+            m_bos_ptr(rhs.m_bos_ptr),
+            m_class_id(rhs.m_class_id),
+            m_initialized(rhs.m_initialized)
         {}
         // the following cannot be defined because of the const
         // member.  This will generate a link error if an attempt
@@ -118,7 +121,7 @@ class basic_oarchive_impl {
         // use this only for lookup argument 
         cobject_type & operator=(const cobject_type &rhs);
         bool operator<(const cobject_type &rhs) const {
-            return *bos_ptr < *(rhs.bos_ptr);
+            return *m_bos_ptr < *(rhs.m_bos_ptr);
         }
     };
     // keyed on type_info
@@ -167,37 +170,45 @@ class basic_oarchive_impl {
 // return NULL if not found
 inline const basic_oserializer *
 basic_oarchive_impl::find(const serialization::extended_type_info & ti) const {
-    class bosarg : public basic_oserializer
+    #ifdef BOOST_MSVC
+    #  pragma warning(push)
+    #  pragma warning(disable : 4511 4512)
+    #endif
+    class bosarg : 
+        public basic_oserializer
     {
-       bool class_info() const {
-            assert(false); 
+        bool class_info() const {
+            BOOST_ASSERT(false); 
             return false;
         }
         // returns true if objects should be tracked
         bool tracking(const unsigned int) const {
-            assert(false);
+            BOOST_ASSERT(false);
             return false;
         }
         // returns class version
-        unsigned int version() const {
-            assert(false);
-            return 0;
+        version_type version() const {
+            BOOST_ASSERT(false);
+            return version_type(0);
         }
         // returns true if this class is polymorphic
         bool is_polymorphic() const{
-            assert(false);
+            BOOST_ASSERT(false);
             return false;
         }
         void save_object_data(      
-            basic_oarchive & ar, const void * x
+            basic_oarchive & /*ar*/, const void * /*x*/
         ) const {
-            assert(false);
+            BOOST_ASSERT(false);
         }
     public:
         bosarg(const serialization::extended_type_info & eti) :
           boost::archive::detail::basic_oserializer(eti)
         {}
     };
+    #ifdef BOOST_MSVC
+    #pragma warning(pop)
+    #endif
     bosarg bos(ti);
     cobject_info_set_type::const_iterator cit 
         = cobject_info_set.find(cobject_type(bos));
@@ -209,7 +220,7 @@ basic_oarchive_impl::find(const serialization::extended_type_info & ti) const {
         return NULL;
     }
     // return pointer to the real class
-    return cit->bos_ptr;
+    return cit->m_bos_ptr;
 }
 
 inline const basic_oarchive_impl::cobject_type &
@@ -247,11 +258,11 @@ basic_oarchive_impl::save_object(
     // get class information for this object
     const cobject_type & co = register_type(bos);
     if(bos.class_info()){
-        if( ! co.initialized){
-            ar.vsave(class_id_optional_type(co.class_id));
+        if( ! co.m_initialized){
+            ar.vsave(class_id_optional_type(co.m_class_id));
             ar.vsave(tracking_type(bos.tracking(m_flags)));
             ar.vsave(version_type(bos.version()));
-            (const_cast<cobject_type &>(co)).initialized = true;
+            (const_cast<cobject_type &>(co)).m_initialized = true;
         }
     }
 
@@ -267,7 +278,7 @@ basic_oarchive_impl::save_object(
     // look for an existing object id
     object_id_type oid(object_set.size());
     // lookup to see if this object has already been written to the archive
-    basic_oarchive_impl::aobject ao(t, co.class_id, oid);
+    basic_oarchive_impl::aobject ao(t, co.m_class_id, oid);
     std::pair<basic_oarchive_impl::object_set_type::const_iterator, bool>
         aresult = object_set.insert(ao);
     oid = aresult.first->object_id;
@@ -306,8 +317,8 @@ basic_oarchive_impl::save_pointer(
     const basic_oserializer & bos = bpos_ptr->get_basic_serializer();
     std::size_t original_count = cobject_info_set.size();
     const cobject_type & co = register_type(bos);
-    if(! co.initialized){
-        ar.vsave(co.class_id);
+    if(! co.m_initialized){
+        ar.vsave(co.m_class_id);
         // if its a previously unregistered class 
         if((cobject_info_set.size() > original_count)){
             if(bos.is_polymorphic()){
@@ -335,10 +346,10 @@ basic_oarchive_impl::save_pointer(
             ar.vsave(tracking_type(bos.tracking(m_flags)));
             ar.vsave(version_type(bos.version()));
         }
-        (const_cast<cobject_type &>(co)).initialized = true;
+        (const_cast<cobject_type &>(co)).m_initialized = true;
     }
     else{
-        ar.vsave(class_id_reference_type(co.class_id));
+        ar.vsave(class_id_reference_type(co.m_class_id));
     }
 
     // if we're not tracking
@@ -355,7 +366,7 @@ basic_oarchive_impl::save_pointer(
 
     object_id_type oid(object_set.size());
     // lookup to see if this object has already been written to the archive
-    basic_oarchive_impl::aobject ao(t, co.class_id, oid);
+    basic_oarchive_impl::aobject ao(t, co.m_class_id, oid);
     std::pair<basic_oarchive_impl::object_set_type::const_iterator, bool>
         aresult = object_set.insert(ao);
     oid = aresult.first->object_id;
@@ -425,7 +436,7 @@ basic_oarchive::register_basic_serializer(const basic_oserializer & bos){
     pimpl->register_type(bos);
 }
 
-BOOST_ARCHIVE_DECL(unsigned int)
+BOOST_ARCHIVE_DECL(library_version_type)
 basic_oarchive::get_library_version() const{
     return BOOST_ARCHIVE_VERSION();
 }

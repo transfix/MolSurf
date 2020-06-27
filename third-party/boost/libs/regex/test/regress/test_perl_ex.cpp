@@ -132,6 +132,13 @@ void test_conditionals()
    TEST_INVALID_REGEX("(?<!*|A)", perl);
    TEST_INVALID_REGEX("(?<=?|A)", perl);
    TEST_INVALID_REGEX("(?<=*|\\B)", perl);
+   TEST_INVALID_REGEX("(?<!a|bc)de", perl);
+   TEST_INVALID_REGEX("(?<=a|bc)de", perl);
+
+   // Bug reports:
+   TEST_REGEX_SEARCH("\\b(?:(?:(one)|(two)|(three))(?:,|\\b)){3,}(?(1)|(?!))(?(2)|(?!))(?(3)|(?!))", perl, "one,two,two, one", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b(?:(?:(one)|(two)|(three))(?:,|\\b)){3,}(?(1)|(?!))(?(2)|(?!))(?(3)|(?!))", perl, "one,three,two", match_default, make_array(0, 13, 0, 3, 10, 13, 4, 9, -2, -2));
+   TEST_REGEX_SEARCH("\\b(?:(?:(one)|(two)|(three))(?:,|\\b)){3,}(?(1)|(?!))(?(2)|(?!))(?(3)|(?!))", perl, "one,two,two,one,three,four", match_default, make_array(0, 22, 12, 15, 8, 11, 16, 21, -2, -2));
 }
 
 void test_options()
@@ -214,6 +221,10 @@ void test_options2()
    TEST_REGEX_SEARCH("(a(?i)b)c", perl, "ABc", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("(a(?i)b)c", perl, "ABC", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("(a(?i)b)c", perl, "AbC", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?i)[dh]og", perl, "hog", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?i)[dh]og", perl, "dog", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?i)[dh]og", perl, "Hog", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?i)[dh]og", perl, "Dog", match_default, make_array(0, 3, -2, -2));
    
    TEST_REGEX_SEARCH("(a(?i)B)c", perl, "abc", match_default, make_array(0, 3, 0, 2, -2, -2));
    TEST_REGEX_SEARCH("(a(?i)B)c", perl, "aBc", match_default, make_array(0, 3, 0, 2, -2, -2));
@@ -278,8 +289,8 @@ void test_options2()
    TEST_REGEX_SEARCH("(?<=^[[:alpha:]]{4})(?:bar|cat)", perl, "aaaacat", match_default, make_array(4, 7, -2, -2));
    TEST_REGEX_SEARCH("(?<=^[[:alpha:]]{4})(?:bar|cat)", perl, "aaacat", match_default, make_array(-2, -2));
 
-   TEST_REGEX_SEARCH("(?<=ab(?i)x(?-i)y|(?i)z|b)ZZ", perl, "abxyZZ", match_default, make_array(4, 6, -2, -2));
-   TEST_REGEX_SEARCH("(?<=ab(?i)x(?-i)y|(?i)z|b)ZZ", perl, "abXyZZ", match_default, make_array(4, 6, -2, -2));
+   //TEST_REGEX_SEARCH("(?<=ab(?i)x(?-i)y|(?i)z|b)ZZ", perl, "abxyZZ", match_default, make_array(4, 6, -2, -2));
+   //TEST_REGEX_SEARCH("(?<=ab(?i)x(?-i)y|(?i)z|b)ZZ", perl, "abXyZZ", match_default, make_array(4, 6, -2, -2));
    TEST_REGEX_SEARCH("(?:ab(?i)x(?-i)y|(?i)z|b)ZZ", perl, "ZZZ", match_default, make_array(0, 3, -2, -2));
    TEST_REGEX_SEARCH("(?:ab(?i)x(?-i)y|(?i)z|b)ZZ", perl, "zZZ", match_default, make_array(0, 3, -2, -2));
    TEST_REGEX_SEARCH("(?:ab(?i)x(?-i)y|(?i)z|b)ZZ", perl, "bZZ", match_default, make_array(0, 3, -2, -2));
@@ -335,6 +346,7 @@ void test_options2()
    TEST_REGEX_SEARCH("(?s).", perl, "\n", match_default|match_not_dot_newline, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("(?-s).", perl, "\n", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("(?-s).", perl, "\n", match_default|match_not_dot_newline, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?-xism)d", perl, "d", match_default, make_array(0, 1, -2, -2));
    test_options3();
 }
 
@@ -674,6 +686,15 @@ void test_mark_resets()
    TEST_REGEX_SEARCH("^X(?7)(a)(?|(b)|(q)(r)(s))(c)(d)(Y)", perl, "XYabcdY", match_default, make_array(0, 7, 2, 3, 3, 4, -1, -1, -1, -1, 4, 5, 5, 6, 6, 7, -2, -2));
    TEST_REGEX_SEARCH("^X(?7)(a)(?|(b|(r)(s))|(q))(c)(d)(Y)", perl, "XYabcdY", match_default, make_array(0, 7, 2, 3, 3, 4, -1, -1, -1, -1, 4, 5, 5, 6, 6, 7, -2, -2));
    TEST_REGEX_SEARCH("^X(?7)(a)(?|(b|(?|(r)|(t))(s))|(q))(c)(d)(Y)", perl, "XYabcdY", match_default, make_array(0, 7, 2, 3, 3, 4, -1, -1, -1, -1, 4, 5, 5, 6, 6, 7, -2, -2));
+   TEST_REGEX_SEARCH("(?|(abc)|(?:((?:xyz)))|(123))", perl, "abc", match_default, make_array(0, 3, 0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?|(abc)|(?:)((?:)xyz)|(123))", perl, "xyz", match_default, make_array(0, 3, 0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?|(abc)|((?:(x)|(y)|(z)))|(123))", perl, "y", match_default, make_array(0, 1, 0, 1, -1, -1, 0, 1, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(?|(abc)|((?|(x)|(y)|(z)))|(123))", perl, "y", match_default, make_array(0, 1, 0, 1, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(?|(abc)|((?|(x)|(y)|(z)))|(123))", perl, "abc", match_default, make_array(0, 3, 0, 3, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(?|(abc)|((?|(x)|(y)|(z)))|(123))", perl, "123", match_default, make_array(0, 3, 0, 3, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(?|(abc)|((x)|(y)|(z))|(123))", perl, "z", match_default, make_array(0, 1, 0, 1, -1, -1, -1, -1, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(?|(abc)|((x)|(y)|(z))|(123))", perl, "abc", match_default, make_array(0, 3, 0, 3, -1, -1, -1, -1, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(?|(abc)|((x)|(y)|(z))|(123))", perl, "123", match_default, make_array(0, 3, 0, 3, -1, -1, -1, -1, -1, -1, -2, -2));
 }
 
 void test_recursion()
@@ -734,11 +755,11 @@ void test_recursion()
    TEST_REGEX_SEARCH("^X(?7)(a)(?|(b|(?|(r)|(t))(s))|(q))(c)(d)(Y)", perl, "XYabcdY", match_default, make_array(0, 7, 2, 3, 3, 4, -1, -1, -1, -1, 4, 5, 5, 6, 6, 7, -2, -2));
    TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"1234", match_default, make_array(0, 4, 0, 4, -2, -2));
    TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\"1234\"", match_default, make_array(0, 6, 0, 6, -2, -2));
-   TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\x100"L"1234", match_default, make_array(0, 5, 1, 5, -2, -2));
-   TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\"\x100"L"1234\"", match_default, make_array(1, 6, 2, 6, -2, -2));
-   TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\x100\x100"L"12ab", match_default, make_array(0, 4, 2, 4, -2, -2));
-   TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\x100\x100"L"\"12\"", match_default, make_array(0, 6, 2, 6, -2, -2));
-   TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\x100\x100"L"abcd", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\x100" L"1234", match_default, make_array(0, 5, 1, 5, -2, -2));
+   TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\"\x100" L"1234\"", match_default, make_array(1, 6, 2, 6, -2, -2));
+   TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\x100\x100" L"12ab", match_default, make_array(0, 4, 2, 4, -2, -2));
+   TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\x100\x100" L"\"12\"", match_default, make_array(0, 6, 2, 6, -2, -2));
+   TEST_REGEX_SEARCH_W(L"\\x{100}*(\\d+|\"(?1)\")", perl, L"\x100\x100" L"abcd", match_default, make_array(-2, -2));
 
    TEST_REGEX_SEARCH("(ab|c)(?-1)", perl, "abc", match_default, make_array(0, 3, 0, 2, -2, -2));
    TEST_REGEX_SEARCH("xy(?+1)(abc)", perl, "xyabcabc", match_default, make_array(0, 8, 5, 8, -2, -2));
@@ -892,5 +913,21 @@ void test_recursion()
    TEST_REGEX_SEARCH("\\b(?&byte)(\\.(?&byte)){3}(?(DEFINE)(?<byte>2[0-4]\\d|25[0-5]|1\\d\\d|[1-9]?\\d))", perl|mod_x, "10.0.0.0", match_default, make_array(0, 8, 6, 8, -1, -1, -2, -2));
    TEST_REGEX_SEARCH("\\b(?&byte)(\\.(?&byte)){3}(?(DEFINE)(?<byte>2[0-4]\\d|25[0-5]|1\\d\\d|[1-9]?\\d))", perl|mod_x, "10.6", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("\\b(?&byte)(\\.(?&byte)){3}(?(DEFINE)(?<byte>2[0-4]\\d|25[0-5]|1\\d\\d|[1-9]?\\d))", perl|mod_x, "455.3.4.5", match_default, make_array(-2, -2));
+
+   // Bugs:
+   TEST_REGEX_SEARCH("namespace\\s+(\\w+)\\s+(\\{(?:[^{}]*(?:(?2)[^{}]*)*)?\\})", perl, "namespace one { namespace two { int foo(); } }", match_default, make_array(0, 46, 10, 13, 14, 46, -2, -2));
+   TEST_REGEX_SEARCH("namespace\\s+(\\w+)\\s+(\\{(?:[^{}]*(?:(?2)[^{}]*)*)?\\})", perl, "namespace one { namespace two { int foo(){} } { {{{ }  } } } {}}", match_default, make_array(0, 64, 10, 13, 14, 64, -2, -2));
+   TEST_INVALID_REGEX("((?1)|a)", perl);
+
+   // Recursion to a named sub with a name that is used multiple times:
+   TEST_REGEX_SEARCH("(?:(?<A>a+)|(?<A>b+))\\.(?&A)", perl, "aaaa.aa", match_default, make_array(0, 7, 0, 4, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(?:(?<A>a+)|(?<A>b+))\\.(?&A)", perl, "bbbb.aa", match_default, make_array(0, 7, -1, -1, 0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?:(?<A>a+)|(?<A>b+))\\.(?&A)", perl, "bbbb.bb", match_default, make_array(-2, -2));
+   // Back reference to a named sub with a name that is used multiple times:
+   TEST_REGEX_SEARCH("(?:(?<A>a+)|(?<A>b+))\\.\\k<A>", perl, "aaaa.aaaa", match_default, make_array(0, 9, 0, 4, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(?:(?<A>a+)|(?<A>b+))\\.\\k<A>", perl, "bbbb.aaaa", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?:(?<A>a+)|(?<A>b+))\\.\\k<A>", perl, "aaaa.bbbb", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?:(?<A>a+)|(?<A>b+))\\.\\k<A>", perl, "bbbb.bbbb", match_default, make_array(0, 9, -1, -1, 0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?:(?<A>a+)|(?<A>b+)|c+)\\.\\k<A>", perl, "cccc.cccc", match_default, make_array(-2, -2));
 }
 

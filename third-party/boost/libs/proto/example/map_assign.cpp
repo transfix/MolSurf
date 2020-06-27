@@ -40,11 +40,18 @@ struct insert
     }
 };
 
+// Work-arounds for Microsoft Visual C++ 7.1
+#if BOOST_WORKAROUND(BOOST_MSVC, == 1310)
+#define MapListOf(x) proto::call<MapListOf(x)>
+#define _value(x) call<proto::_value(x)>
+#endif
+
 // The grammar for valid map-list expressions, and a
 // transform that populates the map.
 struct MapListOf
   : proto::or_<
         proto::when<
+            // map_list_of(a,b)
             proto::function<
                 proto::terminal<map_list_of_tag>
               , proto::terminal<_>
@@ -57,6 +64,7 @@ struct MapListOf
             )
         >
       , proto::when<
+            // map_list_of(a,b)(c,d)...
             proto::function<
                 MapListOf
               , proto::terminal<_>
@@ -70,6 +78,11 @@ struct MapListOf
         >
     >
 {};
+
+#if BOOST_WORKAROUND(BOOST_MSVC, == 1310)
+#undef MapListOf
+#undef _value
+#endif
 
 template<typename Expr>
 struct map_list_of_expr;

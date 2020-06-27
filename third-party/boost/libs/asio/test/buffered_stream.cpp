@@ -2,7 +2,7 @@
 // buffered_stream.cpp
 // ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -18,7 +18,11 @@
 
 #include <boost/bind.hpp>
 #include <cstring>
-#include <boost/asio.hpp>
+#include <boost/asio/buffer.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/placeholders.hpp>
+#include <boost/system/system_error.hpp>
 #include "unit_test.hpp"
 
 typedef boost::asio::buffered_stream<
@@ -149,7 +153,7 @@ void test_async_operations()
   client_socket.lowest_layer().connect(server_endpoint);
 
   stream_type server_socket(io_service);
-  acceptor.async_accept(server_socket.lowest_layer(), handle_accept);
+  acceptor.async_accept(server_socket.lowest_layer(), &handle_accept);
   io_service.run();
   io_service.reset();
 

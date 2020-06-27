@@ -1,6 +1,6 @@
 // C_error_policy_example.cpp
 
-// Copyright Paul A. Bristow 2007.
+// Copyright Paul A. Bristow 2007, 2010.
 // Copyright John Maddock 2007.
 
 // Use, modification and distribution are subject to the
@@ -10,6 +10,8 @@
 
 // Suppose we want a call to tgamma  to behave in a C-compatible way
 // and set global ::errno rather than throw an exception.
+
+#include <cerrno> // for ::errno
 
 #include <boost/math/special_functions/gamma.hpp>
 using boost::math::tgamma;
@@ -24,17 +26,19 @@ using boost::math::policies::denorm_error;
 using boost::math::policies::evaluation_error;
 
 using boost::math::policies::errno_on_error;
-//using boost::math::policies::ignore_error;
+using boost::math::policies::ignore_error;
 
 //using namespace boost::math::policies;
-//using namespace boost::math;
+//using namespace boost::math; // avoid potential ambiuity with std:: <random>
 
 // Define a policy:
 typedef policy<
       domain_error<errno_on_error>, // 'bad' arguments.
       pole_error<errno_on_error>, // argument is pole value.
       overflow_error<errno_on_error>, // argument value causes overflow.
-      evaluation_error<errno_on_error>  // evaluation does not converge and may be inaccurate, or worse.
+      evaluation_error<errno_on_error>  // evaluation does not converge and may be inaccurate, or worse,
+      // or there is no way  known (yet) to implement this evaluation,
+      // for example, kurtosis of non-central beta distribution.
       > C_error_policy;
 
 // std
@@ -58,7 +62,7 @@ int main()
          overflow_error<errno_on_error>(),
          evaluation_error<errno_on_error>() 
       ));
-  cout << "tgamma(4., make_policy( ...) = " << t << endl; // 6
+  cout << "tgamma(4., make_policy(...) = " << t << endl; // 6
 
   return 0;
 } // int main()
@@ -67,8 +71,13 @@ int main()
 
 Output
 
-Autorun "i:\boost-06-05-03-1300\libs\math\test\Math_test\debug\c_error_policy_example.exe"
-tgamma(4., C_error_policy() = 6
-tgamma(4., make_policy( ...) = 6
+  c_error_policy_example.cpp
+  Generating code
+  Finished generating code
+  c_error_policy_example.vcxproj -> J:\Cpp\MathToolkit\test\Math_test\Release\c_error_policy_example.exe
+  tgamma(4., C_error_policy() = 6
+  tgamma(4., make_policy(...) = 6
+  tgamma(4., C_error_policy() = 6
+  tgamma(4., make_policy(...) = 6
 
 */

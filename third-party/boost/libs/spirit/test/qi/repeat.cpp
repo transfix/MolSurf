@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (c) 2001-2009 Joel de Guzman
+    Copyright (c) 2001-2011 Joel de Guzman
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -39,9 +39,10 @@ namespace boost { namespace spirit { namespace traits
     template <>
     struct push_back_container<x_attr, char>
     {
-        static void call(x_attr& /*c*/, char /*val*/)
+        static bool call(x_attr& /*c*/, char /*val*/)
         {
             // push back value type into container
+            return true;
         }
     };
 }}}
@@ -74,6 +75,40 @@ main()
         BOOST_TEST(test("aaaaa", repeat(3, inf)[char_]));
         BOOST_TEST(test("aaaaaa", repeat(3, inf)[char_]));
         BOOST_TEST(!test("aa", repeat(3, inf)[char_]));
+    }
+
+    {
+        std::string s;
+        BOOST_TEST(test_attr("aaaaaaaa", repeat[char_ >> char_], s)); // kleene synonym
+        BOOST_TEST(s == "aaaaaaaa");
+
+        s.clear();
+        BOOST_TEST(test_attr("aaaaaaaa", repeat(4)[char_ >> char_], s));
+        BOOST_TEST(s == "aaaaaaaa");
+
+        BOOST_TEST(!test("aa", repeat(3)[char_ >> char_]));
+        BOOST_TEST(!test("a", repeat(1)[char_ >> char_]));
+
+        s.clear();
+        BOOST_TEST(test_attr("aa", repeat(1, 3)[char_ >> char_], s));
+        BOOST_TEST(s == "aa");
+
+        s.clear();
+        BOOST_TEST(test_attr("aaaaaa", repeat(1, 3)[char_ >> char_], s));
+        BOOST_TEST(s == "aaaaaa");
+
+        BOOST_TEST(!test("aaaaaaa", repeat(1, 3)[char_ >> char_]));
+        BOOST_TEST(!test("a", repeat(1, 3)[char_ >> char_]));
+
+        s.clear();
+        BOOST_TEST(test_attr("aaaa", repeat(2, inf)[char_ >> char_], s));
+        BOOST_TEST(s == "aaaa");
+
+        s.clear();
+        BOOST_TEST(test_attr("aaaaaa", repeat(2, inf)[char_ >> char_], s));
+        BOOST_TEST(s == "aaaaaa");
+
+        BOOST_TEST(!test("aa", repeat(2, inf)[char_ >> char_]));
     }
 
     { // from classic spirit tests
@@ -141,18 +176,25 @@ main()
         s.clear();
         BOOST_TEST(test_attr("b b b b", repeat(4)[char_], s, space) && s == "bbbb");
 
-        // The following 4 tests show that omit does not inhibit explicit attributes
-        s.clear();
-        BOOST_TEST(test_attr("bbbb", repeat(4)[omit[char_('b')]], s) && s == "bbbb");
-
+        // The following 2 tests show that omit does not inhibit explicit attributes
         s.clear();
         BOOST_TEST(test_attr("bbbb", omit[repeat(4)[char_('b')]], s) && s == "bbbb");
 
         s.clear();
-        BOOST_TEST(test_attr("b b b b", repeat(4)[omit[char_('b')]], s, space) && s == "bbbb");
-
-        s.clear();
         BOOST_TEST(test_attr("b b b b", omit[repeat(4)[char_('b')]], s, space) && s == "bbbb");
+    }
+
+    {
+        BOOST_TEST(test("1 2 3", int_ >> repeat(2)[int_], space));
+        BOOST_TEST(!test("1 2", int_ >> repeat(2)[int_], space));
+    }
+
+    {
+        std::vector<char> v;
+        BOOST_TEST(test_attr("1 2 3", int_ >> repeat(2)[int_], v, space));
+        BOOST_TEST(v.size() == 3 && v[0] == 1 && v[1] == 2 && v[2] == 3);
+
+        BOOST_TEST(!test("1 2", int_ >> repeat(2)[int_], space));
     }
 
     { // actions
@@ -196,6 +238,7 @@ main()
         BOOST_TEST(!test("aaaaaa", repeat(3, val(5))[char_]));
         BOOST_TEST(!test("aa", repeat(val(3), 5)[char_]));
 
+//#warning "testcase commented out"
         BOOST_TEST(test("aaa", repeat(val(3), inf)[char_]));
         BOOST_TEST(test("aaaaa", repeat(3, val(inf))[char_]));
         BOOST_TEST(test("aaaaaa", repeat(val(3), inf)[char_]));

@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (c) 2001-2009 Hartmut Kaiser
+    Copyright (c) 2001-2011 Hartmut Kaiser
     http://spirit.sourceforge.net/
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -9,6 +9,7 @@
 
 //[reference_karma_includes
 #include <boost/spirit/include/karma.hpp>
+#include <boost/spirit/include/support_utree.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/fusion/include/std_pair.hpp>
@@ -105,7 +106,7 @@ void test_binary_generator_attr(char const* expected, std::size_t size, G const&
 }
 //]
 
-//[reference_karma_stream_complex
+//[reference_karma_complex
 // a simple complex number representation z = a + bi
 struct complex
 {
@@ -116,7 +117,9 @@ struct complex
     double a;
     double b;
 };
+//]
 
+//[reference_karma_stream_complex
 // define streaming operator for the type complex
 std::ostream& 
 operator<< (std::ostream& os, complex const& z)
@@ -124,6 +127,50 @@ operator<< (std::ostream& os, complex const& z)
     os << "{" << z.a << "," << z.b << "}";
     return os;
 }
+//]
+
+//[reference_karma_auto_complex
+/*`The following construct is required to allow the `complex` data structure
+   to be utilized as a __fusion__ sequence. This is required as we will 
+   emit output for this data structure with a __karma__ sequence:
+   `'{' << karma::double_ << ',' << karma::double_ << '}'`.
+*/
+BOOST_FUSION_ADAPT_STRUCT(
+    complex,
+    (double, a)
+    (double, b)
+)
+
+/*`We add a specialization for the create_generator customization point
+   defining a custom output format for the complex type. Generally, any 
+   specialization for create_generator is expected to return the proto 
+   expression to be used to generate output for the type the customization 
+   point has been specialized for.
+ */
+/*`We need to utilize `proto::deep_copy` as the expression contains literals 
+   (the `'{'`, `','`, and `'}'`) which normally get embedded in the proto 
+   expression by reference only. The deep copy converts the proto tree to 
+   hold this by value. The deep copy operation can be left out for simpler 
+   proto expressions (not containing references to temporaries). Alternatively
+   you could use the `proto::make_expr` facility to build the required
+   proto expression.
+*/
+namespace boost { namespace spirit { namespace traits
+{
+    template <>
+    struct create_generator<complex>
+    {
+        typedef proto::result_of::deep_copy<
+            BOOST_TYPEOF('{' << karma::double_ << ',' << karma::double_ << '}')
+        >::type type;
+
+        static type call()
+        {
+            return proto::deep_copy(
+                '{' << karma::double_ << ',' << karma::double_ << '}');
+        }
+    };
+}}}
 //]
 
 //[reference_karma_auxiliary_attr_cast_data1
@@ -137,7 +184,7 @@ struct int_data
 namespace boost { namespace spirit { namespace traits
 {
     template <>
-    struct transform_attribute<int_data const, int>
+    struct transform_attribute<int_data const, int, karma::domain>
     {
         typedef int type;
         static int pre(int_data const& d) { return d.i; }
@@ -420,6 +467,36 @@ int main()
     }
 
     {
+        //[reference_karma_using_declarations_duplicate
+        using boost::spirit::karma::double_;
+        using boost::spirit::karma::duplicate;
+        using boost::spirit::karma::space;
+        //]
+
+        //[reference_karma_duplicate
+        test_generator_attr("2.02.0", duplicate[double_ << double_], 2.0);
+        test_generator_attr_delim("2.0 2.0 ", duplicate[double_ << double_], space, 2.0);
+        //]
+    }
+
+    {
+        //[reference_karma_using_declarations_columns
+        using boost::spirit::karma::double_;
+        using boost::spirit::karma::columns;
+        using boost::spirit::karma::space;
+        //]
+
+        //[reference_karma_columns
+        std::vector<double> v;
+        v.push_back(1.0);
+        v.push_back(2.0);
+        v.push_back(3.0);
+        test_generator_attr("1.0\n2.0\n3.0\n", columns(1)[*double_], v);
+        test_generator_attr_delim("1.0 2.0 \n3.0 \n", columns(2)[*double_], space, v);
+        //]
+    }
+
+    {
         //[reference_karma_using_declarations_bool
         using boost::spirit::karma::bool_;
         using boost::spirit::karma::lit;
@@ -609,6 +686,27 @@ int main()
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // auto module
+    {
+        //[reference_karma_using_declarations_auto
+        using boost::spirit::karma::auto_;
+        //]
+
+        //[reference_karma_auto
+        /*`Emit a simple string using the `karma::string` generator:
+         */
+        test_generator_attr("abc", auto_, "abc");
+        test_generator("abc", auto_("abc"));
+
+        /*`Emit instances of the `complex` data type as defined above using the
+           generator defined by the customization point for `complex`:
+         */
+        test_generator_attr("{1.2,2.4}", auto_, complex(1.2, 2.4));
+        test_generator("{1.2,2.4}", auto_(complex(1.2, 2.4)));
+        //]
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // binary module
     {
         //[reference_karma_using_declarations_native_binary
@@ -750,6 +848,62 @@ int main()
         v.push_back(456);
         v.push_back(789);
         test_generator_attr_delim("123 , 456 , 789", nlist, space, v);
+        //]
+    }
+
+    // symbols
+    {
+        //[reference_karma_using_declarations_symbols
+        using boost::spirit::karma::symbols;
+        //]
+
+        //[reference_karma_symbols
+        symbols<char, char const*> sym;
+
+        sym.add
+            ('a', "Apple")
+            ('b', "Banana")
+            ('o', "Orange")
+        ;
+
+        test_generator_attr("Banana", sym, 'b');
+        //]
+    }
+
+    // as
+    {
+        //[reference_karma_using_declarations_as
+        using boost::spirit::utree;
+        using boost::spirit::utree_type;
+        using boost::spirit::utf8_symbol_type; 
+        using boost::spirit::karma::as;
+        using boost::spirit::karma::as_string;
+        using boost::spirit::karma::char_;
+        using boost::spirit::karma::double_;
+        //]
+        
+        //[reference_karma_as
+        /*`To properly handle string concatenation with __utree__, we 
+           make use of `as_string[]`. We also use `as<T>` to explicitly extract
+           a __utree__ symbol node.*/
+        
+        typedef as<utf8_symbol_type> as_symbol_type;
+        as_symbol_type const as_symbol = as_symbol_type();
+
+        utree ut;
+        ut.push_back("xyz");
+        ut.push_back(1.23);
+
+        test_generator_attr("xyz1.23", as_string[*char_] << double_, ut);
+        test_generator_attr("xyz1.23", as<std::string>()[*char_] << double_, ut);
+        
+        ut.clear();
+
+        ut.push_back(utf8_symbol_type("xyz"));
+        ut.push_back(1.23);
+
+        test_generator_attr("xyz1.23", as_symbol[*char_] << double_, ut);
+        test_generator_attr("xyz1.23", as<utf8_symbol_type>()[*char_] << double_, ut);
         //]
     }
 

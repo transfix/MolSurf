@@ -12,6 +12,7 @@ toolset.using doxygen ;
 
 boostbook string_algo : string_algo.xml autodoc 
 	:
+        <xsl:param>boost.root=../../../../..
         <format>pdf:<xsl:param>boost.url.prefix=http://www.boost.org/doc/libs/release/doc/html
 	;
 
@@ -42,6 +43,7 @@ doxygen autodoc
     [ glob ../../../../boost/algorithm/string/formatter.hpp ]
     [ glob ../../../../boost/algorithm/string/regex.hpp ]
     [ glob ../../../../boost/algorithm/string/regex_find_format.hpp ]
+    [ glob ../../../../boost/algorithm/string/trim_all.hpp ]
     :
     <doxygen:param>HIDE_UNDOC_MEMBERS=YES
     <doxygen:param>EXTRACT_PRIVATE=NO

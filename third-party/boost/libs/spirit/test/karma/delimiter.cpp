@@ -1,4 +1,4 @@
-//  Copyright (c) 2001-2009 Hartmut Kaiser
+//  Copyright (c) 2001-2011 Hartmut Kaiser
 // 
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying 
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -53,6 +53,17 @@ main()
             verbatim[char_('a') << 'b'], char_(' ')));
         BOOST_TEST(test_delimited("a bc d ", 
             char_('a') << verbatim[char_('b') << 'c'] << 'd', char_(' ')));
+    }
+
+    {
+        BOOST_TEST(test("ab", no_delimit[char_('a') << 'b']));
+        BOOST_TEST(test("abcd", 
+            char_('a') << no_delimit[char_('b') << 'c'] << 'd'));
+
+        BOOST_TEST(test_delimited("ab", 
+            no_delimit[char_('a') << 'b'], char_(' ')));
+        BOOST_TEST(test_delimited("a bcd ", 
+            char_('a') << no_delimit[char_('b') << 'c'] << 'd', char_(' ')));
     }
 
     {

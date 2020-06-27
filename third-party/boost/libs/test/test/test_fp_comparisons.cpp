@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile$
 //
-//  Version     : $Revision$
+//  Version     : $Revision: 54633 $
 //
 //  Description : tests floating point comparison algorithms
 // ***************************************************************************

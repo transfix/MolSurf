@@ -54,7 +54,7 @@ int test_1() {
         make_iterator_property_map(core_nums.begin(), get(vertex_index,G)));
 
     for (size_t i=0; i<num_vertices(G); ++i) {
-        printf("vertex %3zu : %i\n", i, core_nums[i]);
+        printf("vertex %3lu : %i\n", (unsigned long)i, core_nums[i]);
     }
 
     int correct[21]={1,2,2,3,3,3,3,3,2,3,2,1,1,3,3,0,2,2,2,2,1};
@@ -78,14 +78,13 @@ int test_2() {
     int num_arcs = sizeof(edge_array) / sizeof(Edge);
 
     graph_t G(edge_array, edge_array + num_arcs, weights, num_nodes);
-    property_map<graph_t, edge_weight_t>::type weightmap = get(edge_weight, G);
 
     std::vector<int> core_nums(num_vertices(G));
     weighted_core_numbers(G,
         make_iterator_property_map(core_nums.begin(), get(vertex_index,G)));
 
     for (size_t i=0; i<num_vertices(G); ++i) {
-        printf("vertex %3zu : %i\n", i, core_nums[i]);
+        printf("vertex %3lu : %i\n", (unsigned long)i, core_nums[i]);
     }
 
     int correct[3]={-1,-1,-4};
@@ -114,7 +113,7 @@ int test_3() {
         make_iterator_property_map(core_nums.begin(), get(vertex_index,G)));
 
     for (size_t i=0; i<num_vertices(G); ++i) {
-        printf("vertex %3zu : %i\n", i, core_nums[i]);
+        printf("vertex %3lu : %i\n", (unsigned long)i, core_nums[i]);
     }
 
     int correct[5]={1,1,1,1,1};
@@ -126,7 +125,7 @@ int test_3() {
     return 0;
 }
 
-int main(int argc, char **argv) {
+int main(int, char **) {
   int nfail = 0, ntotal = 0;
   int rval;
 

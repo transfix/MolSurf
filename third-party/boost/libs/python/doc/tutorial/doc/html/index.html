@@ -1,11 +1,11 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Chapter 1. python 2.0</title>
-<link rel="stylesheet" href="../../../../../../doc/html/boostbook.css" type="text/css">
-<meta name="generator" content="DocBook XSL Stylesheets V1.66.1">
-<link rel="start" href="index.html" title="Chapter 1. python 1.0">
-<link rel="next" href="python/hello.html" title=" Building Hello World">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>Chapter&#160;1.&#160;python 2.0</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="Chapter&#160;1.&#160;python 2.0">
+<link rel="next" href="python/hello.html" title="Building Hello World">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table cellpadding="2" width="100%"><tr>
@@ -17,21 +17,21 @@
 <td align="center"><a href="../../../../../../more/index.htm">More</a></td>
 </tr></table>
 <hr>
-<div class="spirit-nav"><a accesskey="n" href="python/hello.html"><img src="../../../../../../doc/html/images/next.png" alt="Next"></a></div>
-<div class="chapter" lang="en">
+<div class="spirit-nav"><a accesskey="n" href="python/hello.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a></div>
+<div class="chapter">
 <div class="titlepage"><div>
 <div><h2 class="title">
-<a name="python"></a>Chapter 1. python 1.0</h2></div>
+<a name="python"></a>Chapter&#160;1.&#160;python 2.0</h2></div>
 <div><div class="author"><h3 class="author">
 <span class="firstname">Joel</span> <span class="surname">de Guzman</span>
 </h3></div></div>
 <div><div class="author"><h3 class="author">
 <span class="firstname">David</span> <span class="surname">Abrahams</span>
 </h3></div></div>
-<div><p class="copyright">Copyright © 2002-2005 Joel
+<div><p class="copyright">Copyright &#169; 2002-2005 Joel
       de Guzman, David Abrahams</p></div>
 <div><div class="legalnotice">
-<a name="id457106"></a><p>
+<a name="python.legal"></a><p>
         Distributed under the Boost Software License, Version 1.0. (See accompanying
         file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">
         http://www.boost.org/LICENSE_1_0.txt </a>)
@@ -42,8 +42,8 @@
 <p><b>Table of Contents</b></p>
 <dl>
 <dt><span class="section"><a href="index.html#python.quickstart">QuickStart</a></span></dt>
-<dt><span class="section"><a href="python/hello.html"> Building Hello World</a></span></dt>
-<dt><span class="section"><a href="python/exposing.html"> Exposing Classes</a></span></dt>
+<dt><span class="section"><a href="python/hello.html">Building Hello World</a></span></dt>
+<dt><span class="section"><a href="python/exposing.html">Exposing Classes</a></span></dt>
 <dd><dl>
 <dt><span class="section"><a href="python/exposing.html#python.constructors">Constructors</a></span></dt>
 <dt><span class="section"><a href="python/exposing.html#python.class_data_members">Class Data Members</a></span></dt>
@@ -60,18 +60,19 @@
 <dt><span class="section"><a href="python/functions.html#python.default_arguments">Default Arguments</a></span></dt>
 <dt><span class="section"><a href="python/functions.html#python.auto_overloading">Auto-Overloading</a></span></dt>
 </dl></dd>
-<dt><span class="section"><a href="python/object.html"> Object Interface</a></span></dt>
+<dt><span class="section"><a href="python/object.html">Object Interface</a></span></dt>
 <dd><dl>
 <dt><span class="section"><a href="python/object.html#python.basic_interface">Basic Interface</a></span></dt>
 <dt><span class="section"><a href="python/object.html#python.derived_object_types">Derived Object types</a></span></dt>
 <dt><span class="section"><a href="python/object.html#python.extracting_c___objects">Extracting C++ objects</a></span></dt>
 <dt><span class="section"><a href="python/object.html#python.enums">Enums</a></span></dt>
+<dt><span class="section"><a href="python/object.html#python.creating_python_object">Creating <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">python</span><span class="special">::</span><span class="identifier">object</span></code> from <code class="computeroutput"><span class="identifier">PyObject</span><span class="special">*</span></code></a></span></dt>
 </dl></dd>
 <dt><span class="section"><a href="python/embedding.html">Embedding</a></span></dt>
 <dd><dl><dt><span class="section"><a href="python/embedding.html#python.using_the_interpreter">Using the interpreter</a></span></dt></dl></dd>
 <dt><span class="section"><a href="python/iterators.html">Iterators</a></span></dt>
-<dt><span class="section"><a href="python/exception.html"> Exception Translation</a></span></dt>
-<dt><span class="section"><a href="python/techniques.html"> General Techniques</a></span></dt>
+<dt><span class="section"><a href="python/exception.html">Exception Translation</a></span></dt>
+<dt><span class="section"><a href="python/techniques.html">General Techniques</a></span></dt>
 <dd><dl>
 <dt><span class="section"><a href="python/techniques.html#python.creating_packages">Creating Packages</a></span></dt>
 <dt><span class="section"><a href="python/techniques.html#python.extending_wrapped_objects_in_python">Extending Wrapped Objects in Python</a></span></dt>
@@ -79,7 +80,7 @@
 </dl></dd>
 </dl>
 </div>
-<div class="section" lang="en">
+<div class="section">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="python.quickstart"></a>QuickStart</h2></div></div></div>
 <p>
@@ -93,10 +94,10 @@
       code takes on the look of a kind of declarative interface definition language
       (IDL).
     </p>
-<a name="quickstart.hello_world"></a><h2>
-<a name="id386707"></a>
+<h3>
+<a name="quickstart.hello_world"></a>
       Hello World
-    </h2>
+    </h3>
 <p>
       Following C/C++ tradition, let's start with the "hello, world". A
       C++ Function:
@@ -121,31 +122,21 @@
       That's it. We're done. We can now build this as a shared library. The resulting
       DLL is now visible to Python. Here's a sample Python session:
     </p>
-<p>
-    </p>
 <pre class="programlisting"><span class="special">&gt;&gt;&gt;</span> <span class="keyword">import</span> <span class="identifier">hello_ext</span>
-<span class="special">&gt;&gt;&gt;</span> <span class="keyword">print</span> <span class="identifier">hello</span><span class="special">.</span><span class="identifier">greet</span><span class="special">()</span>
+<span class="special">&gt;&gt;&gt;</span> <span class="keyword">print</span> <span class="identifier">hello_ext</span><span class="special">.</span><span class="identifier">greet</span><span class="special">()</span>
 <span class="identifier">hello</span><span class="special">,</span> <span class="identifier">world</span>
 </pre>
-<p>
-    </p>
-<div class="blockquote"><blockquote class="blockquote">
-<p>
-        </p>
-<p>
-          <span class="emphasis"><em><span class="bold"><b>Next stop... Building your Hello World
-          module from start to finish...</b></span></em></span>
-        </p>
-<p>
-      </p>
-</blockquote></div>
+<div class="blockquote"><blockquote class="blockquote"><p>
+        <span class="emphasis"><em><span class="bold"><strong>Next stop... Building your Hello World module
+        from start to finish...</strong></span></em></span>
+      </p></blockquote></div>
 </div>
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
-<td align="left"><p><small>Last revised: November 22, 2008 at 03:24:11 GMT</small></p></td>
+<td align="left"><p><small>Last revised: December 26, 2011 at 21:58:39 GMT</small></p></td>
 <td align="right"><div class="copyright-footer"></div></td>
 </tr></table>
 <hr>
-<div class="spirit-nav"><a accesskey="n" href="python/hello.html"><img src="../../../../../../doc/html/images/next.png" alt="Next"></a></div>
+<div class="spirit-nav"><a accesskey="n" href="python/hello.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a></div>
 </body>
 </html>

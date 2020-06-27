@@ -8,7 +8,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/pending/indirect_cmp.hpp>
-#include <boost/pending/integer_range.hpp>
+#include <boost/range/irange.hpp>
 
 #include <iostream>
 
@@ -78,7 +78,7 @@ main()
   std::vector < Size > dtime(num_vertices(g));
   graph_traits<graph_t>::vertex_iterator vi, vi_end;
   std::size_t c = 0;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi, ++c)
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi, ++c)
     dtime[c] = dtime_map[*vi];
 
   // Use std::sort to order the vertices by their discover time

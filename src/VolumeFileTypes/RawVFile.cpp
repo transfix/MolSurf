@@ -45,7 +45,7 @@ SimpleVolumeData* RawVFile::loadFile(const string& fileName)
 		printf("Error: could not open file %s\n", fileName.c_str());
 		delete simpleVolumeData;
 		simpleVolumeData = 0;
-		return false;
+		return 0;
 	}
 	// read the header
 	// read the magic number
@@ -59,7 +59,7 @@ SimpleVolumeData* RawVFile::loadFile(const string& fileName)
 		// doh! this isn't a RawV file
 		printf("Error: file format is not recognized. (expecting RawV)\n");
 		fclose(fp);
-		return false;
+		return 0;
 	}
 	// the dimensions, # of timesteps, # of variables, and min/max extents
 	freadSafely(dims, 3, sizeof(unsigned int), fp);

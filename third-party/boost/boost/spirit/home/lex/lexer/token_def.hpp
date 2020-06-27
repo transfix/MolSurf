@@ -1,4 +1,4 @@
-//  Copyright (c) 2001-2009 Hartmut Kaiser
+//  Copyright (c) 2001-2011 Hartmut Kaiser
 // 
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying 
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -13,6 +13,7 @@
 #include <boost/spirit/home/support/unused.hpp>
 #include <boost/spirit/home/support/argument.hpp>
 #include <boost/spirit/home/support/info.hpp>
+#include <boost/spirit/home/support/handles_container.hpp>
 #include <boost/spirit/home/qi/parser.hpp>
 #include <boost/spirit/home/qi/skip_over.hpp>
 #include <boost/spirit/home/qi/detail/construct.hpp>
@@ -29,6 +30,11 @@
 
 #include <string>
 #include <cstdlib>
+
+#if defined(BOOST_MSVC)
+# pragma warning(push)
+# pragma warning(disable: 4355) // 'this' : used in base member initializer list warning
+#endif
 
 namespace boost { namespace spirit { namespace lex
 {
@@ -53,13 +59,10 @@ namespace boost { namespace spirit { namespace lex
         typedef typename proto::terminal<reference_>::type terminal_type;
         typedef proto::extends<terminal_type, token_def> proto_base_type;
 
-        reference_ alias() const
-        {
-            return reference_(*this);
-        }
+        static std::size_t const all_states_id = static_cast<std::size_t>(-2);
 
     public:
-        // Qi interface: metafunction calculating parser return type
+        // Qi interface: meta-function calculating parser return type
         template <typename Context, typename Iterator>
         struct attribute
         {
@@ -96,8 +99,10 @@ namespace boost { namespace spirit { namespace lex
                 //  associate this token definition with a lexer instance.
                 BOOST_ASSERT(std::size_t(~0) != token_state_);
 
-                token_type &t = *first;
-                if (token_id_ == t.id() && token_state_ == t.state()) {
+                token_type const& t = *first;
+                if (token_id_ == t.id() && 
+                    (all_states_id == token_state_ || token_state_ == t.state())) 
+                {
                     spirit::traits::assign_to(t, attr);
                     ++first;
                     return true;
@@ -109,14 +114,18 @@ namespace boost { namespace spirit { namespace lex
         template <typename Context>
         info what(Context& /*context*/) const
         {
-            return info("token_def");
+            if (0 == def_.which()) 
+                return info("token_def", boost::get<string_type>(def_));
+
+            return info("token_def", boost::get<char_type>(def_));
         }
 
         ///////////////////////////////////////////////////////////////////////
         // Lex interface: collect token definitions and put it into the 
         // provided lexer def
         template <typename LexerDef, typename String>
-        void collect(LexerDef& lexdef, String const& state) const
+        void collect(LexerDef& lexdef, String const& state
+          , String const& targetstate) const
         {
             std::size_t state_id = lexdef.add_state(state.c_str());
 
@@ -125,7 +134,13 @@ namespace boost { namespace spirit { namespace lex
             // is not possible. Please create a separate token_def instance 
             // from the same regular expression for each lexer state it needs 
             // to be associated with.
-            BOOST_ASSERT(std::size_t(~0) == token_state_ || state_id == token_state_);
+            BOOST_ASSERT(
+                (std::size_t(~0) == token_state_ || state_id == token_state_) &&
+                "Can't use single token_def with more than one lexer state");
+
+            char_type const* target = targetstate.empty() ? 0 : targetstate.c_str();
+            if (target)
+                lexdef.add_state(target);
 
             token_state_ = state_id;
             if (0 == token_id_)
@@ -133,11 +148,11 @@ namespace boost { namespace spirit { namespace lex
 
             if (0 == def_.which()) {
                 unique_id_ = lexdef.add_token(state.c_str()
-                  , get<string_type>(def_), token_id_);
+                  , boost::get<string_type>(def_), token_id_, target);
             }
             else {
                 unique_id_ = lexdef.add_token(state.c_str()
-                  , get<char_type>(def_), token_id_);
+                  , boost::get<char_type>(def_), token_id_, target);
             }
         }
 
@@ -151,18 +166,23 @@ namespace boost { namespace spirit { namespace lex
 
         // Lex interface: constructing token definitions
         token_def() 
-          : proto_base_type(terminal_type::make(alias()))
+          : proto_base_type(terminal_type::make(reference_(*this)))
           , def_('\0'), token_id_()
-          , unique_id_(std::size_t(~0)), token_state_(std::size_t(~0))  {}
+          , unique_id_(std::size_t(~0)), token_state_(std::size_t(~0)) {}
+
+        token_def(token_def const& rhs) 
+          : proto_base_type(terminal_type::make(reference_(*this)))
+          , def_(rhs.def_), token_id_(rhs.token_id_)
+          , unique_id_(rhs.unique_id_), token_state_(rhs.token_state_) {}
 
         explicit token_def(char_type def_, Idtype id_ = Idtype())
-          : proto_base_type(terminal_type::make(alias()))
+          : proto_base_type(terminal_type::make(reference_(*this)))
           , def_(def_)
-          , token_id_(std::size_t(Idtype() == id_ ? def_ : id_))
+          , token_id_(Idtype() == id_ ? Idtype(def_) : id_)
           , unique_id_(std::size_t(~0)), token_state_(std::size_t(~0)) {}
 
         explicit token_def(string_type const& def_, Idtype id_ = Idtype())
-          : proto_base_type(terminal_type::make(alias()))
+          : proto_base_type(terminal_type::make(reference_(*this)))
           , def_(def_), token_id_(id_)
           , unique_id_(std::size_t(~0)), token_state_(std::size_t(~0)) {}
 
@@ -191,8 +211,9 @@ namespace boost { namespace spirit { namespace lex
 
         string_type definition() const 
         { 
-            return (0 == def_.which()) 
-              ? get<string_type>(def_) : string_type(1, get<char_type>(def_));
+            return (0 == def_.which()) ? 
+                boost::get<string_type>(def_) : 
+                string_type(1, boost::get<char_type>(def_));
         }
         std::size_t state() const { return token_state_; }
 
@@ -202,7 +223,24 @@ namespace boost { namespace spirit { namespace lex
         mutable std::size_t unique_id_;
         mutable std::size_t token_state_;
     };
-
 }}}
+
+namespace boost { namespace spirit { namespace traits
+{
+    ///////////////////////////////////////////////////////////////////////////
+    template<typename Attribute, typename Char, typename Idtype
+      , typename Attr, typename Context, typename Iterator>
+    struct handles_container<
+            lex::token_def<Attribute, Char, Idtype>, Attr, Context, Iterator>
+      : traits::is_container<
+            typename attribute_of<
+                lex::token_def<Attribute, Char, Idtype>, Context, Iterator
+            >::type>
+    {};
+}}}
+
+#if defined(BOOST_MSVC)
+# pragma warning(pop)
+#endif
 
 #endif

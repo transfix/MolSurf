@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: const_string_test.cpp,v $
 //
-//  Version     : $Revision$
+//  Version     : $Revision: 49313 $
 //
 //  Description : simple string class test
 // ***************************************************************************

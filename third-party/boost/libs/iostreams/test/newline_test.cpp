@@ -163,30 +163,58 @@ void read_newline_filter()
     BOOST_CHECK(test_input_filter(newline_filter(newline::mac), mixed, mac));
 }
 
+// Verify that a filter works as expected with both a non-blocking sink
+// and a normal output stream.
+//
+// test_output_filter only tests for a non-blocking sink.
+// TODO: Other tests should probably test with an output stream.
+
+template<typename Filter>
+bool my_test_output_filter(Filter filter, 
+                         const std::string& input, 
+                         const std::string& output)
+{
+    const std::streamsize default_increment = 5;
+
+    for ( int inc = default_increment;
+          inc < default_increment * 40; 
+          inc += default_increment )
+    {
+        io::array_source src(input.data(), input.data() + input.size());
+
+        std::ostringstream stream;
+        io::copy(src, compose(filter, stream));
+        if (stream.str() != output )
+            return false;
+
+    }
+    return test_output_filter(filter, input, output);
+}
+
 void write_newline_filter()
 {
     using namespace io;
 
         // Test converting to posix format.
 
-    BOOST_CHECK(test_output_filter(newline_filter(newline::posix), posix, posix));
-    BOOST_CHECK(test_output_filter(newline_filter(newline::posix), dos, posix));
-    BOOST_CHECK(test_output_filter(newline_filter(newline::posix), mac, posix));
-    BOOST_CHECK(test_output_filter(newline_filter(newline::posix), mixed, posix));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::posix), posix, posix));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::posix), dos, posix));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::posix), mac, posix));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::posix), mixed, posix));
 
         // Test converting to dos format.
 
-    BOOST_CHECK(test_output_filter(newline_filter(newline::dos), posix, dos));
-    BOOST_CHECK(test_output_filter(newline_filter(newline::dos), dos, dos));
-    BOOST_CHECK(test_output_filter(newline_filter(newline::dos), mac, dos));
-    BOOST_CHECK(test_output_filter(newline_filter(newline::dos), mixed, dos));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::dos), posix, dos));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::dos), dos, dos));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::dos), mac, dos));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::dos), mixed, dos));
 
         // Test converting to mac format.
 
-    BOOST_CHECK(test_output_filter(newline_filter(newline::mac), posix, mac));
-    BOOST_CHECK(test_output_filter(newline_filter(newline::mac), dos, mac));
-    BOOST_CHECK(test_output_filter(newline_filter(newline::mac), mac, mac));
-    BOOST_CHECK(test_output_filter(newline_filter(newline::mac), mixed, mac));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::mac), posix, mac));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::mac), dos, mac));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::mac), mac, mac));
+    BOOST_CHECK(my_test_output_filter(newline_filter(newline::mac), mixed, mac));
 }
 
 void test_input_against_flags(int flags, const std::string& input, bool read)
@@ -291,43 +319,43 @@ void read_newline_checker()
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::dos, ::posix, true),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::mac, ::posix, true),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::posix, ::dos, true),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::mac, ::dos, true),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::posix, ::mac, true),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::dos, ::mac, true),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::final_newline, ::no_final_newline, true),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::posix, ::mixed, true),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::dos, ::mixed, true),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::mac, ::mixed, true),
         io::newline_error
-    )
+    );
 }
 
 void write_newline_checker()
@@ -339,7 +367,7 @@ void write_newline_checker()
 
     out.push(io::newline_checker(io::newline::posix));
     out.push(io::null_sink());
-    BOOST_CHECK_NO_THROW(io::copy(string_source(::posix), out))
+    BOOST_CHECK_NO_THROW(io::copy(string_source(::posix), out));
     checker = BOOST_IOSTREAMS_COMPONENT(out, 0, io::newline_checker);
     BOOST_CHECK(checker->is_posix());
     BOOST_CHECK(!checker->is_dos());
@@ -352,7 +380,7 @@ void write_newline_checker()
 
     out.push(io::newline_checker(io::newline::dos));
     out.push(io::null_sink());
-    BOOST_CHECK_NO_THROW(io::copy(string_source(::dos), out))
+    BOOST_CHECK_NO_THROW(io::copy(string_source(::dos), out));
     checker = BOOST_IOSTREAMS_COMPONENT(out, 0, io::newline_checker);
     BOOST_CHECK(!checker->is_posix());
     BOOST_CHECK(checker->is_dos());
@@ -365,7 +393,7 @@ void write_newline_checker()
 
     out.push(io::newline_checker(io::newline::mac));
     out.push(io::null_sink());
-    BOOST_CHECK_NO_THROW(io::copy(string_source(::mac), out))
+    BOOST_CHECK_NO_THROW(io::copy(string_source(::mac), out));
     checker = BOOST_IOSTREAMS_COMPONENT(out, 0, io::newline_checker);
     BOOST_CHECK(!checker->is_posix());
     BOOST_CHECK(!checker->is_dos());
@@ -378,7 +406,7 @@ void write_newline_checker()
 
     out.push(io::newline_checker(io::newline::posix));
     out.push(io::null_sink());
-    BOOST_CHECK_NO_THROW(io::copy(string_source(::no_final_newline), out))
+    BOOST_CHECK_NO_THROW(io::copy(string_source(::no_final_newline), out));
     checker = BOOST_IOSTREAMS_COMPONENT(out, 0, io::newline_checker);
     BOOST_CHECK(checker->is_posix());
     BOOST_CHECK(!checker->is_dos());
@@ -391,7 +419,7 @@ void write_newline_checker()
 
     out.push(io::newline_checker());
     out.push(io::null_sink());
-    BOOST_CHECK_NO_THROW(io::copy(string_source(::mixed), out))
+    BOOST_CHECK_NO_THROW(io::copy(string_source(::mixed), out));
     checker = BOOST_IOSTREAMS_COMPONENT(out, 0, io::newline_checker);
     BOOST_CHECK(!checker->is_posix());
     BOOST_CHECK(!checker->is_dos());
@@ -408,43 +436,43 @@ void write_newline_checker()
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::dos, ::posix, false),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::mac, ::posix, false),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::posix, ::dos, false),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::mac, ::dos, false),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::posix, ::mac, false),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::dos, ::mac, false),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::final_newline, ::no_final_newline, false),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::posix, ::mixed, false),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::dos, ::mixed, false),
         io::newline_error
-    )
+    );
     BOOST_CHECK_THROW(
         test_input_against_flags(io::newline::mac, ::mixed, false),
         io::newline_error
-    )
+    );
 }
 
 test_suite* init_unit_test_suite(int, char* [])

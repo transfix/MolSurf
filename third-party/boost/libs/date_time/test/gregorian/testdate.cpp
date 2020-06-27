@@ -1,18 +1,19 @@
 /* Copyright (c) 2002,2003 CrystalClear Software, Inc.
- * Use, modification and distribution is subject to the 
+ * Use, modification and distribution is subject to the
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
  * Author: Jeff Garland, Bart Garst
  */
 
 #include <iostream>
+#include <boost/cstdint.hpp>
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include "../testfrmwk.hpp"
 
 int
-main() 
+main()
 {
-  
+
   using namespace boost::gregorian;
 
   //various constructors
@@ -58,9 +59,9 @@ main()
   check_equal("ymd year",  ymd.year,  1900);
   check_equal("ymd month", ymd.month, 1);
   check_equal("ymd day",   ymd.day,   1);
-  
+
   //The max function will not compile with Borland 5.5
-  //Complains about must specialize basic_data<limits> ??? 
+  //Complains about must specialize basic_data<limits> ???
 //   std::cout << "Max date is " << (date::max)() << std::endl;
 //   //std::cout << "Max date is " << (basic_date< date_limits<unsigned int,1900> >::max)() << std::endl;
 //   //std::cout << "Max date is " << (date_limits<unsigned int, 1900>::max)() << std::endl;
@@ -220,18 +221,21 @@ main()
   std::cout << to_simple_string(d14) << std::endl;
   check_equal("min date_time value   ",      d14, date(1400,Jan, 1));
 
- 
+
   date d15(1400,1,1);
   std::cout << d15.day_of_week().as_long_string() << std::endl;
   check("check infinity - min compare   ",      d10 < d15);
 
   // most of this testing is in the gregorian_calendar tests
   std::cout << d15.julian_day() << std::endl;
-  check_equal("check julian day   ", d15.julian_day(), 2232400);
+  check_equal("check julian day   ", d15.julian_day(), 
+      static_cast<boost::uint32_t>(2232400));
   check_equal("check modjulian day   ", d15.modjulian_day(), -167601);
   date d16(2004,2,29);
-  check_equal("check julian day   ", d16.julian_day(), 2453065);
-  check_equal("check modjulian day   ", d16.modjulian_day(), 53064);
+  check_equal("check julian day   ", d16.julian_day(), 
+      static_cast<boost::uint32_t>(2453065));
+  check_equal("check modjulian day   ", d16.modjulian_day(), 
+      static_cast<boost::uint32_t>(53064));
 
   // most of this testing is in the gregorian_calendar tests
   date d31(2000, Jun, 1);
@@ -281,12 +285,13 @@ main()
     date d(neg_infin);
     tm d_tm = to_tm(d);
     check("Exception not thrown (special_value to_tm)", false);
+    std::cout << d_tm.tm_sec << std::endl; //does nothing useful but stops compiler from complaining about unused d_tm
   }catch(std::out_of_range& e){
     check("Caught expected exception (special_value to_tm)", true);
   }catch(...){
     check("Caught un-expected exception (special_value to_tm)", false);
   }
-  
+
   return printTestStats();
 
 }

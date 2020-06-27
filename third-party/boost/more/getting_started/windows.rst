@@ -37,7 +37,7 @@ Get Boost
 
 The easiest way to get a copy of Boost is to use an installer.  The
 `Boost website version of this Getting Started guide`_ will have
-undated information on installers as they become available, or see
+updated information on installers as they become available, or see
 `Boost downloads`_ or the installer_ provided by `BoostPro
 Computing`_.  We especially recommend using an installer if you use
 Microsoft Visual Studio, because the installer can download and
@@ -47,7 +47,7 @@ least install the Static Multithreaded variants of the Boost.Regex_
 binaries when given the option.
 
 .. _`Boost website version of this Getting Started guide`:
-       http://www.boost.org/doc/libs/1_36_0/more/getting_started/index.html
+       http://www.boost.org/more/getting_started/index.html
 .. _`Boost downloads`: `sf-download`_      
 .. _installer: http://www.boostpro.com/products/free
 .. _BoostPro Computing: http://www.boostpro.com
@@ -208,12 +208,12 @@ and change your current directory to the Boost root directory. Then, type
 the following commands::
 
   bootstrap
-  .\bjam
+  .\b2
 
 The first command prepares the Boost.Build system for use. The second
 command invokes Boost.Build to build the separately-compiled Boost
 libraries. Please consult the `Boost.Build documentation`__ for a list
-of options that can be passed to ``bjam``.
+of allowed options.
 
 __ http://www.boost.org/boost-build2/doc/html/bbv2/overview/invocation.html
 
@@ -239,14 +239,14 @@ For example, your session might look like this: [#continuation]_
 .. parsed-literal::
 
    C:\\WINDOWS> cd |default-root|
-   |default-root|> bjam **^**
+   |default-root|> b2 **^**
    More? **--build-dir=**\ "C:\\Documents and Settings\\dave\\build-boost" **^**
    More? **--build-type=complete** **msvc** stage
 
 Be sure to read `this note`__ about the appearance of ``^``,
 ``More?`` and quotation marks (``"``) in that line.
 
-The option “\ **--build-type=complete**\ ” causes ``bjam`` to build
+The option “\ **--build-type=complete**\ ” causes Boost.Build to build
 all supported variants of the libraries.  For instructions on how to
 build only specific variants, please ask on the `Boost.Build mailing
 list`_.
@@ -305,7 +305,7 @@ in |default-root|\ ``\lib``:
 .. parsed-literal::
 
    cl /EHsc /I |root| example.cpp   **^**
-        **/link /LIBPATH:** |default-root-bold|\ **\\lib**
+        **/link /LIBPATH:**\ |default-root-bold|\ **\\lib**
 
 Library Naming
 --------------

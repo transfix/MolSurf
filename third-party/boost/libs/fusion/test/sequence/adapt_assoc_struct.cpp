@@ -14,6 +14,7 @@
 #include <boost/fusion/sequence/intrinsic/back.hpp>
 #include <boost/fusion/sequence/intrinsic/has_key.hpp>
 #include <boost/fusion/sequence/intrinsic/at_key.hpp>
+#include <boost/fusion/sequence/intrinsic/value_at.hpp>
 #include <boost/fusion/sequence/intrinsic/value_at_key.hpp>
 #include <boost/fusion/sequence/io/out.hpp>
 #include <boost/fusion/container/vector/vector.hpp>
@@ -26,7 +27,10 @@
 #include <boost/fusion/sequence/comparison/less_equal.hpp>
 #include <boost/fusion/sequence/comparison/greater.hpp>
 #include <boost/fusion/sequence/comparison/greater_equal.hpp>
+#include <boost/fusion/mpl.hpp>
 #include <boost/fusion/support/is_view.hpp>
+#include <boost/mpl/front.hpp>
+#include <boost/mpl/is_sequence.hpp>
 #include <boost/mpl/assert.hpp>
 #include <boost/mpl/not.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -57,7 +61,6 @@ main()
 {
     using namespace boost::fusion;
     using namespace boost;
-    using namespace std;
 
     std::cout << tuple_open('[');
     std::cout << tuple_close(']');
@@ -76,8 +79,8 @@ main()
         at_c<1>(p) = 9;
         BOOST_TEST(p == make_vector(6, 9));
 
-        BOOST_STATIC_ASSERT(result_of::size<ns::point>::value == 2);
-        BOOST_STATIC_ASSERT(!result_of::empty<ns::point>::value);
+        BOOST_STATIC_ASSERT(boost::fusion::result_of::size<ns::point>::value == 2);
+        BOOST_STATIC_ASSERT(!boost::fusion::result_of::empty<ns::point>::value);
 
         BOOST_TEST(front(p) == 6);
         BOOST_TEST(back(p) == 9);
@@ -100,30 +103,37 @@ main()
     {
         // conversion from ns::point to vector
         ns::point p = {5, 3};
-        fusion::vector<int, short> v(p);
+        fusion::vector<int, long> v(p);
         v = p;
     }
 
     {
         // conversion from ns::point to list
         ns::point p = {5, 3};
-        fusion::list<int, short> l(p);
+        fusion::list<int, long> l(p);
         l = p;
     }
 
     {
         // assoc stuff
-        BOOST_MPL_ASSERT((fusion::result_of::has_key<ns::point, ns::x_member>));
-        BOOST_MPL_ASSERT((fusion::result_of::has_key<ns::point, ns::y_member>));
-        BOOST_MPL_ASSERT((mpl::not_<fusion::result_of::has_key<ns::point, ns::z_member> >));
+        BOOST_MPL_ASSERT((boost::fusion::result_of::has_key<ns::point, ns::x_member>));
+        BOOST_MPL_ASSERT((boost::fusion::result_of::has_key<ns::point, ns::y_member>));
+        BOOST_MPL_ASSERT((mpl::not_<boost::fusion::result_of::has_key<ns::point, ns::z_member> >));
 
-        BOOST_MPL_ASSERT((is_same<fusion::result_of::value_at_key<ns::point, ns::x_member>::type, int>));
-        BOOST_MPL_ASSERT((is_same<fusion::result_of::value_at_key<ns::point, ns::y_member>::type, int>));
+        BOOST_MPL_ASSERT((boost::is_same<boost::fusion::result_of::value_at_key<ns::point, ns::x_member>::type, int>));
+        BOOST_MPL_ASSERT((boost::is_same<boost::fusion::result_of::value_at_key<ns::point, ns::y_member>::type, int>));
 
         ns::point p = {5, 3};
         
         BOOST_TEST(at_key<ns::x_member>(p) == 5);
         BOOST_TEST(at_key<ns::y_member>(p) == 3);
+    }
+
+    {
+        BOOST_MPL_ASSERT((mpl::is_sequence<ns::point>));
+        BOOST_MPL_ASSERT((boost::is_same<
+            boost::fusion::result_of::value_at_c<ns::point,0>::type
+          , mpl::front<ns::point>::type>));
     }
 
     return boost::report_errors();

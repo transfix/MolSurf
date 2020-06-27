@@ -57,7 +57,9 @@ namespace boost { namespace program_options { namespace detail {
                     bad_prefixes = true;
             }
             if (bad_prefixes)
-                boost::throw_exception(error("bad prefixes"));
+                boost::throw_exception(error("options '" + string(name) + "' and '" +
+                                             *i + "*' will both match the same "
+                                             "arguments from the configuration file"));
             allowed_prefixes.insert(s);
         }
     }
@@ -105,19 +107,19 @@ namespace boost { namespace program_options { namespace detail {
                     bool registered = allowed_option(name);
                     if (!registered && !m_allow_unregistered)
                         boost::throw_exception(unknown_option(name));
-                                        
-                    if (value.empty())
-                        boost::throw_exception(invalid_syntax(s, "no value given"));
-                    
+
                     found = true;
                     this->value().string_key = name;
                     this->value().value.clear();
                     this->value().value.push_back(value);
                     this->value().unregistered = !registered;
+                    this->value().original_tokens.clear();
+                    this->value().original_tokens.push_back(name);
+                    this->value().original_tokens.push_back(value);
                     break;
 
                 } else {
-                    boost::throw_exception(invalid_syntax(s, "unrecognized line"));
+                    boost::throw_exception(invalid_config_file_syntax(s, invalid_syntax::unrecognized_line));
                 }
             }
         }

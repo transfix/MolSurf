@@ -15,6 +15,7 @@
 #include <boost/utility/result_of.hpp>
 
 #include <boost/mpl/identity.hpp>
+#include <boost/mpl/placeholders.hpp>
 
 #include <boost/utility/result_of.hpp>
 
@@ -63,13 +64,13 @@ struct test_func
         typedef long result_type;
 
         template <typename T>
-        long operator()(T const & elem, long value) const
+        long operator()(long value, T const & elem) const
         {
           return value + sizeof(T) * elem;
         }
 
         template <typename T>
-        long operator()(T & elem, long value) const
+        long operator()(long value, T & elem) const
         {
           elem += sizeof(T);
           return value;

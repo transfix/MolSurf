@@ -107,7 +107,7 @@ if (vm.count("response-file")) {
      // Load the file and tokenize it
      ifstream ifs(vm["response-file"].as<string>().c_str());
      if (!ifs) {
-         cout << "Could no open the response file\n";
+         cout << "Could not open the response file\n";
          return 1;
      }
      // Read the whole file into a string
@@ -115,7 +115,8 @@ if (vm.count("response-file")) {
      ss << ifs.rdbuf();
      // Split the file content
      char_separator<char> sep(" \n\r");
-     tokenizer<char_separator<char> > tok(ss.str(), sep);
+     std::string ResponsefileContents( ss.str() );
+     tokenizer<char_separator<char> > tok(ResponsefileContents, sep);
      vector<string> args;
      copy(tok.begin(), tok.end(), back_inserter(args));
      // Parse the file and store the options
@@ -146,7 +147,7 @@ if (vm.count("response-file")) {
 vector&lt;string&gt; args = split_winmain(lpCmdLine);
 store(command_line_parser(args).options(desc).run(), vm);
 </programlisting>      
-      The function is an overload for <code>wchar_t</code> strings, so can
+      The <code>split_winmain</code> function is overloaded for <code>wchar_t</code> strings, so can
       also be used in Unicode applications.
     </para>
 
@@ -295,7 +296,7 @@ void validate(boost::any& v,
     if (regex_match(s, match, r)) {
         v = any(magic_number(lexical_cast<int>(match[1])));
     } else {
-        throw validation_error("invalid value");
+        throw validation_error(validation_error::invalid_option_value);
     }        
 }
 ]]>        

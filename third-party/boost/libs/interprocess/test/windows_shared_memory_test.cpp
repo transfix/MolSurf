@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //
-// (C) Copyright Ion Gaztanaga 2004-2009. Distributed under the Boost
+// (C) Copyright Ion Gaztanaga 2004-2012. Distributed under the Boost
 // Software License, Version 1.0. (See accompanying file
 // LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
@@ -32,8 +32,8 @@ static const char *name_initialization_routine()
 }
 
 static const std::size_t ShmSize = 1000;
-typedef detail::managed_open_or_create_impl
-   <windows_shared_memory, false> windows_shared_memory_t;
+typedef ipcdetail::managed_open_or_create_impl
+   <windows_shared_memory, 0, false> windows_shared_memory_t;
 
 //This wrapper is necessary to have a common constructor
 //in generic named_creation_template functions
@@ -42,15 +42,15 @@ class shared_memory_creation_test_wrapper
 {
    public:
    shared_memory_creation_test_wrapper(create_only_t)
-      :  windows_shared_memory_t(create_only, name_initialization_routine(), ShmSize)
+      :  windows_shared_memory_t(create_only, name_initialization_routine(), ShmSize, read_write, 0, permissions())
    {}
 
    shared_memory_creation_test_wrapper(open_only_t)
-      :  windows_shared_memory_t(open_only, name_initialization_routine())
+      :  windows_shared_memory_t(open_only, name_initialization_routine(), read_write, 0)
    {}
 
    shared_memory_creation_test_wrapper(open_or_create_t)
-      :  windows_shared_memory_t(open_or_create, name_initialization_routine(), ShmSize)
+      :  windows_shared_memory_t(open_or_create, name_initialization_routine(), ShmSize, read_write, 0, permissions())
    {}
 };
 

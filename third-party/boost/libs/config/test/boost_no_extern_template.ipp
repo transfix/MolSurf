@@ -6,13 +6,32 @@
 
 //  See http://www.boost.org/libs/config for more information.
 
-//  MACRO:         BOOST_NO_EXTERN_TEMPLATE
+//  MACRO:         BOOST_NO_CXX11_EXTERN_TEMPLATE
 //  TITLE:         C++0x extern template unavailable
 //  DESCRIPTION:   The compiler does not support C++0x extern template
 
-namespace boost_no_extern_template {
+namespace boost_no_cxx11_extern_template {
 
-extern template<class T> void f(T);
+template<class T, class U> void f(T const* p, U const* q)
+{
+   p = q;
+}
+
+template <class T>
+class must_not_compile
+{
+public:
+   void f(T const* p, int const* q);
+};
+
+template <class T>
+void must_not_compile<T>::f(T const* p, int const* q)
+{
+   p = q;
+}
+
+extern template void f<>(int const*, float const*);
+extern template class must_not_compile<int>;
 
 int test()
 {

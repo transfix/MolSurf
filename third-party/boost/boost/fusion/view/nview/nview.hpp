@@ -14,12 +14,16 @@
 #include <boost/utility/result_of.hpp>
 
 #include <boost/type_traits/remove_reference.hpp>
+#include <boost/type_traits/add_reference.hpp>
+#include <boost/type_traits/add_const.hpp>
 
 #include <boost/fusion/support/is_view.hpp>
 #include <boost/fusion/support/category_of.hpp>
 #include <boost/fusion/support/sequence_base.hpp>
 #include <boost/fusion/container/vector.hpp>
 #include <boost/fusion/view/transform_view.hpp>
+
+#include <boost/config.hpp>
 
 namespace boost { namespace fusion
 {
@@ -33,12 +37,21 @@ namespace boost { namespace fusion
             template<typename U>
             struct result<addref(U)> : add_reference<U> {};
 
+#ifdef BOOST_NO_RVALUE_REFERENCES
             template <typename T>
-            typename boost::result_of<addref(T)>::type 
+            typename add_reference<T>::type 
             operator()(T& x) const
             {
                 return x;
             }
+#else
+            template <typename T>
+            typename result<addref(T)>::type
+            operator()(T&& x) const
+            {
+                return x;
+            }
+#endif
         };
 
         struct addconstref
@@ -52,8 +65,15 @@ namespace boost { namespace fusion
             {};
 
             template <typename T>
-            typename boost::result_of<addconstref(T)>::type 
+            typename add_reference<typename add_const<T>::type>::type 
             operator()(T& x) const
+            {
+                return x;
+            }
+
+            template <typename T>
+            typename add_reference<typename add_const<T>::type>::type 
+            operator()(T const& x) const
             {
                 return x;
             }

@@ -2,13 +2,13 @@
  The Boost Parameter Library Python Binding Documentation 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-:Authors:       Daniel Wallin
-:Contact:       dalwan01@student.umu.se
-:organization:  `Boost Consulting`_
-:date:          $Date$
+:Authors:       David Abrahams, Daniel Wallin
+:Contact:       dave@boost-consulting.com, daniel@boostpro.com
+:organization:  `BoostPro Computing`_
+:date:          $Date: 2010-05-27 10:58:58 -0700 (Thu, 27 May 2010) $
 
 :copyright:     Copyright David Abrahams, Daniel Wallin
-                2005. Distributed under the Boost Software License,
+                2005-2009. Distributed under the Boost Software License,
                 Version 1.0. (See accompanying file LICENSE_1_0.txt
                 or copy at http://www.boost.org/LICENSE_1_0.txt)
 
@@ -22,7 +22,7 @@
 
 __ ../../../../index.htm
 
-.. _`Boost Consulting`: http://www.boost-consulting.com
+.. _`BoostPro Computing`: http://www.boostpro.com
 
 
 .. role:: class

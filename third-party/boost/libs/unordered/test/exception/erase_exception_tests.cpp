@@ -8,7 +8,7 @@
 #include "../helpers/invariants.hpp"
 #include "../helpers/helpers.hpp"
 
-test::seed_t seed(835193);
+test::seed_t initialize_seed(835193);
 
 template <class T>
 struct erase_test_base : public test::exception_base
@@ -22,7 +22,7 @@ struct erase_test_base : public test::exception_base
         return T(values.begin(), values.end());
     }
 
-    void check(T const& x) const {
+    void check BOOST_PREVENT_MACRO_SUBSTITUTION(T const& x) const {
         std::string scope(test::scope);
 
         BOOST_TEST(scope.find("hash::") != std::string::npos ||
@@ -38,7 +38,8 @@ struct erase_by_key_test1 : public erase_test_base<T>
 {
     void run(T& x) const
     {
-        typedef BOOST_DEDUCED_TYPENAME test::random_values<T>::const_iterator iterator;
+        typedef BOOST_DEDUCED_TYPENAME
+            test::random_values<T>::const_iterator iterator;
 
         for(iterator it = this->values.begin(), end = this->values.end();
                 it != end; ++it)

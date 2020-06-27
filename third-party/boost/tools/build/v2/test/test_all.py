@@ -64,6 +64,10 @@ def run_tests(critical_tests, other_tests):
                 print "PASSED"
             else:
                 print "FAILED"
+
+            if i == "regression":
+                BoostBuild.flush_annotations()
+            BoostBuild.clear_annotations()
         else:
             rs = "succeed"
             if not passed:
@@ -114,10 +118,10 @@ def reorder_tests(tests, first_test):
         return tests
 
 
-critical_tests = ["unit_tests", "module_actions", "startup_v1", "startup_v2"]
+critical_tests = ["unit_tests", "module_actions", "startup_v2"]
 
 critical_tests += ["core_d12", "core_typecheck", "core_delete_module",
-                   "core_varnames", "core_import_module"]
+                   "core_language", "core_arguments", "core_varnames", "core_import_module"]
 
 tests = [ "absolute_sources",
           "alias",
@@ -126,6 +130,8 @@ tests = [ "absolute_sources",
           "build_dir",
           "build_file",
           "build_no",
+          "builtin_echo",
+          "builtin_exit",
           "c_file",
           "chain",
           "clean",
@@ -136,6 +142,18 @@ tests = [ "absolute_sources",
           "conditionals_multiple",
           "configuration",
           "copy_time",
+          "core_action_status",
+          "core_actions_quietly",
+          "core_at_file",
+          "core_bindrule",
+          "core_nt_line_length",
+          "core_option_d2",
+          "core_option_l",
+          "core_option_n",
+          "core_parallel_actions",
+          "core_parallel_multifile_actions_1",
+          "core_parallel_multifile_actions_2",
+          "core_update_now",
           "custom_generator",
           "default_build",
           "default_features",
@@ -143,6 +161,7 @@ tests = [ "absolute_sources",
 #          "default_toolset",
           "dependency_property",
           "dependency_test",
+          "direct_request_test",
           "disambiguation",
           "dll_path",
           "double_loading",
@@ -151,7 +170,6 @@ tests = [ "absolute_sources",
           "example_make",
           "expansion",
           "explicit",
-          "file_name_handling",
           "free_features_request",
           "generator_selection",
           "generators_test",
@@ -198,10 +216,12 @@ tests = [ "absolute_sources",
           "testing_support",
           "timedata",
           "unit_test",
+          "unused",
           "use_requirements",
           "using",
           "wrapper",
-          "wrong_project"
+          "wrong_project",
+          "exit_status",
           ]
 
 if os.name == 'posix':

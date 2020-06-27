@@ -3,16 +3,14 @@
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+using boostbook ;
+using quickbook ;
+
 path-constant images_location : ../ ;
 path-constant admonishment_location : ../../../../doc/src/images ;
 
 xml unordered : unordered.qbk ;
 boostbook standalone : unordered :
-    <xsl:param>html.stylesheet=../../../../doc/html/boostbook.css
-    <xsl:param>boost.root=../../../..
-    <xsl:param>boost.libraries=../../../libraries.htm
-    <xsl:param>navig.graphics=1
-
     <xsl:param>chunk.first.sections=1
     <xsl:param>chunk.section.depth=2
     <xsl:param>generate.section.toc.level=2
@@ -23,7 +21,15 @@ boostbook standalone : unordered :
     <xsl:param>boost.compact.function=0
     <xsl:param>boost.compact.enum=0
 
+    # HTML Options:
+
+    <format>html:<xsl:param>boost.root=../../../..
+    <format>html:<xsl:param>img.src.path=../../../../doc/html/
+    <format>xhtml:<xsl:param>boost.root=../../../..
+    <format>xhtml:<xsl:param>img.src.path=../../../../doc/html/
+
     # PDF Options:
+
     # TOC Generation: this is needed for FOP-0.9 and later:
     <xsl:param>fop1.extensions=0
     <format>pdf:<xsl:param>xep.extensions=1

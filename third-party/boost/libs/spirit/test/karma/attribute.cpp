@@ -1,10 +1,13 @@
-//  Copyright (c) 2001-2009 Hartmut Kaiser
+//  Copyright (c) 2001-2011 Hartmut Kaiser
 // 
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying 
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/config/warning_disable.hpp>
 #include <boost/detail/lightweight_test.hpp>
+
+#include <boost/spirit/include/phoenix_limits.hpp>
+
 #include <boost/fusion/include/struct.hpp>
 #include <boost/fusion/include/nview.hpp>
 
@@ -49,7 +52,7 @@ struct test_int_data1
 namespace boost { namespace spirit { namespace traits
 {
     template <>
-    struct transform_attribute<test_int_data1 const, int>
+    struct transform_attribute<test_int_data1 const, int, karma::domain>
     {
         typedef int type;
         static int pre(test_int_data1 const& d) { return d.i; }
@@ -68,7 +71,7 @@ struct test_int_data2
 namespace boost { namespace spirit { namespace traits
 {
     template <>
-    struct transform_attribute<test_int_data2 const, int>
+    struct transform_attribute<test_int_data2 const, int, karma::domain>
     {
         typedef int const& type;
         static int const& pre(test_int_data2 const& d) { return d.i; }
@@ -105,7 +108,7 @@ int main()
                 karma::string << karma::string << karma::double_;
 
         BOOST_TEST(test("s11s122.5\ns21s223.4", r % karma::eol, v));
-        BOOST_TEST(test_delimited("s11s122.5\n s21s223.4", 
+        BOOST_TEST(test_delimited("s11s122.5 \n s21s223.4 ", 
             r % karma::eol, v, ' '));
     }
 

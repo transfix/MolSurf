@@ -1,11 +1,11 @@
 [/==============================================================================
-    Copyright (C) 2001-2009 Joel de Guzman
-    Copyright (C) 2001-2009 Hartmut Kaiser
+    Copyright (C) 2001-2011 Joel de Guzman
+    Copyright (C) 2001-2011 Hartmut Kaiser
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ===============================================================================/]
-[section Operator]
+[section:operator Parser Operators]
 
 Operators are used as a means for object composition and embedding.
 Simple parsers may be composed to form composites through operator
@@ -15,13 +15,13 @@ expression such as:
     a | b
 
 yields a new parser type which is a composite of its operands, `a` and
-`b`. 
+`b`.
 
 This module includes different parsers which get instantiated if one of
 the overloaded operators is used with more primitive parser constructs.
-It includes Alternative (`|`), And predicate (unary `&`), Difference
-(`-`), Expect (`>`), Kleene star (unary `*`), Lists (`%`), Not
-predicate (`!`), Optional (unary `-`), Permutation (`^`), Plus (unary
+It includes Alternative (`|`), And-predicate (unary `&`), Difference
+(`-`), Expect (`>`), Kleene star (unary `*`), Lists (`%`), Not-predicate (`!`),
+Optional (unary `-`), Permutation (`^`), Plus (unary
 `+`), Sequence (`>>`), and Sequential-Or (`||`).
 
 [heading Module Header]
@@ -32,12 +32,12 @@ predicate (`!`), Optional (unary `-`), Permutation (`^`), Plus (unary
 Also, see __include_structure__.
 
 [/------------------------------------------------------------------------------]
-[section:alternative Alternative (`a | b`)]
+[section:alternative Alternative Parser (`a | b`)]
 
 [heading Description]
 
 The alternative operator, `a | b`, matches one of two or more operands
-(`a`, `b`, ... etc.): 
+(`a`, `b`, ... etc.):
 
     a | b | ...
 
@@ -87,7 +87,7 @@ See __qi_comp_attr_notation__.
 
 [table
     [[Expression]       [Attribute]]
-    [[`a | b`]  
+    [[`a | b`]
 [``a: A, b: B --> (a | b): variant<A, B>
 a: A, b: Unused --> (a | b): optional<A>
 a: A, b: B, c: Unused --> (a | b | c): optional<variant<A, B> >
@@ -95,6 +95,11 @@ a: Unused, b: B --> (a | b): optional<B>
 a: Unused, b: Unused --> (a | b): Unused
 a: A, b: A --> (a | b): A``]]
 ]
+
+[note Alternative parsers do not roll back changes made to the outer attribute
+      because of a failed alternative. If you need to enforce that only the
+      succeeded alternative changes the outer attribute please utilize the
+      directive __qi_hold__`[]`.]
 
 [heading Complexity]
 
@@ -116,21 +121,21 @@ Some using declarations:
 [endsect] [/ Alternative]
 
 [/------------------------------------------------------------------------------]
-[section:and_predicate And Predicate (`&a`)]
+[section:and_predicate And-Predicate Parser (`&a`)]
 
 [heading Description]
 
 Syntactic predicates assert a certain conditional syntax to be satisfied
 before evaluating another production. Similar to semantic predicates,
-__qi_eps__, syntactic predicates do not consume any input. The /and
-predicate/, `&a`, is a positive syntactic predicate that returns a zero
+__qi_eps__, syntactic predicates do not consume any input. The /and-predicate/,
+`&a`, is a positive syntactic predicate that returns a zero
 length match only if its predicate matches.
 
 [heading Header]
 
     // forwards to <boost/spirit/home/qi/operator/and_predicate.hpp>
     #include <boost/spirit/include/qi_and_predicate.hpp>
-    
+
 Also, see __include_structure__.
 
 [heading Model of]
@@ -148,7 +153,7 @@ not defined in __unary_parser_concept__.
 
 [table
     [[Expression]       [Semantics]]
-    [[`&a`]             [If the predicate `a` matches, return a zero 
+    [[`&a`]             [If the predicate `a` matches, return a zero
                         length match. Otherwise, fail.]]
 ]
 
@@ -175,7 +180,7 @@ __qi_basics_examples__ section.]
 [endsect] [/ And Predicate]
 
 [/------------------------------------------------------------------------------]
-[section:difference Difference (`a - b`)]
+[section:difference Difference Parser (`a - b`)]
 
 [heading Description]
 
@@ -192,7 +197,7 @@ RHS.]
 
     // forwards to <boost/spirit/home/qi/operator/difference.hpp>
     #include <boost/spirit/include/qi_difference.hpp>
-    
+
 Also, see __include_structure__.
 
 [heading Model of]
@@ -239,9 +244,25 @@ __qi_basics_examples__ section.]
 [endsect] [/ Difference]
 
 [/------------------------------------------------------------------------------]
-[section:expect Expectation (`a > b`)]
+[section:expect Expectation Parser (`a > b`)]
 
 [heading Description]
+
+There are occasions in which it is expected that the input must match a
+particular parser or the input is invalid. Such cases generally arise
+after matching a portion of a grammar, such that the context is fully
+known. In such a situation, failure to match should result in an
+exception. For example, when parsing an e-mail address, after matching a
+name and "@" there must be a domain name or the address is invalid.
+
+The expectation operator (>) requires that the following parser match
+the input or an exception is emitted. Using on_error(), that exception
+can be handled by calling a handler with the context at which the
+parsing failed can be reported.
+
+By contrast, the follows operator (>>) does not require that the
+following parser match the input, which allows for backtracking or
+simply returning false from the parse() function with no exceptions.
 
 Like the __qi_sequence__, the expectation operator, `a > b`, parses two or
 more operands (`a`, `b`, ... etc.), in sequence:
@@ -299,7 +320,7 @@ See __qi_comp_attr_notation__.
 
 [table
     [[Expression]       [Attribute]]
-    [[`a > b`]  
+    [[`a > b`]
 [``a: A, b: B --> (a > b): tuple<A, B>
 a: A, b: Unused --> (a > b): A
 a: Unused, b: B --> (a > b): B
@@ -332,7 +353,7 @@ Some using declarations:
 [endsect] [/ Expectation]
 
 [/------------------------------------------------------------------------------]
-[section:kleene Kleene (`*a`)]
+[section:kleene Kleene Parser (`*a`)]
 
 [heading Description]
 
@@ -343,7 +364,7 @@ zero or more times.
 
     // forwards to <boost/spirit/home/qi/operator/kleene.hpp>
     #include <boost/spirit/include/qi_kleene.hpp>
-    
+
 Also, see __include_structure__.
 
 [heading Model of]
@@ -392,7 +413,7 @@ __qi_basics_examples__ section.]
 [endsect] [/ Kleene]
 
 [/------------------------------------------------------------------------------]
-[section:list List (`a % b`)]
+[section:list List Parser (`a % b`)]
 
 [heading Description]
 
@@ -404,7 +425,7 @@ equivalent to `a >> *(b >> a)`.
 
     // forwards to <boost/spirit/home/qi/operator/list.hpp>
     #include <boost/spirit/include/qi_list.hpp>
-    
+
 Also, see __include_structure__.
 
 [heading Model of]
@@ -422,8 +443,8 @@ not defined in __binary_parser_concept__.
 
 [table
     [[Expression]       [Semantics]]
-    [[`a % b`]          [Match a list of one or more repetitions of `a` 
-                        separated by occurrences of `b`. This is equivalent 
+    [[`a % b`]          [Match a list of one or more repetitions of `a`
+                        separated by occurrences of `b`. This is equivalent
                         to `a >> *(b >> a)`.]]
 ]
 
@@ -454,21 +475,21 @@ __qi_basics_examples__ section.]
 [endsect] [/ List]
 
 [/------------------------------------------------------------------------------]
-[section:not_predicate Not Predicate (`!a`)]
+[section:not_predicate Not-Predicate Parser (`!a`)]
 
 [heading Description]
 
 Syntactic predicates assert a certain conditional syntax to be satisfied
 before evaluating another production. Similar to semantic predicates,
-__qi_eps__, syntactic predicates do not consume any input. The /not
-predicate/, `!a`, is a negative syntactic predicate that returns a zero
+__qi_eps__, syntactic predicates do not consume any input. The /not-predicate/,
+`!a`, is a negative syntactic predicate that returns a zero
 length match only if its predicate fails to match.
 
 [heading Header]
 
     // forwards to <boost/spirit/home/qi/operator/not_predicate.hpp>
     #include <boost/spirit/include/qi_not_predicate.hpp>
-    
+
 Also, see __include_structure__.
 
 [heading Model of]
@@ -486,7 +507,7 @@ not defined in __unary_parser_concept__.
 
 [table
     [[Expression]       [Semantics]]
-    [[`!a`]             [If the predicate `a` matches, fail. Otherwise, 
+    [[`!a`]             [If the predicate `a` matches, fail. Otherwise,
                         return a zero length match.]]
 ]
 
@@ -513,7 +534,7 @@ __qi_basics_examples__ section.]
 [endsect] [/ Not Predicate]
 
 [/------------------------------------------------------------------------------]
-[section:optional Optional (`-a`)]
+[section:optional Optional Parser (`-a`)]
 
 [heading Description]
 
@@ -524,7 +545,7 @@ operand zero or one time.
 
     // forwards to <boost/spirit/home/qi/operator/optional.hpp>
     #include <boost/spirit/include/qi_optional.hpp>
-    
+
 Also, see __include_structure__.
 
 [heading Model of]
@@ -570,18 +591,21 @@ __qi_basics_examples__ section.]
 [endsect] [/ Optional]
 
 [/------------------------------------------------------------------------------]
-[section:permutation Permutation (`a ^ b`)]
+[section:permutation Permutation Parser (`a ^ b`)]
 
 [heading Description]
 
 The permutation operator, `a ^ b`, matches one or more operands (`a`, `b`,
-... etc.) in any order: 
+... etc.) in any order:
 
     a ^ b ^ ...
 
 The operands are the elements in the permutation set. Each element in
 the permutation set may occur at most once, but not all elements of the
-given set need to be present. For example:
+given set need to be present. Note that by this definition, the
+permutation operator is not limited to strict permutations.
+
+For example:
 
      char_('a') ^ 'b' ^ 'c'
 
@@ -611,7 +635,7 @@ defined in __nary_parser_concept__.
 
 [table
     [[Expression]       [Semantics]]
-    [[`a ^ b`]          [Match `a` or `b` in any order. Each operand 
+    [[`a ^ b`]          [Match `a` or `b` in any order. Each operand
                         may match zero or one time as long as at least
                         one operand matches.]]
 ]
@@ -622,7 +646,7 @@ See __qi_comp_attr_notation__.
 
 [table
     [[Expression]       [Attribute]]
-    [[`a ^ b`]  
+    [[`a ^ b`]
 [``a: A, b: B --> (a ^ b): tuple<optional<A>, optional<B> >
 a: A, b: Unused --> (a ^ b): optional<A>
 a: Unused, b: B --> (a ^ b): optional<B>
@@ -650,7 +674,7 @@ Some using declarations:
 [endsect] [/ Permutation]
 
 [/------------------------------------------------------------------------------]
-[section:plus Plus (`+a`)]
+[section:plus Plus Parser (`+a`)]
 
 [heading Description]
 
@@ -661,7 +685,7 @@ or more times.
 
     // forwards to <boost/spirit/home/qi/operator/plus.hpp>
     #include <boost/spirit/include/qi_plus.hpp>
-    
+
 Also, see __include_structure__.
 
 [heading Model of]
@@ -709,7 +733,7 @@ __qi_basics_examples__ section.]
 [endsect] [/ Plus]
 
 [/------------------------------------------------------------------------------]
-[section:sequence Sequence (`a >> b`)]
+[section:sequence Sequence Parser (`a >> b`)]
 
 [heading Description]
 
@@ -749,7 +773,7 @@ See __qi_comp_attr_notation__.
 
 [table
     [[Expression]       [Attribute]]
-    [[`a >> b`]  
+    [[`a >> b`]
 [``a: A, b: B --> (a >> b): tuple<A, B>
 a: A, b: Unused --> (a >> b): A
 a: Unused, b: B --> (a >> b): B
@@ -781,7 +805,7 @@ __qi_basics_examples__ section.]
 [endsect] [/ Sequence]
 
 [/------------------------------------------------------------------------------]
-[section:sequential_or Sequential Or (`a || b`)]
+[section:sequential_or Sequential Or Parser (`a || b`)]
 
 [heading Description]
 
@@ -822,17 +846,26 @@ See __qi_comp_attr_notation__.
 
 [table
     [[Expression]       [Attribute]]
-    [[`a || b`]  
-[``a: A, b: B --> (a || b): tuple<A, B>
-a: A, b: Unused --> (a || b): A
-a: Unused, b: B --> (a || b): B
+    [[`a || b`]
+[``a: A, b: B --> (a || b): tuple<optional<A>, optional<B> >
+a: A, b: Unused --> (a || b): optional<A>
+a: Unused, b: B --> (a || b): optional<B>
 a: Unused, b: Unused --> (a || b): Unused
 
-a: A, b: A --> (a || b): vector<A>
-a: vector<A>, b: A --> (a || b): vector<A>
-a: A, b: vector<A> --> (a || b): vector<A>
-a: vector<A>, b: vector<A> --> (a || b): vector<A>``]]
+a: A, b: A --> (a || b): vector<optional<A> >``]]
 ]
+
+[note The sequential-or parser behaves attribute-wise very similar to the
+      plain sequence parser (`a >> b`) in the sense that it exposes the
+      attributes of its elements separately. For instance, if you attach a
+      semantic action to the whole sequential-or:
+      ``
+          (int_ || int_)[print_pair(_1, _2)]
+      ``
+      the function object `print_pair` would be invoked with the
+      attribute of the first `int_` (`boost::optional<int>`) as its first
+      parameter and the attribute of the second `int_` (`boost::optional<int>`
+      as well) as its second parameter.]
 
 [heading Complexity]
 

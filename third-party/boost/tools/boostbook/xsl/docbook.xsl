@@ -98,14 +98,14 @@
 
               <itemizedlist>
                 <xsl:for-each select="concept">
-                  <listitem>
+                  <listitem><simpara>
                     <xsl:call-template name="internal-link">
                       <xsl:with-param name="to">
                         <xsl:call-template name="generate.id"/>
                       </xsl:with-param>
                       <xsl:with-param name="text" select="@name"/>
                     </xsl:call-template>
-                  </listitem>
+                  </simpara></listitem>
                 </xsl:for-each>
               </itemizedlist>
             </section>
@@ -178,24 +178,6 @@
 
   <xsl:template match="*" mode="passthrough">
     <xsl:copy-of select="."/>
-  </xsl:template>
-
-  <!-- Syntax highlighting -->
-  <xsl:template name="highlight-keyword">
-    <xsl:param name="keyword"/>
-    <xsl:choose>
-      <xsl:when test="$boost.syntax.highlight='1'">
-        <emphasis role="bold"><xsl:value-of select="$keyword"/></emphasis>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$keyword"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="highlight-comment">
-    <xsl:param name="text"/>
-    <emphasis><xsl:copy-of select="$text"/></emphasis>
   </xsl:template>
 
   <xsl:template name="monospaced">
@@ -400,9 +382,19 @@ Error: XSL template 'link-or-anchor' called with invalid link-type '<xsl:value-o
     </xsl:element>
   </xsl:template>
 
+  <xsl:template match="processing-instruction()">
+    <xsl:copy/>
+  </xsl:template>
+
   <xsl:template match="code">
     <computeroutput>
       <xsl:apply-templates mode="annotation"/>
+    </computeroutput>
+  </xsl:template>
+
+  <xsl:template match="code[@language='jam']">
+    <computeroutput>
+      <xsl:apply-templates mode="highlight-jam"/>
     </computeroutput>
   </xsl:template>
 
@@ -417,16 +409,12 @@ Error: XSL template 'link-or-anchor' called with invalid link-type '<xsl:value-o
                   ($boost.include.libraries='' or
                    contains($boost.include.libraries, @id))">
       <chapter>
-        <xsl:attribute name="id">
-          <xsl:choose>
-            <xsl:when test="@id">
-              <xsl:value-of select="@id"/>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:call-template name="generate.id"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:attribute>
+        <xsl:copy-of select="@*[not(contains(' last-revision name dirname html-only url ', concat(' ',local-name(),' ')))]"/>
+        <xsl:if test="not(@id)">
+          <xsl:attribute name="id">
+            <xsl:call-template name="generate.id"/>
+          </xsl:attribute>
+        </xsl:if>
 
         <xsl:if test="@last-revision">
           <xsl:attribute
@@ -455,11 +443,20 @@ Error: XSL template 'link-or-anchor' called with invalid link-type '<xsl:value-o
   </xsl:template>
 
   <xsl:template match="boostbook">
-    <book><xsl:apply-templates/></book>
+    <book>
+      <xsl:copy-of select="@*[not(contains(' last-revision name dirname html-only url ', concat(' ',local-name(),' ')))]"/>
+      <xsl:apply-templates/>
+    </book>
   </xsl:template>
 
   <xsl:template match="programlisting">
     <programlisting><xsl:apply-templates/></programlisting>
+  </xsl:template>
+
+  <xsl:template match="programlisting[@language='jam']">
+    <programlisting>
+      <xsl:apply-templates mode="highlight-jam"/>
+    </programlisting>
   </xsl:template>
 
   <!-- These DocBook elements have special meaning. Use the annotation mode -->

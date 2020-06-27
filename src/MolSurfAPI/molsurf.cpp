@@ -1391,7 +1391,7 @@ Geometry* surfaceUsingGaussianBlur(PDBParser::GroupOfAtoms* molecule, double iso
 	PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType;
 	if(!PDBParser::GroupOfAtoms::intToRadiusType(&radiusType, radiusInt))
 	{
-	  return false;
+	  return 0;
 	}
 
 	// sData
@@ -1407,7 +1407,7 @@ Geometry* surfaceUsingGaussianBlur(PDBParser::GroupOfAtoms* molecule, double iso
 
 	if(!sData)
 	{
-		return false;
+		return 0;
 	}
 	//delete molecule;  // arand: don't delete or TexMol crashes...
 
@@ -1425,7 +1425,7 @@ Geometry* surfaceUsingGaussianBlur2(PDBParser::GroupOfAtoms* molecule, double is
 	PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType;
 	if(!PDBParser::GroupOfAtoms::intToRadiusType(&radiusType, radiusInt))
 	{
-	  return false;
+	  return 0;
 	}
 
 	// sData
@@ -1436,7 +1436,7 @@ Geometry* surfaceUsingGaussianBlur2(PDBParser::GroupOfAtoms* molecule, double is
 
 	if(!sData)
 	{
-		return false;
+		return 0;
 	}
 	//delete molecule;  // arand: don't delete or TexMol crashes...
 

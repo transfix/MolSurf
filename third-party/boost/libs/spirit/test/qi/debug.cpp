@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (c) 2001-2009 Joel de Guzman
+    Copyright (c) 2001-2010 Joel de Guzman
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -39,9 +39,9 @@ main()
     using boost::spirit::qi::fail;
     using boost::spirit::qi::on_error;
     using boost::spirit::qi::debug;
+    using boost::spirit::qi::alpha;
 
     namespace phx = boost::phoenix;
-
 
     { // basic tests
 
@@ -86,6 +86,16 @@ main()
         BOOST_SPIRIT_DEBUG_NODE(start);
         BOOST_TEST(test(" a a a a b a b a b a a a b b b ", start, space));
         BOOST_TEST(test(" a a a a b a b a b a a a b b a ", start, space, false));
+    }
+
+    { // std::container attributes
+
+        typedef boost::fusion::vector<int, char> fs;
+        rule<char const*, std::vector<fs>(), space_type> start;
+        start = *(int_ >> alpha);
+
+        BOOST_SPIRIT_DEBUG_NODE(start);
+        BOOST_TEST(test("1 a 2 b 3 c", start, space));
     }
 
     { // error handling

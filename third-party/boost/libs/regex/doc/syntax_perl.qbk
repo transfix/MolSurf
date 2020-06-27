@@ -26,7 +26,7 @@ default behavior in Boost.Regex or you can pass the flag =perl= to the
 In Perl regular expressions, all characters match themselves except for the 
 following special characters:
 
-[pre .\[{()\\\*+?|^$]
+[pre .\[{}()\\\*+?|^$]
 
 [h4 Wildcard]
 
@@ -143,11 +143,11 @@ consume as little input as possible while still producing a match.
 ={n,m}?= Matches the previous atom between n and m times, while 
    consuming as little input as possible.
    
-[h4 Pocessive repeats]
+[h4 Possessive repeats]
 
-By default when a repeated patten does not match then the engine will backtrack until
+By default when a repeated pattern does not match then the engine will backtrack until
 a match is found.  However, this behaviour can sometime be undesireable so there are
-also "pocessive" repeats: these match as much as possible and do not then allow
+also "possessive" repeats: these match as much as possible and do not then allow
 backtracking if the rest of the expression fails to match.
 
 =*+= Matches the previous atom zero or more times, while giving nothing back.
@@ -376,12 +376,13 @@ context is the whole of the input text that is being matched against
 
 \\' 	Matches at the end of a buffer only.
 
-\\A 	Matches at the start of a buffer only (the same as \\\`).
+\\A 	Matches at the start of a buffer only (the same as =\\\`=).
 
-\\z 	Matches at the end of a buffer only (the same as \\').
+\\z 	Matches at the end of a buffer only (the same as =\\'=).
 
-\\Z 	Matches an optional sequence of newlines at the end of a buffer: 
-equivalent to the regular expression =\n*\z=
+\\Z 	Matches a zero-width assertion consisting of an optional sequence of newlines at the end of a buffer: 
+equivalent to the regular expression [^(?=\\v*\\z)].  Note that this is subtly different from Perl which
+behaves as if matching [^(?=\\n?\\z)].
 
 [h5 Continuation Escape]
 
@@ -513,7 +514,7 @@ whole to match then no match is found at all.
 
 [h5 Recursive Expressions]
 
-[^(?['N]) (?-['N]) (?+['N]) (?R) (?0)]
+[^(?['N]) (?-['N]) (?+['N]) (?R) (?0) (?&NAME)]
 
 =(?R)= and =(?0)= recurse to the start of the entire pattern.
 
@@ -522,13 +523,15 @@ whole to match then no match is found at all.
 [^(?-['N])] and [^(?+['N])] are relative recursions, so for example =(?-1)= recurses to the last sub-expression to be declared,
 and =(?+1)= recurses to the next sub-expression to be declared.
 
+[^(?&NAME)] recurses to named sub-expression ['NAME].
+
 [h5 Conditional Expressions]
 
 =(?(condition)yes-pattern|no-pattern)= attempts to match /yes-pattern/ if 
 the /condition/ is true, otherwise attempts to match /no-pattern/.
 
 =(?(condition)yes-pattern)= attempts to match /yes-pattern/ if the /condition/ 
-is true, otherwise fails.
+is true, otherwise matches the NULL string.
 
 /condition/ may be either: a forward lookahead assert, the index of 
 a marked sub-expression (the condition becomes true if the sub-expression 
@@ -541,9 +544,17 @@ Here is a summary of the possible predicates:
 executes /no-pattern/.
 * =(?(?!assert)yes-pattern|no-pattern)=  Executes /yes-pattern/ if the forward look-ahead assert does not match, otherwise
 executes /no-pattern/.
+* =(?(['N])yes-pattern|no-pattern)=  Executes /yes-pattern/ if subexpression /N/ has been matched, otherwise
+executes /no-pattern/.
+* =(?(<['name]>)yes-pattern|no-pattern)=  Executes /yes-pattern/ if named subexpression /name/ has been matched, otherwise
+executes /no-pattern/.
+* =(?('['name]')yes-pattern|no-pattern)=  Executes /yes-pattern/ if named subexpression /name/ has been matched, otherwise
+executes /no-pattern/.
 * =(?(R)yes-pattern|no-pattern)=  Executes /yes-pattern/ if we are executing inside a recursion, otherwise
 executes /no-pattern/.
 * [^(?(R['N])yes-pattern|no-pattern)]  Executes /yes-pattern/ if we are executing inside a recursion to sub-expression /N/, otherwise
+executes /no-pattern/.
+* [^(?(R&['name])yes-pattern|no-pattern)]  Executes /yes-pattern/ if we are executing inside a recursion to named sub-expression /name/, otherwise
 executes /no-pattern/.
 * [^(?(DEFINE)never-exectuted-pattern)]  Defines a block of code that is never executed and matches no characters:
 this is usually used to define one or more named sub-expressions which are refered to from elsewhere in the pattern.

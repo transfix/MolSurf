@@ -40,6 +40,7 @@ void iterator_test()
     string str1("xx-abc--xx-abb");
     string str2("Xx-abc--xX-abb-xx");
     string str3("xx");
+    string strempty("");
     const char* pch1="xx-abc--xx-abb";
     vector<string> tokens;
     vector< vector<int> > vtokens;
@@ -123,6 +124,25 @@ void iterator_test()
     BOOST_CHECK( tokens[3]==string("xx") );
     BOOST_CHECK( tokens[4]==string("abb") );
 
+    split(
+        tokens,
+        str3,
+        is_any_of(","),
+        token_compress_off);
+
+    BOOST_REQUIRE( tokens.size()==1 );
+    BOOST_CHECK( tokens[0]==string("xx") );
+
+    split(
+        tokens,
+        strempty,
+        is_punct(),
+        token_compress_off);
+
+    BOOST_REQUIRE( tokens.size()==1 );
+    BOOST_CHECK( tokens[0]==string("") );
+
+
     find_iterator<string::iterator> fiter=make_find_iterator(str1, first_finder("xx"));
     BOOST_CHECK(equals(*fiter, "xx"));
     ++fiter;
@@ -139,6 +159,7 @@ void iterator_test()
     ++siter;
     BOOST_CHECK(equals(*siter, "abb"));
     ++siter;
+    BOOST_CHECK(siter==split_iterator<string::iterator>(siter));
     BOOST_CHECK(siter==split_iterator<string::iterator>());
 
 }

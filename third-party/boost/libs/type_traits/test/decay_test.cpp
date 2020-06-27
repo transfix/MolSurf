@@ -16,6 +16,13 @@
 #include <string>
 #include <utility>
 
+#ifdef BOOST_INTEL
+//  remark #383: value copied to temporary, reference to temporary used
+//     std::pair<std::string, int>        p2 = boost::make_pair( "foo", 1 );
+//                                                                      ^
+#pragma warning(disable:383)
+#endif
+
 namespace boost
 {
 
@@ -61,6 +68,9 @@ TT_TEST_BEGIN(is_class)
                                   true );
    BOOST_CHECK_INTEGRAL_CONSTANT((::tt::is_same< 
           ::tt::decay<char[2]>::type,char*>::value),
+                                 true );
+   BOOST_CHECK_INTEGRAL_CONSTANT((::tt::is_same< 
+          ::tt::decay<char[2][3]>::type,char(*)[3]>::value),
                                  true );
    BOOST_CHECK_INTEGRAL_CONSTANT((::tt::is_same< 
           ::tt::decay<const char[2]>::type,const char*>::value),

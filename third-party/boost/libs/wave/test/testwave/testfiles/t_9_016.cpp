@@ -2,7 +2,7 @@
     Boost.Wave: A Standard compliant C++ preprocessor library
     http://www.boost.org/
 
-    Copyright (c) 2001-2009 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2012 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -37,6 +37,6 @@ EXPAND(#) define later
 //H 19: $B(t_9_016.cpp): inclusion
 //H 10: t_9_016.cpp(13): #   include "t_9_016.hpp"
 //H 04: "t_9_016.hpp"
-//H 05: $B(t_9_016.hpp) ($B(t_9_016.hpp))
+//H 05: t_9_016.hpp ($B(t_9_016.hpp))
 //H 06: 
 //H 10: t_9_016.cpp(14): #else

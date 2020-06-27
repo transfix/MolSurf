@@ -1,5 +1,6 @@
 [/==============================================================================
-    Copyright (C) 2001-2007 Joel de Guzman, Dan Marsden, Tobias Schwinger
+    Copyright (C) 2001-2011 Joel de Guzman
+    Copyright (C) 2006 Dan Marsden
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -43,7 +44,7 @@ lazy nature make them very cheap to copy and be passed around by value.
 
 [heading Model of]
 
-* __forward_sequence__
+* __random_access_sequence__
 
 [variablelist Notation
     [[`S`]              [A `single_view` type]]
@@ -54,7 +55,7 @@ lazy nature make them very cheap to copy and be passed around by value.
 [heading Expression Semantics]
 
 Semantics of an expression is defined only where it differs from, or is not
-defined in __forward_sequence__.
+defined in __random_access_sequence__.
 
 [table
     [[Expression]           [Semantics]]
@@ -101,6 +102,7 @@ presents only those elements for which its predicate evaluates to
 [heading Model of]
 
 * __forward_sequence__
+* __associative_sequence__ if `Sequence` implements the __associative_sequence__ model.
 
 [variablelist Notation
     [[`F`]              [A `filter_view` type]]
@@ -111,7 +113,7 @@ presents only those elements for which its predicate evaluates to
 [heading Expression Semantics]
 
 Semantics of an expression is defined only where it differs from, or is not
-defined in __forward_sequence__.
+defined in the implemented models.
 
 [table
     [[Expression]           [Semantics]]
@@ -164,6 +166,7 @@ by a pair of iterators.
 * __forward_sequence__, __bidirectional_sequence__ or
 __random_access_sequence__ depending on the traversal characteristics (see
 __traversal_concept__) of its underlying sequence.
+* __associative_sequence__ if `First` and `Last` implement the __associative_iterator__ model.
 
 [variablelist Notation
     [[`IR`]             [An `iterator_range` type]]
@@ -175,7 +178,7 @@ __traversal_concept__) of its underlying sequence.
 [heading Expression Semantics]
 
 Semantics of an expression is defined only where it differs from, or is not
-defined in __forward_sequence__.
+defined in the implemented models.
 
 [table
     [[Expression]           [Semantics]]
@@ -230,6 +233,7 @@ defined in __forward_sequence__.
 [heading Model of]
 
 * __forward_sequence__
+* __associative_sequence__ if `Sequence1` and `Sequence2` implement the __associative_sequence__ model.
 
 [variablelist Notation
     [[`JV`]             [A `joint_view` type]]
@@ -241,7 +245,7 @@ defined in __forward_sequence__.
 [heading Expression Semantics]
 
 Semantics of an expression is defined only where it differs from, or is not
-defined in __forward_sequence__.
+defined in the implemented models.
 
 [table
     [[Expression]           [Semantics]]
@@ -443,7 +447,9 @@ element will be its last and the last element will be its first.
 
 [heading Model of]
 
-* __bidirectional_sequence__
+* A model of __bidirectional_sequence__ if `Sequence` is a __bidirectional_sequence__
+else, __random_access_sequence__ if `Sequence` is a __random_access_sequence__.
+* __associative_sequence__ if `Sequence` implements the __associative_sequence__ model.
 
 [variablelist Notation
     [[`RV`]             [A `reverse_view` type]]
@@ -454,7 +460,7 @@ element will be its last and the last element will be its first.
 [heading Expression Semantics]
 
 Semantics of an expression is defined only where it differs from, or is not
-defined in __bidirectional_sequence__.
+defined in the implemented models.
 
 [table
     [[Expression]           [Semantics]]
@@ -540,6 +546,72 @@ of the original Fusion __sequence__
 
     std::cout << nview<vec, indicies>(v1) << std::endl; // (2.0 c 1 2.0 1)
     std::cout << as_nview<2, 1, 1, 0>(v1) << std::endl; // (2.0 c c 1)
+
+[endsect]
+
+
+[section repetitive_view]
+
+[heading Description]
+
+`repetitive_view` presents a view which iterates over a given
+__sequence__ repeatedly.  Because a `repetitive_view`
+has infinite length, it can only be used when some external
+condition determines the end.  Thus, initializing a fixed
+length sequence with a `repetitive_view` is okay, but
+printing a `repetitive_view` to `std::cout` is not.
+
+[heading Header]
+
+    #include <boost/fusion/view/repetitive_view.hpp>
+    #include <boost/fusion/include/repetitive_view.hpp>
+
+[heading Synopsis]
+
+    template <typename Sequence>
+    struct repetitive_view;
+
+[heading Template parameters]
+
+[table
+    [[Parameter]            [Description]                   [Default]]
+    [[`Sequence`]           [An arbitrary Fusion __forward_sequence__]
+                                                            []]
+]
+
+[variablelist Notation
+    [[`RV`]            [A `repetitive_view` type]]
+    [[`s`]             [An instance of `Sequences`]]
+    [[`rv`, `rv1`, `rv2`]    [Instances of `RV`]]
+]
+
+[heading Expression Semantics]
+
+[table
+    [[Expression]           [Return Type]          [Semantics]]
+    [[`RV(s)`]              []                     [Creates an `repetitive_view` given the underlying sequence.]]
+    [[`RV(rv1)`]            []                     [Copy constructs an `repetitive_view` from another `repetitive_view`, `rv1`.]]
+    [[`rv1 = rv2`]          []                     [Assigns to a `repetitive_view`, `rv1`, from another `repetitive_view`, `rv2`.]]
+    [[`__begin__(rv)`]      [__forward_iterator__] []]
+    [[`__end__(rv)`]       [__forward_iterator__] [Creates an unreachable iterator (since the sequnce is infinite)]]
+]
+
+[heading Result Type Expressions]
+
+[table
+    [[Expression]]
+    [[`__result_of_begin__<RV>::type`]]
+    [[`__result_of_end__<RV>::type`]]
+]
+
+[heading Example]
+    typedef __vector__<int, char, double> vec1;
+    typedef __vector__<int, char, double, int, char> vec2;
+
+    vec1 v1(1, 'c', 2.0);
+    vec2 v2(repetitive_view<vec1>(v1));
+
+    std::cout << v2 << std::endl; // 1, 'c', 2.0, 1, 'c'
 
 [endsect]
 

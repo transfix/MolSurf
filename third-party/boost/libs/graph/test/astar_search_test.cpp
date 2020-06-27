@@ -15,6 +15,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/random.hpp>
+#include <utility>
 #include <vector>
 #include <list>
 #include <iostream>
@@ -98,7 +99,7 @@ class astar_goal_visitor : public boost::default_astar_visitor
 public:
   astar_goal_visitor(Vertex goal) : m_goal(goal) {}
   template <class Graph>
-  void examine_vertex(Vertex u, Graph& g) {
+  void examine_vertex(Vertex u, Graph&) {
     if(u == m_goal)
       throw found_goal();
   }
@@ -107,7 +108,7 @@ private:
 };
 
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
   
   // specify some types
@@ -162,14 +163,14 @@ int main(int argc, char **argv)
   WeightMap weightmap = get(edge_weight, g);
   for(std::size_t j = 0; j < num_edges; ++j) {
     edge_descriptor e; bool inserted;
-    tie(e, inserted) = add_edge(edge_array[j].first,
-                                edge_array[j].second, g);
+    boost::tie(e, inserted) = add_edge(edge_array[j].first,
+                                       edge_array[j].second, g);
     weightmap[e] = weights[j];
   }
   
   
   // pick random start/goal
-  minstd_rand gen(time(0));
+  boost::minstd_rand gen(time(0));
   vertex start = gen() % num_vertices(g);
   vertex goal = gen() % num_vertices(g);
   

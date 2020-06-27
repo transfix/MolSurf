@@ -1,6 +1,6 @@
 [/==============================================================================
-    Copyright (C) 2001-2009 Joel de Guzman
-    Copyright (C) 2001-2009 Hartmut Kaiser
+    Copyright (C) 2001-2011 Joel de Guzman
+    Copyright (C) 2001-2011 Hartmut Kaiser
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -154,7 +154,7 @@ described above by using the predefined __spirit__ placeholders:
 
 The context object passed as the last parameter to any lexer semantic action is 
 not directly accessible while using __boost_phoenix__ expressions. We rather provide
-predefine Phoenix functions allowing to invoke the different support functions
+predefined Phoenix functions allowing to invoke the different support functions
 as mentioned above. The following table lists the available support functions 
 and describes their functionality:
  

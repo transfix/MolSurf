@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //
-// (C) Copyright Ion Gaztanaga 2006-2009.
+// (C) Copyright Ion Gaztanaga 2006-2012.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -48,31 +48,29 @@ struct shared_ptr_owner
 
 int main ()
 {
-   //Destroy any previous file with the name to be used.
-   struct file_remove 
-   {
+   //Define file names
    //<-
    #if 1
-      file_remove() { file_mapping::remove(test::get_process_id_name()); }
-      ~file_remove(){ file_mapping::remove(test::get_process_id_name()); }
+   std::string mapped_file(boost::interprocess::ipcdetail::get_temporary_path());
+   mapped_file += "/"; mapped_file += test::get_process_id_name();
+   const char *MappedFile = mapped_file.c_str();
    #else
    //->
-      file_remove() { file_mapping::remove("MyMappedFile"); }
-      ~file_remove(){ file_mapping::remove("MyMappedFile"); }
+   const char *MappedFile  = "MyMappedFile";
    //<-
    #endif
    //->
-   } remover;
+
+   //Destroy any previous file with the name to be used.
+   struct file_remove
    {
-      //<-
-      #if 1
-      managed_mapped_file file(create_only, test::get_process_id_name(), 4096);
-      #else
-      //->
-      managed_mapped_file file(create_only, "MyMappedFile", 4096);
-      //<-
-      #endif
-      //->
+      file_remove(const char *MappedFile)
+         : MappedFile_(MappedFile) { file_mapping::remove(MappedFile_); }
+      ~file_remove(){ file_mapping::remove(MappedFile_); }
+      const char *MappedFile_;
+   } remover(MappedFile);
+   {
+      managed_mapped_file file(create_only, MappedFile, 65536);
 
       //Construct the shared type in the file and
       //pass ownership to this local shared pointer
@@ -101,15 +99,7 @@ int main ()
    }
    {
       //Reopen the mapped file and find again all owners
-      //<-
-      #if 1
-      managed_mapped_file file(open_only, test::get_process_id_name());
-      #else
-      //->
-      managed_mapped_file file(open_only, "MyMappedFile");
-      //<-
-      #endif
-      //->
+      managed_mapped_file file(open_only, MappedFile);
 
       shared_ptr_owner *owner1 = file.find<shared_ptr_owner>("owner1").first;
       shared_ptr_owner *owner2 = file.find<shared_ptr_owner>("owner2").first;
@@ -138,11 +128,11 @@ int main ()
       //Now destroy the remaining owner. "object to share" will be destroyed
       file.destroy_ptr(owner2);
       assert(file.find<type_to_share>("object to share").first == 0);
-      
+
       //Test observer
       assert(local_observer1.expired());
       assert(local_observer1.use_count() == 0);
-      
+
       //The reference count will be deallocated when all weak pointers
       //disappear. After that, the file is unmapped.
    }

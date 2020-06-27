@@ -37,7 +37,7 @@ href="#fig:adj-list-graph">Figure 1</a> shows an adjacency list
 representation of a directed graph.
 
 <P></P>
-<DIV ALIGN="center"><A NAME="fig:adj-list-graph"></A><A NAME="1509"></A>
+<DIV ALIGN="center"><A NAME="fig:adj-list-graph"></A>
 <TABLE>
 <CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG> Adjacency List Representation of a Directed Graph.</CAPTION>
 <TR><TD><IMG SRC="./figs/adj-matrix-graph2.gif" width="386" height="284"></TD>
@@ -67,7 +67,7 @@ href="#fig:undir-adj-list-graph">Figure 2</a> shows an adjacency list
 representation of an undirected graph.
 
 <P></P>
-<DIV ALIGN="center"><A NAME="fig:undir-adj-list-graph"></A><A NAME="1509"></A>
+<DIV ALIGN="center"><A NAME="fig:undir-adj-list-graph"></A>
 <TABLE>
 <CAPTION ALIGN="BOTTOM"><STRONG>Figure 2:</STRONG> Adjacency List Representation of an Undirected Graph.</CAPTION>
 <TR><TD><IMG SRC="./figs/undir-adj-matrix-graph2.gif" width="260" height="240"></TD>
@@ -763,8 +763,10 @@ std::pair&lt;edge_descriptor, bool&gt;
 edge(vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
      const&nbsp;adjacency_list&amp;&nbsp;g)
 </pre>
-Returns an edge connecting vertex <tt>u</tt> to vertex <tt>v</tt> in
-graph <tt>g</tt>.
+If an edge from vertex <tt>u</tt> to vertex <tt>v</tt> exists, return a pair
+containing one such edge and <tt>true</tt>.  If there are no edges between
+<tt>u</tt> and <tt>v</tt>, return a pair with an arbitrary edge descriptor and
+<tt>false</tt>.
 
 <hr>
 

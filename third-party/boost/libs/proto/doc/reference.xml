@@ -1,4 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2012 Eric Niebler
+
+  Distributed under the Boost
+  Software License, Version 1.0. (See accompanying
+  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+  -->
 <library-reference xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <!-- classes -->
@@ -37,6 +44,16 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::_env">proto::_env</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::_env_var">proto::_env_var</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::_expr">proto::_expr</classname>
         </computeroutput>
       </listitem>
@@ -48,6 +65,11 @@
       <listitem>
         <computeroutput>
           <classname alt="boost::proto::_value">proto::_value</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::_void">proto::_void</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -68,6 +90,21 @@
       <listitem>
         <computeroutput>
           <classname alt="boost::proto::assign">proto::assign</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::basic_default_domain">proto::basic_default_domain</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::basic_default_generator">proto::basic_default_generator</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::basic_expr">proto::basic_expr</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -122,6 +159,11 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::char_">proto::char_</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::comma">proto::comma</classname>
         </computeroutput>
       </listitem>
@@ -172,6 +214,11 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::data_type">proto::data_type</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::deduce_domain">proto::deduce_domain</classname>
         </computeroutput>
       </listitem>
@@ -207,7 +254,27 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::domain::as_child">proto::domain::as_child</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::domain::as_expr">proto::domain::as_expr</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::domain_of">proto::domain_of</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::empty_env">proto::empty_env</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::env">proto::env</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -232,6 +299,16 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::external_transform">proto::external_transform</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::external_transforms">proto::external_transforms</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::fold">proto::fold</classname>
         </computeroutput>
       </listitem>
@@ -247,12 +324,32 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::functional::advance">proto::functional::advance</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::functional::as_child">proto::functional::as_child</classname>
         </computeroutput>
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::functional::as_env">proto::functional::as_env</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::functional::as_expr">proto::functional::as_expr</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::at">proto::functional::at</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::begin">proto::functional::begin</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -277,12 +374,42 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::functional::distance">proto::functional::distance</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::empty">proto::functional::empty</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::end">proto::functional::end</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::env_var">proto::functional::env_var</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::functional::eval">proto::functional::eval</classname>
         </computeroutput>
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::functional::first">proto::functional::first</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::functional::flatten">proto::functional::flatten</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::has_env_var">proto::functional::has_env_var</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -297,7 +424,47 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::functional::make_pair">proto::functional::make_pair</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::next">proto::functional::next</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::pop_back">proto::functional::pop_back</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::functional::pop_front">proto::functional::pop_front</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::prior">proto::functional::prior</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::push_back">proto::functional::push_back</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::push_front">proto::functional::push_front</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::rbegin">proto::functional::rbegin</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::rend">proto::functional::rend</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -308,6 +475,16 @@
       <listitem>
         <computeroutput>
           <classname alt="boost::proto::functional::right">proto::functional::right</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::second">proto::functional::second</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::functional::size">proto::functional::size</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -347,6 +524,16 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::int_">proto::int_</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::integral_c">proto::integral_c</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::is_aggregate">proto::is_aggregate</classname>
         </computeroutput>
       </listitem>
@@ -362,6 +549,11 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::is_env">proto::is_env</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::is_expr">proto::is_expr</classname>
         </computeroutput>
       </listitem>
@@ -373,6 +565,16 @@
       <listitem>
         <computeroutput>
           <classname alt="boost::proto::is_proto_expr">proto::is_proto_expr</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::is_transform">proto::is_transform</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::key_not_found">proto::key_not_found</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -413,6 +615,11 @@
       <listitem>
         <computeroutput>
           <classname alt="boost::proto::logical_or">proto::logical_or</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::long_">proto::long_</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -502,6 +709,11 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::pack">proto::pack</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::pass_through">proto::pass_through</classname>
         </computeroutput>
       </listitem>
@@ -552,6 +764,11 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::result_of::as_env">proto::result_of::as_env</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::result_of::as_expr">proto::result_of::as_expr</classname>
         </computeroutput>
       </listitem>
@@ -572,12 +789,22 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::result_of::env_var">proto::result_of::env_var</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::result_of::eval">proto::result_of::eval</classname>
         </computeroutput>
       </listitem>
       <listitem>
         <computeroutput>
           <classname alt="boost::proto::result_of::flatten">proto::result_of::flatten</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::result_of::has_env_var">proto::result_of::has_env_var</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -633,6 +860,11 @@
       <listitem>
         <computeroutput>
           <classname alt="boost::proto::shift_right_assign">proto::shift_right_assign</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::size_t">proto::size_t</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -892,6 +1124,11 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::transforms_type">proto::transforms_type</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::transform_impl">proto::transform_impl</classname>
         </computeroutput>
       </listitem>
@@ -907,12 +1144,22 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <classname alt="boost::proto::use_basic_expr">proto::use_basic_expr</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <classname alt="boost::proto::unexpr">proto::unexpr</classname>
         </computeroutput>
       </listitem>
       <listitem>
         <computeroutput>
           <classname alt="boost::proto::vararg">proto::vararg</classname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <classname alt="boost::proto::wants_basic_expr">proto::wants_basic_expr</classname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -933,7 +1180,22 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <functionname alt="boost::proto::as_env">proto::as_env()</functionname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <functionname alt="boost::proto::as_expr">proto::as_expr()</functionname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <functionname alt="boost::proto::assert_matches">proto::assert_matches()</functionname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <functionname alt="boost::proto::assert_matches_not">proto::assert_matches_not()</functionname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -958,12 +1220,22 @@
       </listitem>
       <listitem>
         <computeroutput>
+          <functionname alt="boost::proto::env_var">proto::env_var()</functionname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
           <functionname alt="boost::proto::eval">proto::eval()</functionname>
         </computeroutput>
       </listitem>
       <listitem>
         <computeroutput>
           <functionname alt="boost::proto::flatten">proto::flatten()</functionname>
+        </computeroutput>
+      </listitem>
+      <listitem>
+        <computeroutput>
+          <functionname alt="boost::proto::has_env_var">proto::has_env_var()</functionname>
         </computeroutput>
       </listitem>
       <listitem>
@@ -1013,6 +1285,23 @@
   <xi:include href="reference/eval.xml"/>
   <xi:include href="reference/expr.xml"/>
   <xi:include href="reference/extends.xml"/>
+  <xi:include href="reference/functional.xml"/>
+  <xi:include href="reference/functional/fusion.xml"/>
+  <xi:include href="reference/functional/fusion/at.xml"/>
+  <xi:include href="reference/functional/fusion/pop_back.xml"/>
+  <xi:include href="reference/functional/fusion/pop_front.xml"/>
+  <xi:include href="reference/functional/fusion/push_back.xml"/>
+  <xi:include href="reference/functional/fusion/push_front.xml"/>
+  <xi:include href="reference/functional/fusion/reverse.xml"/>
+  <xi:include href="reference/functional/range/begin.xml"/>
+  <xi:include href="reference/functional/range/empty.xml"/>
+  <xi:include href="reference/functional/range/end.xml"/>
+  <xi:include href="reference/functional/range/rbegin.xml"/>
+  <xi:include href="reference/functional/range/rend.xml"/>
+  <xi:include href="reference/functional/range/size.xml"/>
+  <xi:include href="reference/functional/std.xml"/>
+  <xi:include href="reference/functional/std/iterator.xml"/>
+  <xi:include href="reference/functional/std/utility.xml"/>
   <xi:include href="reference/fusion.xml"/>
   <xi:include href="reference/generate.xml"/>
   <xi:include href="reference/literal.xml"/>
@@ -1025,26 +1314,31 @@
   <xi:include href="reference/repeat.xml"/>
   <xi:include href="reference/tags.xml"/>
   <xi:include href="reference/traits.xml"/>
+  <xi:include href="reference/transform.xml"/>
   <xi:include href="reference/transform/arg.xml"/>
   <xi:include href="reference/transform/call.xml"/>
   <xi:include href="reference/transform/default.xml"/>
+  <xi:include href="reference/transform/env.xml"/>
   <xi:include href="reference/transform/fold.xml"/>
   <xi:include href="reference/transform/fold_tree.xml"/>
   <xi:include href="reference/transform/impl.xml"/>
+  <xi:include href="reference/transform/integral_c.xml"/>
   <xi:include href="reference/transform/lazy.xml"/>
   <xi:include href="reference/transform/make.xml"/>
   <xi:include href="reference/transform/pass_through.xml"/>
   <xi:include href="reference/transform/when.xml"/>
+  <xi:include href="reference/context.xml"/>
   <xi:include href="reference/context/callable.xml"/>
   <xi:include href="reference/context/default.xml"/>
   <xi:include href="reference/context/null.xml"/>
 
   <!-- concepts -->
-  <!--<xi:include href="reference/concepts/BasicPrimitiveTransform.xml"/>-->
   <xi:include href="reference/concepts/CallableTransform.xml"/>
+  <xi:include href="reference/concepts/Domain.xml"/>
+  <xi:include href="reference/concepts/Expr.xml"/>
   <xi:include href="reference/concepts/ObjectTransform.xml"/>
+  <xi:include href="reference/concepts/PolymorphicFunctionObject.xml"/>
   <xi:include href="reference/concepts/PrimitiveTransform.xml"/>
   <xi:include href="reference/concepts/Transform.xml"/>
-  <xi:include href="reference/concepts/PolymorphicFunctionObject.xml"/>
 
 </library-reference>

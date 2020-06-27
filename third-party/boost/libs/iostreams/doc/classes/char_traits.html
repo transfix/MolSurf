@@ -26,7 +26,7 @@
 <H2>Description</H2>
 
 <P>
-    The class template <CODE>boost::iostreams::char_traits</CODE> is a derived class of <CODE>std::char_traits</CODE> which has an additional static function <A HREF='#would_block'><CODE>would_block</CODE></A>, used to indicate that an attempt to read a character has failed because no input is currently available. 
+    The class template <CODE>boost::iostreams::char_traits</CODE> is a derived class of <CODE>std::char_traits</CODE> which has an additional static function <A HREF='#would_block_function'><CODE>would_block</CODE></A>, used to indicate that an attempt to read a character has failed because no input is currently available. 
 </P>
 
 <P>
@@ -54,7 +54,7 @@
 
 <SPAN CLASS="keyword">template</SPAN>&lt;<SPAN CLASS="keyword">typename</SPAN> <A CLASS="documented" HREF="#template_params">Ch</A>&gt;
 <SPAN CLASS="keyword">class</SPAN> <A CLASS="documented" HREF="#template_params">char_traits</A> : public std::char_traits&lt;Ch&gt; {
-    <SPAN CLASS='keyword'>static</SPAN> <SPAN CLASS='keyword'>typename</SPAN> std::char_traits&lt;Ch&gt;::int_type <A CLASS='documented' HREF='#would_block'>would_block</A>();
+    <SPAN CLASS='keyword'>static</SPAN> <SPAN CLASS='keyword'>typename</SPAN> std::char_traits&lt;Ch&gt;::int_type <A CLASS='documented' HREF='#would_block_function'>would_block</A>();
 };
 
 } } // End namespace boost::io</PRE>
@@ -86,7 +86,7 @@
     </TR>
 </TABLE>
 
-<A NAME="char_traits"></A>
+<A NAME="would_block_function"></A>
 <H4><CODE>char_traits::would_block</CODE></H4>
 
 <PRE CLASS="broken_ie">    <SPAN CLASS='keyword'>static</SPAN> <SPAN CLASS='keyword'>typename</SPAN> std::char_traits&lt;Ch&gt;::int_type would_block();</PRE>
@@ -98,7 +98,6 @@
 <!-- Begin Footer -->
 
 <HR>
-<P CLASS="copyright">Revised 02 Feb 2008</P>
 
 <P CLASS="copyright">&copy; Copyright 2008 <a href="http://www.coderage.com/" target="_top">CodeRage, LLC</a><br/>&copy; Copyright 2004-2007 <a href="http://www.coderage.com/turkanis/" target="_top">Jonathan Turkanis</a></P>
 <P CLASS="copyright"> 

@@ -19,6 +19,7 @@
 
 #define BOOST_REGEX_SOURCE
 
+#include <boost/config.hpp>
 #include <climits>
 #include <stdexcept>
 #include <string>
@@ -258,11 +259,22 @@ void mapfile::lock(pointer* node)const
             *p = 0;
             *(reinterpret_cast<int*>(*node)) = 1;
          }
-         std::fseek(hfile, (node - _first) * buf_size, SEEK_SET);
-         if(node == _last - 1)
-            std::fread(*node + sizeof(int), _size % buf_size, 1, hfile);
-         else
-            std::fread(*node + sizeof(int), buf_size, 1, hfile);
+ 
+        std::size_t read_size = 0; 
+        int read_pos = std::fseek(hfile, (node - _first) * buf_size, SEEK_SET); 
+
+        if(0 == read_pos && node == _last - 1) 
+           read_size = std::fread(*node + sizeof(int), _size % buf_size, 1, hfile); 
+        else
+           read_size = std::fread(*node + sizeof(int), buf_size, 1, hfile);
+#ifndef BOOST_NO_EXCEPTIONS 
+        if((read_size == 0) || (std::ferror(hfile)))
+        { 
+           throw std::runtime_error("Unable to read file."); 
+        } 
+#else 
+        BOOST_REGEX_NOEH_ASSERT((0 == std::ferror(hfile)) && (read_size != 0)); 
+#endif 
       }
       else
       {
@@ -836,10 +848,16 @@ bool iswild(const char* mask, const char* name)
 unsigned _fi_attributes(const char* root, const char* name)
 {
    char buf[MAX_PATH];
+   // verify that we can not overflow:
+   if(std::strlen(root) + std::strlen(_fi_sep) + std::strlen(name) >= MAX_PATH)
+      return 0;
+   int r;
    if( ( (root[0] == *_fi_sep) || (root[0] == *_fi_sep_alt) ) && (root[1] == '\0') )
-      (std::sprintf)(buf, "%s%s", root, name);
+      r = (std::sprintf)(buf, "%s%s", root, name);
    else
-      (std::sprintf)(buf, "%s%s%s", root, _fi_sep, name);
+      r = (std::sprintf)(buf, "%s%s%s", root, _fi_sep, name);
+   if(r < 0)
+      return 0; // sprintf failed
    DIR* d = opendir(buf);
    if(d)
    {
@@ -859,6 +877,7 @@ _fi_find_handle _fi_FindFirstFile(const char* lpFileName, _fi_find_data* lpFindF
    {
       if(_fi_FindNextFile(dat, lpFindFileData))
          return dat;
+      closedir(h);
    }
    delete dat;
    return 0;

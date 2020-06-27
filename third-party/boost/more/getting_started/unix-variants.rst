@@ -108,12 +108,12 @@ least use
   **$** ./bootstrap.sh **--prefix=**\ *path*\ /\ *to*\ /\ *installation*\ /\ *prefix* 
 
 to install somewhere else.  Also, consider using the
-``--show-libraries`` and ``--with-``\ *library_name* options to limit the
+``--show-libraries`` and ``--with-libraries=``\ *library-name-list* options to limit the
 long wait you'll experience if you build everything.  Finally,
 
 .. parsed-literal::
 
-  **$** ./bjam install
+  **$** ./b2 install
 
 will leave Boost binaries in the ``lib/`` subdirectory of your
 installation prefix.  You will also find a copy of the Boost
@@ -150,7 +150,7 @@ For example, your session might look like this:
 .. parsed-literal::
 
    $ cd ~/|boost_ver|
-   $ bjam **--build-dir=**\ /tmp/build-boost **toolset=**\ gcc stage
+   $ b2 **--build-dir=**\ /tmp/build-boost **toolset=**\ gcc stage
 
 That will build static and shared non-debug multi-threaded variants of the libraries. To build all variants, pass the additional option, “``--build-type=complete``”.
 

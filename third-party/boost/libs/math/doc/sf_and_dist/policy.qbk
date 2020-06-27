@@ -2,7 +2,7 @@
 
 [section:pol_overview Policy Overview]
 [policy_overview]
-[endsect][/section:pol_overview Policy Overview]
+[endsect] [/section:pol_overview Policy Overview]
 
 [include policy_tutorial.qbk]
 
@@ -50,8 +50,9 @@ Will throw one of the following exceptions, depending upon the
 
 [h5 errno_on_error]
 
-Will set global `::errno` to one of the following values depending 
-upon the error type, and then return the same value as if the error
+Will set global __errno `::errno` to one of the following values depending 
+upon the error type (often EDOM = 33 and ERANGE = 34),
+and then return the same value as if the error
 had been ignored:
  [table
     [[Error Type][errno value]]
@@ -74,7 +75,7 @@ Will return one of the values below depending on the error type (`::errno` is NO
     [[Overflow Error][std::numeric_limits<T>::infinity()]]
     [[Underflow Error][0]]
     [[Denorm Error][The denormalised value.]]
-    [[Evaluation Error][The best guess as to the result: which
+    [[Evaluation Error][The best guess (perhaps NaN) as to the result: which
           may be significantly in error.]]
     [[Indeterminate Result Error][Depends on the function where the error occurred]]
  ]
@@ -226,12 +227,12 @@ rather than throw exceptions, then we can use:
 
 [endsect] [/section:error_handling_policies Error Handling Policies]
 
-[section:internal_promotion Internal Promotion Policies]
+[section:internal_promotion Internal Floating-point Promotion Policies]
 
 Normally when evaluating a function at say `float` precision, maximal
 accuracy is assured by conducting the calculation at `double` precision
 internally, and then rounding the result.  There are two policies that
-effect whether internal promotion takes place or not:
+control whether internal promotion to a higher precision floating-point type takes place, or not:
 
 [table
 [[Policy][Meaning]]
@@ -265,7 +266,8 @@ There are some functions that are generic
 (they are present for all the statistical distributions supported)
 but which may be mathematically undefined for certain distributions, but defined for others.
 
-For example, the Cauchy distribution does not have a mean, so what should
+For example, the Cauchy distribution does not have a meaningful mean,
+so what should
 
    mean(cauchy<>());
    
@@ -299,6 +301,12 @@ For example:
    
    // This will compile, but raises a domain error!
    double m2 = mean(cauchy_distribution<double, policy<assert_undefined<false> > >());
+
+`policy<assert_undefined<false>` behaviour can also be obtained by defining the macro
+
+  #define BOOST_MATH_ASSERT_UNDEFINED_POLICY false
+  
+at the head of the file - see __policy_macros. 
  
 [endsect][/section:assert_undefined Mathematically Undefined Function Policies]
 
@@ -421,7 +429,7 @@ There are two equivalent policies that effect the ['working precision]
 used to calculate results, these policies both default to 0 - meaning
 calculate to the maximum precision available in the type being used
  - but can be set to other values to cause lower levels of precision 
-to be used.
+to be used. One might want to trade precision for evaluation speed.
 
    namespace boost{ namespace math{ namespace policies{
    
@@ -447,7 +455,7 @@ For example we could calculate `tgamma` to approximately 5 decimal digits using:
 
 [policy_ref_snip9]
    
-Or again using ['make_policy]:
+Or again using helper function `make_policy`:
 
 [import ../../example/policy_ref_snip10.cpp]
 
@@ -480,9 +488,9 @@ The class `max_root_iterations` determines the maximum number
 of iterations permitted in a root-finding algorithm before the special
 function gives up and returns the result of __evaluation_error.
 
-[endsect][/section:iteration_pol Iteration Limits Policies]
+[endsect] [/section:iteration_pol Iteration Limits Policies]
 
-[section:policy_defaults Using macros to Change the Policy Defaults]
+[section:policy_defaults Using Macros to Change the Policy Defaults]
 
 You can use the various macros below to change any (or all) of the policies.
 
@@ -490,7 +498,7 @@ You can make a local change by placing a macro definition *before*
 a function or distribution #include.
 
 [caution There is a danger of One-Definition-Rule violations if you 
-add ad-hock macros to more than one source files: these must be set the same in *every 
+add ad-hoc macros to more than one source files: these must be set the same in *every 
 translation unit*.]
 
 [caution If you place it after the #include it will have no effect,
@@ -878,8 +886,8 @@ actually use.
 [endsect][/section:pol_ref Policy Reference]
 [endsect][/section:policy Policies]
 
-[/ math.qbk
-  Copyright 2007 John Maddock and Paul A. Bristow.
+[/ policy.qbk
+  Copyright 2007, 2010 John Maddock and Paul A. Bristow.
   Distributed under the Boost Software License, Version 1.0.
   (See accompanying file LICENSE_1_0.txt or copy at
   http://www.boost.org/LICENSE_1_0.txt).

@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (c) 2001-2006 Joel de Guzman
+    Copyright (c) 2001-2011 Joel de Guzman
     Copyright (c) 2005-2006 Dan Marsden
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying 
@@ -121,14 +121,14 @@ namespace
 
         template<typename Lhs, typename Rhs>
         struct result<poly_combine(Lhs, Rhs)>
-            : boost::remove_reference<Rhs>
+            : boost::remove_reference<Lhs>
         {};
         
         template<typename Lhs, typename Rhs>
         typename result<poly_combine(Lhs,Rhs)>::type
         operator()(const Lhs& lhs, const Rhs& rhs) const
         {
-            return rhs + boost::fusion::at_c<0>(lhs) * boost::fusion::at_c<1>(lhs);
+            return lhs + boost::fusion::at_c<0>(rhs) * boost::fusion::at_c<1>(rhs);
         }
     };
 

@@ -1,28 +1,35 @@
-//  fstream_test.cpp  --------------------------------------------------------//
+//  fstream_test.cpp  ------------------------------------------------------------------//
 
-//  Copyright Beman Dawes 2002.
-//  Use, modification, and distribution is subject to the Boost Software
-//  License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
+//  Copyright Beman Dawes 2002
 
-//  See library home page at http://www.boost.org/libs/filesystem
+//  Distributed under the Boost Software License, Version 1.0.
+//  See http://www.boost.org/LICENSE_1_0.txt
+
+//  Library home page: http://www.boost.org/libs/filesystem
 
 #include <boost/config/warning_disable.hpp>
 
 //  See deprecated_test for tests of deprecated features
-#define BOOST_FILESYSTEM_NO_DEPRECATED
+#ifndef BOOST_FILESYSTEM_NO_DEPRECATED 
+#  define BOOST_FILESYSTEM_NO_DEPRECATED
+#endif
+#ifndef BOOST_SYSTEM_NO_DEPRECATED 
+#  define BOOST_SYSTEM_NO_DEPRECATED
+#endif
 
 #include <boost/filesystem/fstream.hpp>
+
+#include <boost/config.hpp>
+# if defined( BOOST_NO_STD_WSTRING )
+#   error Configuration not supported: Boost.Filesystem V3 and later requires std::wstring support
+# endif
+
 #include <boost/filesystem/operations.hpp>
 #include <string>
 #include <iostream>
 #include <cstdio> // for std::remove
 
-#include "../src/utf8_codecvt_facet.hpp"
-
-#ifndef BOOST_FILESYSTEM_NARROW_ONLY
-#  include "lpath.hpp"
-#endif
+#include <boost/filesystem/detail/utf8_codecvt_facet.hpp>
 
 namespace fs = boost::filesystem;
 
@@ -32,149 +39,131 @@ namespace fs = boost::filesystem;
 #endif
 
 #include <boost/detail/lightweight_test.hpp>
+#include <boost/detail/lightweight_main.hpp>
 
 namespace
 {
   bool cleanup = true;
   
-  template< class Path >
-  void test( const Path & p )
+  void test(const fs::path & p)
   {
-#  if !BOOST_WORKAROUND( BOOST_MSVC, <= 1200 ) // VC++ 6.0 can't handle open
-    { 
+    fs::remove(p);
+    {
       std::cout << " in test 1\n";
-      fs::filebuf fb;
-      fb.open( p, std::ios_base::in );
-      BOOST_TEST( fb.is_open() == fs::exists( p ) );
+      fs::filebuf fb1;
+      fb1.open(p, std::ios_base::out);
+      BOOST_TEST(fb1.is_open());
     }
     {
       std::cout << " in test 2\n";
-      fs::filebuf fb1;
-      fb1.open( p, std::ios_base::out );
-      BOOST_TEST( fb1.is_open() );
+      fs::filebuf fb2;
+      fb2.open(p, std::ios_base::in);
+      BOOST_TEST(fb2.is_open());
     }
     {
       std::cout << " in test 3\n";
-      fs::filebuf fb2;
-      fb2.open( p, std::ios_base::in );
-      BOOST_TEST( fb2.is_open() );
+      fs::ifstream tfs(p);
+      BOOST_TEST(tfs.is_open());
     }
-#  else
-    std::cout << "<note>\n";
-    std::cout <<
-      "VC++6.0 does not support boost::filesystem open()\n";
-#  endif
     {
       std::cout << " in test 4\n";
-      fs::ifstream tfs( p );
-      BOOST_TEST( tfs.is_open() );
-    }
-    {
-      std::cout << " in test 4.1\n";
-      fs::ifstream tfs( p / p.filename() ); // should fail
-      BOOST_TEST( !tfs.is_open() );
+      fs::ifstream tfs(p / p.filename()); // should fail
+      BOOST_TEST(!tfs.is_open());
     }
     {
       std::cout << " in test 5\n";
-      fs::ifstream tfs( p, std::ios_base::in );
-      BOOST_TEST( tfs.is_open() );
+      fs::ifstream tfs(p, std::ios_base::in);
+      BOOST_TEST(tfs.is_open());
     }
-#  if !BOOST_WORKAROUND( BOOST_MSVC, <= 1200 ) // VC++ 6.0 can't handle open
     {
       std::cout << " in test 6\n";
       fs::ifstream tfs;
-      tfs.open( p );
-      BOOST_TEST( tfs.is_open() );
+      tfs.open(p);
+      BOOST_TEST(tfs.is_open());
     }
     {
       std::cout << " in test 7\n";
       fs::ifstream tfs;
-      tfs.open( p, std::ios_base::in );
-      BOOST_TEST( tfs.is_open() );
+      tfs.open(p, std::ios_base::in);
+      BOOST_TEST(tfs.is_open());
     }
-#  endif
     {
       std::cout << " in test 8\n";
-      fs::ofstream tfs( p );
-      BOOST_TEST( tfs.is_open() );
+      fs::ofstream tfs(p);
+      BOOST_TEST(tfs.is_open());
     }
     {
       std::cout << " in test 9\n";
-      fs::ofstream tfs( p, std::ios_base::out );
-      BOOST_TEST( tfs.is_open() );
+      fs::ofstream tfs(p, std::ios_base::out);
+      BOOST_TEST(tfs.is_open());
     }
-#  if !BOOST_WORKAROUND( BOOST_MSVC, <= 1200 ) // VC++ 6.0 can't handle open
     {
       std::cout << " in test 10\n";
       fs::ofstream tfs;
-      tfs.open( p );
-      BOOST_TEST( tfs.is_open() );
+      tfs.open(p);
+      BOOST_TEST(tfs.is_open());
     }
     {
       std::cout << " in test 11\n";
       fs::ofstream tfs;
-      tfs.open( p, std::ios_base::out );
-      BOOST_TEST( tfs.is_open() );
+      tfs.open(p, std::ios_base::out);
+      BOOST_TEST(tfs.is_open());
     }
-# endif
     {
       std::cout << " in test 12\n";
-      fs::fstream tfs( p );
-      BOOST_TEST( tfs.is_open() );
+      fs::fstream tfs(p);
+      BOOST_TEST(tfs.is_open());
     }
     {
       std::cout << " in test 13\n";
-      fs::fstream tfs( p, std::ios_base::in|std::ios_base::out );
-      BOOST_TEST( tfs.is_open() );
+      fs::fstream tfs(p, std::ios_base::in|std::ios_base::out);
+      BOOST_TEST(tfs.is_open());
     }
-#  if !BOOST_WORKAROUND( BOOST_MSVC, <= 1200 ) // VC++ 6.0 can't handle open
     {
       std::cout << " in test 14\n";
       fs::fstream tfs;
-      tfs.open( p );
-      BOOST_TEST( tfs.is_open() );
+      tfs.open(p);
+      BOOST_TEST(tfs.is_open());
     }
     {
       std::cout << " in test 15\n";
       fs::fstream tfs;
-      tfs.open( p, std::ios_base::in|std::ios_base::out );
-      BOOST_TEST( tfs.is_open() );
+      tfs.open(p, std::ios_base::in|std::ios_base::out);
+      BOOST_TEST(tfs.is_open());
     }
-#  endif
 
-    if ( cleanup ) fs::remove( p );
+    if (cleanup)
+      fs::remove(p);
 
   } // test
 } // unnamed namespace
 
-int main( int argc, char*[] )
+int cpp_main(int argc, char*[])
 {
-  if ( argc > 1 ) cleanup = false;
+  if (argc > 1) cleanup = false;
 
-  // test fs::path
-  std::cout << "path tests:\n";
-  test( fs::path( "fstream_test_foo" ) );
+  std::cout << "BOOST_FILESYSTEM_C_STR defined as \""
+            << BOOST_STRINGIZE(BOOST_FILESYSTEM_C_STR) << "\"\n";
 
-#ifndef BOOST_FILESYSTEM_NARROW_ONLY
+  // test narrow characters
+  std::cout << "narrow character tests:\n";
+  test("narrow_fstream_test");
+
 
   // So that tests are run with known encoding, use Boost UTF-8 codecvt
   std::locale global_loc = std::locale();
-  std::locale loc( global_loc, new fs::detail::utf8_codecvt_facet );
-  fs::wpath_traits::imbue( loc );
+  std::locale loc(global_loc, new fs::detail::utf8_codecvt_facet);
+  fs::path::imbue(loc);
 
-  // test fs::wpath
-  //  x2780 is circled 1 against white background == e2 9e 80 in UTF-8
-  //  x2781 is circled 2 against white background == e2 9e 81 in UTF-8
-  std::cout << "\nwpath tests:\n";
-  test( fs::wpath( L"fstream_test_\x2780" ) );
-
-  // test user supplied basic_path
-  const long lname[] = { 'f', 's', 'r', 'e', 'a', 'm', '_', 't', 'e', 's',
-    't', '_', 'l', 'p', 'a', 't', 'h', 0 };
-  std::cout << "\nlpath tests:\n";
-  test( user::lpath( lname ) );
-
-#endif
+  // test with some wide characters
+  //  \u2780 is circled 1 against white background == e2 9e 80 in UTF-8
+  //  \u2781 is circled 2 against white background == e2 9e 81 in UTF-8
+  //  \u263A is a white smiling face
+  std::cout << "\nwide character tests:\n";
+  std::wstring ws(L"wide_fstream_test_");
+  ws += 0x2780;
+  ws += 0x263A;
+  test(ws);
 
   return ::boost::report_errors();
 }

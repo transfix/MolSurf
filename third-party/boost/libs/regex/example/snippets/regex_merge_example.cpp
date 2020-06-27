@@ -42,7 +42,7 @@ void load_file(std::string& s, std::istream& is)
 {
    s.erase();
    if(is.bad()) return;
-   s.reserve(is.rdbuf()->in_avail());
+   s.reserve(static_cast<std::string::size_type>(is.rdbuf()->in_avail()));
    char c;
    while(is.get(c))
    {
@@ -86,8 +86,8 @@ int main(int argc, const char** argv)
    return 0;
 }
 
-extern const char* pre_expression = "(<)|(>)|\\r";
-extern const char* pre_format = "(?1&lt;)(?2&gt;)";
+const char* pre_expression = "(<)|(>)|\\r";
+const char* pre_format = "(?1&lt;)(?2&gt;)";
 
 
 const char* expression_text = // preprocessor directives: index 1

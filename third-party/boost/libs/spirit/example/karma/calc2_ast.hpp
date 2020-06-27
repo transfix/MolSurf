@@ -1,6 +1,6 @@
 /*=============================================================================
-    Copyright (c) 2001-2009 Joel de Guzman
-    Copyright (c) 2001-2009 Hartmut Kaiser
+    Copyright (c) 2001-2010 Joel de Guzman
+    Copyright (c) 2001-2010 Hartmut Kaiser
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,10 +19,11 @@
 #define SPIRIT_EXAMPLE_CALC2_AST_APR_30_2008_1011AM
 
 #include <boost/variant.hpp>
-#include <boost/variant/get.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_function.hpp>
 #include <boost/spirit/include/phoenix_statement.hpp>
+#include <boost/spirit/include/karma_domain.hpp>
+#include <boost/spirit/include/support_attributes_fwd.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Our AST
@@ -82,16 +83,24 @@ namespace boost
         return boost::get<T>(expr.expr);
     }
 
-    // the specialization below tells Spirit to handle expression_ast as if it 
-    // where a 'real' variant
     namespace spirit { namespace traits
     {
-        template <typename T>
-        struct not_is_variant;
-
+        // the specialization below tells Spirit to handle expression_ast as 
+        // if it where a 'real' variant (if used with Spirit.Karma)
         template <>
-        struct not_is_variant<expression_ast>
+        struct not_is_variant<expression_ast, karma::domain>
           : mpl::false_ {};
+
+        // the specialization of variant_which allows to generically extract
+        // the current type stored in the given variant like type
+        template <>
+        struct variant_which<expression_ast>
+        {
+            static int call(expression_ast const& v)
+            {
+                return v.which();
+            }
+        };
     }}
 }
 

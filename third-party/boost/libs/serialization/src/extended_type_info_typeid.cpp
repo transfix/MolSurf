@@ -11,7 +11,7 @@
 
 #include <algorithm>
 #include <set>
-#include <cassert>
+#include <boost/assert.hpp>
 #include <typeinfo>
 #include <cstddef> // NULL
 
@@ -51,27 +51,28 @@ extended_type_info_typeid_0::is_less_than(
     // shortcut for common case
     if(this == & rhs)
         return false;
-    return static_cast<bool>(m_ti->before(
+    return 0 != m_ti->before(
         *(static_cast<const extended_type_info_typeid_0 &>(rhs).m_ti)
-    ));
+    );
 }
 
 BOOST_SERIALIZATION_DECL(bool) 
 extended_type_info_typeid_0::is_equal(
     const boost::serialization::extended_type_info & rhs
 ) const {
-    // shortcut for common case
-    if(this == & rhs)
-        return true;
-    return static_cast<bool>(
+    return 
+        // note: std::type_info == operator returns an int !!!
+        // the following permits conversion to bool without a warning.
+        ! (
         * m_ti 
-        == *(static_cast<const extended_type_info_typeid_0 &>(rhs).m_ti)
-    );
+        != *(static_cast<const extended_type_info_typeid_0 &>(rhs).m_ti)
+        )
+    ;
 }
 
 BOOST_SERIALIZATION_DECL(BOOST_PP_EMPTY())
 extended_type_info_typeid_0::extended_type_info_typeid_0(
-	const char * key
+    const char * key
 ) :
     extended_type_info(EXTENDED_TYPE_INFO_TYPE_KEY, key),
     m_ti(NULL)
@@ -95,7 +96,7 @@ extended_type_info_typeid_0::type_unregister()
             tkmap & x = singleton<tkmap>::get_mutable_instance();
             tkmap::iterator start = x.lower_bound(this);
             tkmap::iterator end = x.upper_bound(this);
-            assert(start != end);
+            BOOST_ASSERT(start != end);
 
             // remove entry in map which corresponds to this type
             do{
@@ -109,10 +110,22 @@ extended_type_info_typeid_0::type_unregister()
     m_ti = NULL;
 }
 
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#  pragma warning(disable : 4511 4512)
+#endif
+
 // this derivation is used for creating search arguments
 class extended_type_info_typeid_arg : 
     public extended_type_info_typeid_0
 {
+    virtual void * construct(unsigned int /*count*/, ...) const{
+        BOOST_ASSERT(false);
+        return NULL;
+    }
+    virtual void destroy(void const * const /*p*/) const {
+        BOOST_ASSERT(false);
+    }
 public:
     extended_type_info_typeid_arg(const std::type_info & ti) :
         extended_type_info_typeid_0(NULL)
@@ -126,6 +139,10 @@ public:
         m_ti = NULL;
     }
 };
+
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
 
 BOOST_SERIALIZATION_DECL(const extended_type_info *)
 extended_type_info_typeid_0::get_extended_type_info(

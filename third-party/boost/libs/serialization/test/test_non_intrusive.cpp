@@ -16,17 +16,18 @@
 #include <cstdlib> // for rand()
 #include <cstdio>  // remove
 #include <cmath>   // for fabs()
-#include <limits>
-
 #include <boost/config.hpp>
+#include <boost/detail/workaround.hpp>
+#include <boost/limits.hpp>
+
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{
-    using ::rand;
-    using ::fabs;
+    using ::rand; 
+    using ::fabs; 
     using ::remove;
-#ifndef UNDER_CE    
-    using ::numeric_limits; 
-#endif
+    #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(UNDER_CE)
+        using ::numeric_limits;
+    #endif
 }
 #endif
 
@@ -51,8 +52,8 @@ public:
 };
 
 A::A() : 
-    s(std::rand()),
-    t(std::rand()),
+    s(static_cast<signed char>(0xff & std::rand())),
+    t(static_cast<signed char>(0xff & std::rand())),
     u(std::rand()),
     v(std::rand()),
     w((float)std::rand() / std::rand()),
@@ -74,13 +75,13 @@ bool A::operator==(const A &rhs) const
 
 bool A::operator<(const A &rhs) const
 {
-    if(! s == rhs.s )
+    if(! (s == rhs.s) )
         return s < rhs.s;
-    if(! t == rhs.t )
+    if(! (t == rhs.t) )
         return t < rhs.t;
-    if(! u == rhs.u )
+    if(! (u == rhs.u) )
         return t < rhs.u; 
-    if(! v == rhs.v )
+    if(! (v == rhs.v) )
         return t < rhs.v;
     if(! (std::fabs(w - rhs.w) < std::numeric_limits<float>::round_error() ) )
         return t < rhs.w; 

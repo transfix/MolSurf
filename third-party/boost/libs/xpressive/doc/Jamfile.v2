@@ -15,7 +15,10 @@ doxygen autodoc
                                    \"BOOST_DEDUCED_TYPENAME=typename\" \\
                                    \"BOOST_XPRESSIVE_GLOBAL_MARK_TAG(x,y)=mark_tag const x(y)\" \\
                                    \"BOOST_STATIC_CONSTANT(x,y)=static x const y\" \\
-                                   \"BOOST_XPR_NONDEDUCED_TYPE_(X)=X\""
+                                   \"BOOST_XPR_NONDEDUCED_TYPE_(X)=X\" \\
+                                   \"UNREF(X)=typename remove_reference<X>::type\" \\
+                                   \"UNCV(X)=typename remove_const<X>::type\" \\
+                                   \"UNCVREF(X)=typename remove_const<typename remove_reference<X>::type>::type\""
         <doxygen:param>HIDE_UNDOC_MEMBERS=NO
         <doxygen:param>EXTRACT_PRIVATE=NO
         <doxygen:param>ENABLE_PREPROCESSING=YES
@@ -34,6 +37,7 @@ boostbook standalone
     :
         xpressive
     :
+        <xsl:param>boost.root=../../../..
         <xsl:param>toc.max.depth=3
         <xsl:param>toc.section.depth=3
         <xsl:param>chunk.section.depth=3

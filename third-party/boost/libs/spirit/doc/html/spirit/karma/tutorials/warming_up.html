@@ -1,28 +1,28 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <title>Warming up</title>
-<link rel="stylesheet" href="../../../../../../../doc/html/boostbook.css" type="text/css">
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.0">
-<link rel="home" href="../../../index.html" title="Spirit 2.1">
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="../../../index.html" title="Spirit 2.5.2">
 <link rel="up" href="../tutorials.html" title="Tutorials">
 <link rel="prev" href="quick_start.html" title="Quick Start">
-<link rel="next" href="semantic_actions.html" title="Semantic Actions">
+<link rel="next" href="semantic_actions.html" title="Generator Semantic Actions">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table cellpadding="2" width="100%"><tr>
 <td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
 <td align="center"><a href="../../../../../../../index.html">Home</a></td>
-<td align="center"><a href="../../../../../../libraries.htm">Libraries</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
 <td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
 <td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
 <td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="quick_start.html"><img src="../../../../../../../doc/html/images/prev.png" alt="Prev"></a><a accesskey="u" href="../tutorials.html"><img src="../../../../../../../doc/html/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/html/images/home.png" alt="Home"></a><a accesskey="n" href="semantic_actions.html"><img src="../../../../../../../doc/html/images/next.png" alt="Next"></a>
+<a accesskey="p" href="quick_start.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../tutorials.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="semantic_actions.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
-<div class="section" title="Warming up">
+<div class="section">
 <div class="titlepage"><div><div><h4 class="title">
 <a name="spirit.karma.tutorials.warming_up"></a><a class="link" href="warming_up.html" title="Warming up">Warming up</a>
 </h4></div></div></div>
@@ -30,9 +30,9 @@
           Learning how to use <span class="emphasis"><em>Spirit.Karma</em></span> is really simple.
           We will start from trivial examples, ramping up as we go.
         </p>
-<a name="spirit.karma.tutorials.warming_up.trivial_example__1_generating_a_number"></a><h6>
-<a name="id756516"></a>
-          <a class="link" href="warming_up.html#spirit.karma.tutorials.warming_up.trivial_example__1_generating_a_number">Trivial
+<h6>
+<a name="spirit.karma.tutorials.warming_up.h0"></a>
+          <span><a name="spirit.karma.tutorials.warming_up.trivial_example__1_generating_a_number"></a></span><a class="link" href="warming_up.html#spirit.karma.tutorials.warming_up.trivial_example__1_generating_a_number">Trivial
           Example #1 Generating a number</a>
         </h6>
 <p>
@@ -50,9 +50,9 @@
           Actually, both libraries are using the very same variable instance to refer
           to a floating point generator or parser: <code class="computeroutput"><span class="identifier">double_</span></code>.
         </p>
-<a name="spirit.karma.tutorials.warming_up.trivial_example__2_generating_two_numbers"></a><h6>
-<a name="id756559"></a>
-          <a class="link" href="warming_up.html#spirit.karma.tutorials.warming_up.trivial_example__2_generating_two_numbers">Trivial
+<h6>
+<a name="spirit.karma.tutorials.warming_up.h1"></a>
+          <span><a name="spirit.karma.tutorials.warming_up.trivial_example__2_generating_two_numbers"></a></span><a class="link" href="warming_up.html#spirit.karma.tutorials.warming_up.trivial_example__2_generating_two_numbers">Trivial
           Example #2 Generating two numbers</a>
         </h6>
 <p>
@@ -76,7 +76,7 @@
           of smaller generators. Whitespace between numbers can implicitly be inserted
           depending on how the generator is invoked (see below).
         </p>
-<div class="note" title="Note"><table border="0" summary="Note">
+<div class="note"><table border="0" summary="Note">
 <tr>
 <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../images/note.png"></td>
 <th align="left">Note</th>
@@ -88,9 +88,9 @@
             up with one bigger generator. This is an important concept.
           </p></td></tr>
 </table></div>
-<a name="spirit.karma.tutorials.warming_up.trivial_example__3_generating_one_or_more_numbers"></a><h6>
-<a name="id756644"></a>
-          <a class="link" href="warming_up.html#spirit.karma.tutorials.warming_up.trivial_example__3_generating_one_or_more_numbers">Trivial
+<h6>
+<a name="spirit.karma.tutorials.warming_up.h2"></a>
+          <span><a name="spirit.karma.tutorials.warming_up.trivial_example__3_generating_one_or_more_numbers"></a></span><a class="link" href="warming_up.html#spirit.karma.tutorials.warming_up.trivial_example__3_generating_one_or_more_numbers">Trivial
           Example #3 Generating one or more numbers</a>
         </h6>
 <p>
@@ -110,12 +110,12 @@
           Any expression that evaluates to a generator may be used with the Kleene
           Star. Keep in mind, though, that due to C++ operator precedence rules you
           may need to put the expression in parentheses for complex expressions.
-          As above, whitespace can be inserted implicitely in between the generated
+          As above, whitespace can be inserted implicitly in between the generated
           numbers, if needed.
         </p>
-<a name="spirit.karma.tutorials.warming_up.trivial_example__4_generating_a_comma_delimited_list_of_numbers"></a><h6>
-<a name="id756692"></a>
-          <a class="link" href="warming_up.html#spirit.karma.tutorials.warming_up.trivial_example__4_generating_a_comma_delimited_list_of_numbers">Trivial
+<h6>
+<a name="spirit.karma.tutorials.warming_up.h3"></a>
+          <span><a name="spirit.karma.tutorials.warming_up.trivial_example__4_generating_a_comma_delimited_list_of_numbers"></a></span><a class="link" href="warming_up.html#spirit.karma.tutorials.warming_up.trivial_example__4_generating_a_comma_delimited_list_of_numbers">Trivial
           Example #4 Generating a comma-delimited list of numbers</a>
         </h6>
 <p>
@@ -136,9 +136,9 @@
           Star encloses the complete expression above, repeating the whole pattern
           in the generated output zero or more times.
         </p>
-<a name="spirit.karma.tutorials.warming_up.let_s_generate_"></a><h6>
-<a name="id756827"></a>
-          <a class="link" href="warming_up.html#spirit.karma.tutorials.warming_up.let_s_generate_">Let's
+<h6>
+<a name="spirit.karma.tutorials.warming_up.h4"></a>
+          <span><a name="spirit.karma.tutorials.warming_up.let_s_generate_"></a></span><a class="link" href="warming_up.html#spirit.karma.tutorials.warming_up.let_s_generate_">Let's
           Generate!</a>
         </h6>
 <p>
@@ -148,17 +148,17 @@
         </p>
 <div class="orderedlist"><ol class="orderedlist" type="1">
 <li class="listitem">
-            An output iterator accepting the generated characters
-          </li>
+              An output iterator accepting the generated characters
+            </li>
 <li class="listitem">
-            The generator expression
-          </li>
+              The generator expression
+            </li>
 <li class="listitem">
-            Another generator called the delimiting generator
-          </li>
+              Another generator called the delimiting generator
+            </li>
 <li class="listitem">
-            The data to format and output
-          </li>
+              The data to format and output
+            </li>
 </ol></div>
 <p>
           While comparing this minimal example with an equivalent parser example
@@ -169,8 +169,8 @@
           given parser expression allowing to verify whether the input is parsable.
           For generators this mode doesn't make any sense. What is output generation
           without generating any output? So we always will have to supply the data
-          the output should be generated from. In our example we supply a vector
-          of <code class="computeroutput"><span class="keyword">double</span></code> numbers as the last
+          the output should be generated from. In our example we supply a list of
+          <code class="computeroutput"><span class="keyword">double</span></code> numbers as the last
           parameter to the function <code class="computeroutput"><span class="identifier">generate_delimited</span></code>
           (see code below).
         </p>
@@ -192,9 +192,6 @@
           please refer to <a href="../../../../../example/karma/num_list1.cpp" target="_top">num_list1.cpp</a>).
         </p>
 <p>
-          </p>
-<p>
-            
 </p>
 <pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">OutputIterator</span><span class="special">&gt;</span>
 <span class="keyword">bool</span> <span class="identifier">generate_numbers</span><span class="special">(</span><span class="identifier">OutputIterator</span><span class="special">&amp;</span> <span class="identifier">sink</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">list</span><span class="special">&lt;</span><span class="keyword">double</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">v</span><span class="special">)</span>
@@ -204,19 +201,17 @@
     <span class="keyword">using</span> <span class="identifier">ascii</span><span class="special">::</span><span class="identifier">space</span><span class="special">;</span>
 
     <span class="keyword">bool</span> <span class="identifier">r</span> <span class="special">=</span> <span class="identifier">generate_delimited</span><span class="special">(</span>
-        <span class="identifier">sink</span><span class="special">,</span>                           <span class="comment">// destination: output iterator
-</span>        <span class="identifier">double_</span> <span class="special">&lt;&lt;</span> <span class="special">*(</span><span class="char">','</span> <span class="special">&lt;&lt;</span> <span class="identifier">double_</span><span class="special">),</span>   <span class="comment">// the generator
-</span>        <span class="identifier">space</span><span class="special">,</span>                          <span class="comment">// the delimiter-generator
-</span>        <span class="identifier">v</span>                               <span class="comment">// the data to output 
-</span>    <span class="special">);</span>
+        <span class="identifier">sink</span><span class="special">,</span>                           <span class="comment">// destination: output iterator</span>
+        <span class="identifier">double_</span> <span class="special">&lt;&lt;</span> <span class="special">*(</span><span class="char">','</span> <span class="special">&lt;&lt;</span> <span class="identifier">double_</span><span class="special">),</span>   <span class="comment">// the generator</span>
+        <span class="identifier">space</span><span class="special">,</span>                          <span class="comment">// the delimiter-generator</span>
+        <span class="identifier">v</span>                               <span class="comment">// the data to output </span>
+    <span class="special">);</span>
     <span class="keyword">return</span> <span class="identifier">r</span><span class="special">;</span>
 <span class="special">}</span>
 </pre>
 <p>
-          </p>
-<p>
         </p>
-<div class="note" title="Note"><table border="0" summary="Note">
+<div class="note"><table border="0" summary="Note">
 <tr>
 <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../images/note.png"></td>
 <th align="left">Note</th>
@@ -244,7 +239,7 @@
           or disk full, etc.). Another reason might be that the data doesn't match
           the requirements of a particular generator.
         </p>
-<div class="note" title="Note"><table border="0" summary="Note">
+<div class="note"><table border="0" summary="Note">
 <tr>
 <td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../images/note.png"></td>
 <th align="left">Note</th>
@@ -267,7 +262,7 @@
             a character literal generator.
           </p>
 <p>
-            The problem with omiting the <code class="computeroutput"><span class="identifier">lit</span></code>
+            The problem with omitting the <code class="computeroutput"><span class="identifier">lit</span></code>
             should be obvious: <code class="computeroutput"><span class="char">'a'</span> <span class="special">&lt;&lt;</span>
             <span class="char">'b'</span></code> is not a spirit generator, it
             is a numeric expression, left-shifting the ASCII (or another encoding)
@@ -295,8 +290,7 @@
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>
-<td align="right"><div class="copyright-footer">Copyright © 2001-2009 Joel
-      de Guzman, Hartmut Kaiser<p>
+<td align="right"><div class="copyright-footer">Copyright &#169; 2001-2011 Joel de Guzman, Hartmut Kaiser<p>
         Distributed under the Boost Software License, Version 1.0. (See accompanying
         file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
       </p>
@@ -304,7 +298,7 @@
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="quick_start.html"><img src="../../../../../../../doc/html/images/prev.png" alt="Prev"></a><a accesskey="u" href="../tutorials.html"><img src="../../../../../../../doc/html/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/html/images/home.png" alt="Home"></a><a accesskey="n" href="semantic_actions.html"><img src="../../../../../../../doc/html/images/next.png" alt="Next"></a>
+<a accesskey="p" href="quick_start.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../tutorials.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="semantic_actions.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
 </body>
 </html>

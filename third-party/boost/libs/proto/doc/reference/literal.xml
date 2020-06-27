@@ -1,4 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2012 Eric Niebler
+
+  Distributed under the Boost
+  Software License, Version 1.0. (See accompanying
+  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+  -->
 <header name="boost/proto/literal.hpp">
   <para>
     The
@@ -20,7 +27,7 @@
         </template>
         <inherit>
           <type>
-  <classname>proto::extends</classname>&lt;typename <classname>proto::terminal</classname>&lt;T&gt;::type, proto::literal&lt;T, Domain&gt;, Domain&gt;</type>
+  <classname>proto::extends</classname>&lt;<classname>proto::basic_expr</classname>&lt;<classname>proto::tag::terminal</classname>, <classname>proto::term</classname>&lt; T &gt; &gt;, proto::literal&lt;T, Domain&gt;, Domain&gt;</type>
         </inherit>
         <purpose>A simple wrapper for a terminal, provided for ease of use.</purpose>
         <description>
@@ -36,7 +43,7 @@
         </description>
         <typedef name="X">
           <purpose>For exposition only</purpose>
-          <type>typename <classname>proto::terminal</classname>&lt;T&gt;::type</type>
+          <type><classname>proto::basic_expr</classname>&lt;<classname>proto::tag::terminal</classname>, <classname>proto::term</classname>&lt; T &gt; &gt;</type>
         </typedef>
         <typedef name="value_type">
           <type>typename <classname>proto::result_of::value</classname>&lt;X&gt;::type</type>
@@ -61,6 +68,7 @@
             </returns>
           </method>
         </method-group>
+        <constructor/>
         <constructor>
           <template>
             <template-type-parameter name="U"/>

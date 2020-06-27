@@ -1,5 +1,7 @@
 [/==============================================================================
-    Copyright (C) 2001-2007 Joel de Guzman, Dan Marsden, Tobias Schwinger
+    Copyright (C) 2001-2011 Joel de Guzman
+    Copyright (C) 2006 Dan Marsden
+    Copyright (C) 2010 Christopher Schmidt
 
     Use, modification and distribution is subject to the Boost Software
     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -7,9 +9,9 @@
 ===============================================================================/]
 [library Fusion
     [quickbook 1.3]
-    [version 2.0]
+    [version 2.1]
     [authors [de Guzman, Joel], [Marsden, Dan], [Schwinger, Tobias]]
-    [copyright 2001 2002 2003 2004 2005 2006 2007 Joel de Guzman, Dan Marsden, Tobias Schwinger]
+    [copyright 2001 2002 2003 2004 2005 2006 2011 2012 Joel de Guzman, Dan Marsden, Tobias Schwinger]
     [purpose Statically Typed Heterogeneous Data Structures and Algorithms]
     [license
         Distributed under the Boost Software License, Version 1.0.
@@ -79,6 +81,7 @@
 [def __forward_iterator__       [link fusion.iterator.concepts.forward_iterator Forward Iterator]]
 [def __bidirectional_iterator__ [link fusion.iterator.concepts.bidirectional_iterator Bidirectional Iterator]]
 [def __random_access_iterator__ [link fusion.iterator.concepts.random_access_iterator Random Access Iterator]]
+[def __associative_iterator__   [link fusion.iterator.concepts.associative_iterator Associative Iterator]]
 
 [def __next__                   [link fusion.iterator.functions.next `next`]]
 [def __prior__                  [link fusion.iterator.functions.prior `prior`]]
@@ -86,6 +89,7 @@
 [def __advance_c__              [link fusion.iterator.functions.advance_c `advance_c`]]
 [def __distance__               [link fusion.iterator.functions.distance `distance`]]
 [def __deref__                  [link fusion.iterator.functions.deref `deref`]]
+[def __deref_data__             [link fusion.iterator.functions.deref_data `deref_data`]]
 
 [def __result_of_next__         [link fusion.iterator.metafunctions.next `result_of::next`]]
 [def __result_of_prior__        [link fusion.iterator.metafunctions.prior `result_of::prior`]]
@@ -95,7 +99,9 @@
 [def __result_of_distance__     [link fusion.iterator.metafunctions.distance `result_of::distance`]]
 [def __result_of_deref__        [link fusion.iterator.metafunctions.deref `result_of::deref`]]
 [def __result_of_value_of__     [link fusion.iterator.metafunctions.value_of `result_of::value_of`]]
-[def __value_of__               [link fusion.iterator.metafunctions.value_of `value_of`]]
+[def __result_of_key_of__       [link fusion.iterator.metafunctions.key_of `result_of::key_of`]]
+[def __result_of_value_of_data__ [link fusion.iterator.metafunctions.value_of_data `result_of::value_of_data`]]
+[def __result_of_deref_data__   [link fusion.iterator.metafunctions.deref_data `result_of::deref_data`]]
 
 [def __sequence__               [link fusion.sequence Sequence]]
 [def __sequence_concepts__      [link fusion.sequence.concepts Sequence Concepts]]
@@ -110,6 +116,9 @@
 [def __vector__                 [link fusion.container.vector `vector`]]
 [def __cons__                   [link fusion.container.cons `cons`]]
 [def __list__                   [link fusion.container.list `list`]]
+[def __deque__                  [link fusion.container.deque `deque`]]
+[def __front_extended_deque__   [link fusion.container.front_extended_deque `front_extended_deque`]]
+[def __back_extended_deque__    [link fusion.container.back_extended_deque `back_extended_deque`]]
 [def __set__                    [link fusion.container.set `set`]]
 [def __map__                    [link fusion.container.map `map`]]
 
@@ -123,9 +132,24 @@
 [def __reverse_view__           [link fusion.view.reverse_view `reverse_view`]]
 [def __zip_view__               [link fusion.view.zip_view `zip_view`]]
 
+[def __array__                  [link fusion.adapted.array array]]
 [def __std_pair__               [link fusion.adapted.std__pair `std::pair`]]
 [def __boost_array__            [link fusion.adapted.boost__array `boost::array`]]
 [def __mpl_sequence__           [link fusion.adapted.mpl_sequence mpl sequence]]
+[def __adapt_tpl_struct__       [link fusion.adapted.adapt_tpl_struct `BOOST_FUSION_ADAPT_TPL_STRUCT`]]
+[def __adapt_struct_named__     [link fusion.adapted.adapt_struct_named `BOOST_FUSION_ADAPT_STRUCT_NAMED`]]
+[def __adapt_struct_named_ns__  [link fusion.adapted.adapt_struct_named `BOOST_FUSION_ADAPT_STRUCT_NAMED_NS`]]
+[def __adapt_assoc_tpl_struct__ [link fusion.adapted.adapt_assoc_tpl_struct `BOOST_FUSION_ADAPT_ASSOC_TPL_STRUCT`]]
+[def __adapt_assoc_struct_named__ [link fusion.adapted.adapt_assoc_struct_named `BOOST_FUSION_ADAPT_ASSOC_STRUCT_NAMED`]]
+[def __adapt_assoc_struct_named_ns__ [link fusion.adapted.adapt_assoc_struct_named `BOOST_FUSION_ADAPT_ASSOC_STRUCT_NAMED_NS`]]
+[def __adapt_adt__              [link fusion.adapted.adapt_adt `BOOST_FUSION_ADAPT_ADT`]]
+[def __adapt_tpl_adt__          [link fusion.adapted.adapt_tpl_adt `BOOST_FUSION_ADAPT_TPL_ADT`]]
+[def __adapt_assoc_adt__        [link fusion.adapted.adapt_assoc_adt `BOOST_FUSION_ADAPT_ASSOC_ADT`]]
+[def __adapt_assoc_tpl_adt__    [link fusion.adapted.adapt_assoc_tpl_adt `BOOST_FUSION_ADAPT_ASSOC_TPL_ADT`]]
+[def __define_struct__          [link fusion.adapted.define_struct `BOOST_FUSION_DEFINE_STRUCT`]]
+[def __define_tpl_struct__      [link fusion.adapted.define_tpl_struct `BOOST_FUSION_DEFINE_TPL_STRUCT`]]
+[def __define_assoc_struct__    [link fusion.adapted.define_assoc_struct `BOOST_FUSION_DEFINE_ASSOC_STRUCT`]]
+[def __define_assoc_tpl_struct__ [link fusion.adapted.define_assoc_tpl_struct `BOOST_FUSION_DEFINE_ASSOC_TPL_STRUCT`]]
 
 [def __intrinsic__              [link fusion.sequence.intrinsic Intrinsic]]
 [def __intrinsics__             [link fusion.sequence.intrinsic Intrinsics]]
@@ -149,7 +173,6 @@
 [def __result_of_at_key__       [link fusion.sequence.intrinsic.metafunctions.at_key `result_of::at_key`]]
 [def __has_key__                [link fusion.sequence.intrinsic.functions.has_key `has_key`]]
 [def __result_of_has_key__      [link fusion.sequence.intrinsic.metafunctions.has_key `result_of::has_key`]]
-[def __value_at_key__           [link fusion.sequence.intrinsic.metafunctions.value_at_key `value_at_key`]]
 [def __result_of_value_at__     [link fusion.sequence.intrinsic.metafunctions.value_at `result_of::value_at`]]
 [def __result_of_value_at_c__   [link fusion.sequence.intrinsic.metafunctions.value_at_c `result_of::value_at_c`]]
 [def __result_of_value_at_key__ [link fusion.sequence.intrinsic.metafunctions.value_at_key `result_of::value_at_key`]]
@@ -178,12 +201,16 @@
 [def __result_of_make_cons__    [link fusion.container.generation.metafunctions.make_cons `result_of::make_cons`]]
 [def __make_list__              [link fusion.container.generation.functions.make_list `make_list`]]
 [def __result_of_make_list__    [link fusion.container.generation.metafunctions.make_list `result_of::make_list`]]
+[def __make_deque__             [link fusion.container.generation.functions.make_deque `make_deque`]]
+[def __result_of_make_deque__   [link fusion.container.generation.metafunctions.make_deque `result_of::make_deque`]]
 [def __make_set__               [link fusion.container.generation.functions.make_set `make_set`]]
 [def __result_of_make_set__     [link fusion.container.generation.metafunctions.make_set `result_of::make_set`]]
 [def __make_map__               [link fusion.container.generation.functions.make_map `make_map`]]
 [def __result_of_make_map__     [link fusion.container.generation.metafunctions.make_map `result_of::make_map`]]
 [def __list_tie__               [link fusion.container.generation.functions.list_tie `list_tie`]]
 [def __result_of_list_tie__     [link fusion.container.generation.metafunctions.list_tie `result_of::list_tie`]]
+[def __deque_tie__              [link fusion.container.generation.functions.deque_tie `deque_tie`]]
+[def __result_of_deque_tie__    [link fusion.container.generation.metafunctions.deque_tie `result_of::deque_tie`]]
 
 [def __out__                    [link fusion.sequence.operator.i_o.out out]]
 [def __in__                     [link fusion.sequence.operator.i_o.in in]]
@@ -196,8 +223,15 @@
 
 [def __algorithm__              [link fusion.algorithm Algorithm]]
 [def __algorithms__             [link fusion.algorithm Algorithms]]
+[def __copy__                   [link fusion.algorithm.auxiliary.functions.copy `copy`]]
 [def __fold__                   [link fusion.algorithm.iteration.functions.fold `fold`]]
 [def __result_of_fold__         [link fusion.algorithm.iteration.metafunctions.fold `result_of::fold`]]
+[def __reverse_fold__           [link fusion.algorithm.iteration.functions.reverse_fold `reverse_fold`]]
+[def __result_of_reverse_fold__ [link fusion.algorithm.iteration.metafunctions.reverse_fold `result_of::reverse_fold`]]
+[def __iter_fold__              [link fusion.algorithm.iteration.functions.iter_fold `iter_fold`]]
+[def __result_of_iter_fold__    [link fusion.algorithm.iteration.metafunctions.iter_fold `result_of::iter_fold`]]
+[def __reverse_iter_fold__      [link fusion.algorithm.iteration.functions.reverse_iter_fold `reverse_iter_fold`]]
+[def __result_of_reverse_iter_fold__ [link fusion.algorithm.iteration.metafunctions.reverse_iter_fold `result_of::reverse_iter_fold`]]
 [def __accumulate__             [link fusion.algorithm.iteration.functions.accumulate `accumulate`]]
 [def __result_of_accumulate__   [link fusion.algorithm.iteration.metafunctions.accumulate `result_of::accumulate`]]
 [def __for_each__               [link fusion.algorithm.iteration.functions.for_each `for_each`]]
@@ -291,10 +325,12 @@
 [def __note_boost_ref__         [link fusion.notes.boost__ref `boost::ref`]]
 
 [def __quick_start__            [link fusion.quick_start Quick Start]]
-[def __organization__           [link fusion.organization Orgainization]]
+[def __organization__           [link fusion.organization Organization]]
 [def __extension__              [link fusion.extension Extension]]
-[def __sequence_facade__       [link fusion.extension.sequence_facade `sequence_facade`]]
-[def __iterator_facade__       [link fusion.extension.iterator_facade `iterator_facade`]]
+[def __sequence_facade__        [link fusion.extension.sequence_facade `sequence_facade`]]
+[def __iterator_facade__        [link fusion.extension.iterator_facade `iterator_facade`]]
+
+[def __adt_attribute_proxy__    [link fusion.notes.adt_attribute_proxy `adt_attribute_proxy`]]
 
 [include preface.qbk]
 [include introduction.qbk]

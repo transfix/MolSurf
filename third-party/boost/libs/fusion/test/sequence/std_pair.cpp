@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (c) 2001-2006 Joel de Guzman
+    Copyright (c) 2001-2011 Joel de Guzman
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying 
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -22,7 +22,10 @@
 #include <boost/fusion/sequence/comparison/less_equal.hpp>
 #include <boost/fusion/sequence/comparison/greater.hpp>
 #include <boost/fusion/sequence/comparison/greater_equal.hpp>
+#include <boost/fusion/mpl.hpp>
 #include <boost/fusion/support/is_view.hpp>
+#include <boost/mpl/is_sequence.hpp>
+#include <boost/mpl/front.hpp>
 #include <boost/mpl/assert.hpp>
 #include <iostream>
 #include <string>
@@ -33,7 +36,6 @@ main()
 {
     using namespace boost::fusion;
     using namespace boost;
-    using namespace std;
 
     std::cout << tuple_open('[');
     std::cout << tuple_close(']');
@@ -53,8 +55,8 @@ main()
         at_c<1>(p) = "mama mia";
         BOOST_TEST(p == make_vector(6, "mama mia"));
 
-        BOOST_STATIC_ASSERT(result_of::size<pair_type>::value == 2);
-        BOOST_STATIC_ASSERT(!result_of::empty<pair_type>::value);
+        BOOST_STATIC_ASSERT(boost::fusion::result_of::size<pair_type>::value == 2);
+        BOOST_STATIC_ASSERT(!boost::fusion::result_of::empty<pair_type>::value);
 
         BOOST_TEST(front(p) == 6);
         BOOST_TEST(back(p) == "mama mia");
@@ -84,6 +86,12 @@ main()
         // conversion from pair to list
         fusion::list<int, std::string> l(std::make_pair(123, "Hola!!!"));
         l = std::make_pair(123, "Hola!!!");
+    }
+
+    {
+        typedef std::pair<int, std::string> pair_type;
+        BOOST_MPL_ASSERT((mpl::is_sequence<pair_type>));
+        BOOST_MPL_ASSERT((boost::is_same<int, mpl::front<pair_type>::type>));
     }
 
     return boost::report_errors();

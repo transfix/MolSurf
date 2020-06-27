@@ -2,7 +2,7 @@
     Boost.Wave: A Standard compliant C++ preprocessor library
     http://www.boost.org/
 
-    Copyright (c) 2001-2009 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2012 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -10,6 +10,7 @@
 #if !defined(BOOST_WAVE_LIBS_WAVE_TEST_COLLECT_HOOKS_INFORMATION_HPP)
 #define BOOST_WAVE_LIBS_WAVE_TEST_COLLECT_HOOKS_INFORMATION_HPP
 
+#include <boost/config.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -53,6 +54,49 @@ inline String repr(boost::wave::util::file_position<String> const& pos)
     return handle_filepath(pos.get_file()) + String("(") + linenum.c_str() + ")";
 }
 
+template <typename String>
+inline String repr(String const& value)
+{
+    String result;
+    typename String::const_iterator end = value.end();
+    for (typename String::const_iterator it = value.begin(); it != end; ++it)
+    {
+        typedef typename String::value_type char_type;
+        char_type c = *it;
+        if (c == static_cast<char_type>('\a'))
+            result.append("\\a");
+        else if (c == static_cast<char_type>('\b'))
+            result.append("\\b");
+        else if (c == static_cast<char_type>('\f'))
+            result.append("\\f");
+        else if (c == static_cast<char_type>('\n'))
+            result.append("\\n");
+        else if (c == static_cast<char_type>('\r'))
+            result.append("\\r");
+        else if (c == static_cast<char_type>('\t'))
+            result.append("\\t");
+        else if (c == static_cast<char_type>('\v'))
+            result.append("\\v");
+        else
+            result += static_cast<char_type>(c);
+    }
+    return result;
+}
+
+#if defined(BOOST_WINDOWS)
+template <typename String>
+inline String replace_slashes(String value, char const* lookfor = "\\",
+    char replace_with = '/')
+{
+    typename String::size_type p = value.find_first_of(lookfor);
+    while (p != value.npos) {
+        value[p] = replace_with;
+        p = value.find_first_of(lookfor, p+1);
+    }
+    return value;
+}
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 template <typename Token>
 class collect_hooks_information 
@@ -62,8 +106,13 @@ class collect_hooks_information
 
 public:
     collect_hooks_information(std::string& trace)
-      : hooks_trace(trace)
+      : hooks_trace(trace), skipped_token_hooks(false)
     {}
+
+    void set_skipped_token_hooks(bool flag) 
+    {
+        skipped_token_hooks = flag;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     //  
@@ -231,7 +280,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     template <typename Context>
     bool 
-    found_include_directive(Context const& ctx, std::string const& filename, 
+    found_include_directive(Context const& ctx, std::string filename, 
         bool include_next) 
     {
         BOOST_WAVETEST_OSSTREAM strm;
@@ -264,11 +313,19 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     template <typename Context>
     void 
-    opened_include_file(Context const& ctx, std::string const& relname, 
-        std::string const& absname, bool is_system_include) 
+    opened_include_file(Context const& ctx, std::string relname, 
+        std::string absname, bool is_system_include) 
     {
+        using boost::wave::util::impl::escape_lit;
+
+#if defined(BOOST_WINDOWS)
+        relname = replace_slashes(relname);
+        absname = replace_slashes(absname);
+#endif
+
         BOOST_WAVETEST_OSSTREAM strm;
-        strm << "05: " << relname << " (" << absname << ")" << std::endl;
+        strm << "05: " << escape_lit(relname) 
+             << " (" << escape_lit(absname) << ")" << std::endl;
         hooks_trace += BOOST_WAVETEST_GETSTRING(strm);
     }
     
@@ -488,10 +545,13 @@ public:
     void
     skipped_token(Context const& ctx, Token const& token)
     {
-// this generates a lot of noise
-//         BOOST_WAVETEST_OSSTREAM strm;
-//         strm << "12: " << std::endl;
-//         hooks_trace += BOOST_WAVETEST_GETSTRING(strm);
+        // this normally generates a lot of noise
+        if (skipped_token_hooks) {
+            BOOST_WAVETEST_OSSTREAM strm;
+            strm << "12: " << repr(token.get_position()) << ": >" 
+                 << repr(token.get_value()) << "<" << std::endl;
+            hooks_trace += BOOST_WAVETEST_GETSTRING(strm);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -713,11 +773,18 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     template <typename ContextT>
     void
-    detected_include_guard(ContextT const& ctx, std::string const& filename,
+    detected_include_guard(ContextT const& ctx, std::string filename,
         std::string const& include_guard) 
     {
+        using boost::wave::util::impl::escape_lit;
+
+#if defined(BOOST_WINDOWS)
+        filename = replace_slashes(filename);
+#endif
+
         BOOST_WAVETEST_OSSTREAM strm;
-        strm << "19: " << filename << ": " << include_guard << std::endl;
+        strm << "19: " << escape_lit(filename) << ": " 
+             << include_guard << std::endl;
         hooks_trace += BOOST_WAVETEST_GETSTRING(strm);
     }
 
@@ -745,17 +812,59 @@ public:
     template <typename ContextT, typename TokenT>
     void
     detected_pragma_once(ContextT const& ctx, TokenT const& pragma_token,
-        std::string const& filename) 
+        std::string filename) 
     {
+        using boost::wave::util::impl::escape_lit;
+
+#if defined(BOOST_WINDOWS)
+        filename = replace_slashes(filename);
+#endif
+
         BOOST_WAVETEST_OSSTREAM strm;
         strm << "20: " << repr(pragma_token.get_position()) << ": " 
-             << pragma_token.get_value() << ": " << filename << std::endl;
+             << pragma_token.get_value() << ": " 
+             << escape_lit(filename) << std::endl;
         hooks_trace += BOOST_WAVETEST_GETSTRING(strm);
     }
 #endif 
 
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    //  The function 'found_unknown_directive' is called, whenever an unknown 
+    //  preprocessor directive was encountered.
+    //
+    //  The parameter 'ctx' is a reference to the context object used for 
+    //  instantiating the preprocessing iterators by the user.
+    //
+    //  The parameter 'line' holds the tokens of the entire source line
+    //  containing the unknown directive.
+    //
+    //  The parameter 'pending' may be used to push tokens back into the input 
+    //  stream, which are to be used as the replacement text for the whole 
+    //  line containing the unknown directive.
+    //
+    //  The return value defines, whether the given expression has been 
+    //  properly interpreted by the hook function or not. If this function 
+    //  returns 'false', the library will raise an 'ill_formed_directive' 
+    //  preprocess_exception. Otherwise the tokens pushed back into 'pending'
+    //  are passed on to the user program.
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    template <typename ContextT, typename ContainerT>
+    bool
+    found_unknown_directive(ContextT const& ctx, ContainerT const& line, 
+        ContainerT& pending)
+    {
+        BOOST_WAVETEST_OSSTREAM strm;
+        strm << "21: " << repr((*line.begin()).get_position()) << ": " 
+             << boost::wave::util::impl::as_string(line) << std::endl;
+        hooks_trace += BOOST_WAVETEST_GETSTRING(strm);
+        return false; 
+    }
+
 private:
     std::string& hooks_trace;
+    bool skipped_token_hooks;
 };
 
 #endif

@@ -22,7 +22,7 @@ PropertyGraph
 A PropertyGraph is a graph that has some property associated with each
 of the vertices or edges in the graph. As a given graph may have
 several properties associated with each vertex or edge, a tag is used
-to identity which property is being accessed.  The graph provides a
+to identify which property is being accessed.  The graph provides a
 function which returns a property map object.
 
 <P>
@@ -173,9 +173,9 @@ The <tt>get()</tt> property map function must be constant time.
     typedef typename property_map&lt;G, PropertyTag&gt;::type Map;
     typedef typename property_map&lt;G, PropertyTag&gt;::const_type const_Map;
     void constraints() {
-      function_requires&lt; GraphConcept&lt;G&gt; &gt;();
-      function_requires&lt; ReadWritePropertyMapConcept&lt;Map, X&gt; &gt;();
-      function_requires&lt; ReadablePropertyMapConcept&lt;const_Map, X&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( GraphConcept&lt;G&gt; ));
+      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept&lt;Map, X&gt; ));
+      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept&lt;const_Map, X&gt; ));
 
       Map pmap = get(PropertyTag(), g);
       pval = get(PropertyTag(), g, x);

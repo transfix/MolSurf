@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (c) 2001-2009 Joel de Guzman
+    Copyright (c) 2001-2011 Joel de Guzman
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -10,7 +10,6 @@
 #include <map>
 
 #include <boost/detail/lightweight_test.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <boost/spirit/include/qi_operator.hpp>
 #include <boost/spirit/include/qi_char.hpp>
@@ -50,6 +49,21 @@ main()
         std::string s;
         BOOST_TEST(test_attr("a,b,c,d,e,f,g,h", char_ % ',', s));
         BOOST_TEST(s == "abcdefgh");
+
+        BOOST_TEST(!test("a,b,c,d,e,f,g,h,", char_ % ','));
+    }
+
+    {
+        std::string s;
+        BOOST_TEST(test_attr("ab,cd,ef,gh", (char_ >> char_) % ',', s));
+        BOOST_TEST(s == "abcdefgh");
+
+        BOOST_TEST(!test("ab,cd,ef,gh,", (char_ >> char_) % ','));
+        BOOST_TEST(!test("ab,cd,ef,g", (char_ >> char_) % ','));
+
+        s.clear();
+        BOOST_TEST(test_attr("ab,cd,efg", (char_ >> char_) % ',' >> char_, s));
+        BOOST_TEST(s == "abcdefg");
     }
 
     {
@@ -76,12 +90,14 @@ main()
     }
 
     {
-        std::vector<boost::optional<std::string> > v;
+        std::vector<boost::optional<char> > v;
         BOOST_TEST(test_attr("#a,#", ('#' >> -alpha) % ',', v)); 
         BOOST_TEST(2 == v.size() && 
-            !!v[0] && "a" == boost::get<std::string>(v[0]) && 
-            !!v[1] && boost::get<std::string>(v[1]).size() == 1 && 
-                    boost::get<std::string>(v[1])[0] == '\0');
+            !!v[0] && 'a' == boost::get<char>(v[0]) && !v[1]);
+
+        std::vector<char> v2;
+        BOOST_TEST(test_attr("#a,#", ('#' >> -alpha) % ',', v2)); 
+        BOOST_TEST(1 == v2.size() && 'a' == v2[0]);
     }
 
     {

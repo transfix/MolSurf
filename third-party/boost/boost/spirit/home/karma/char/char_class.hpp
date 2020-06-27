@@ -1,4 +1,4 @@
-//  Copyright (c) 2001-2009 Hartmut Kaiser
+//  Copyright (c) 2001-2011 Hartmut Kaiser
 //
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -46,11 +46,17 @@ namespace boost { namespace spirit { namespace karma
     namespace iso8859_1 { using namespace boost::spirit::iso8859_1; }
     namespace standard { using namespace boost::spirit::standard; }
     namespace standard_wide { using namespace boost::spirit::standard_wide; }
+#if defined(BOOST_SPIRIT_UNICODE)
+    namespace unicode { using namespace boost::spirit::unicode; }
+#endif
 
     // Import the standard namespace into the karma namespace. This allows 
     // for default handling of all character/string related operations if not 
     // prefixed with a character set namespace.
     using namespace boost::spirit::standard;
+
+    // Import encoding
+    using spirit::encoding;
 
     ///////////////////////////////////////////////////////////////////////////
     //
@@ -87,7 +93,7 @@ namespace boost { namespace spirit { namespace karma
 
         // char_class shouldn't be used without any associated attribute
         template <typename CharParam, typename Context>
-        bool test(unused_type, CharParam& ch, Context&) const
+        bool test(unused_type, CharParam&, Context&) const
         {
             // It is not possible (doesn't make sense) to use char_ generators 
             // without providing any attribute, as the generator doesn't 'know' 
@@ -192,7 +198,7 @@ namespace boost { namespace spirit { namespace karma
 
         typedef char_class<
             tag_type
-          , typename spirit::detail::get_encoding<
+          , typename spirit::detail::get_encoding_with_case<
                 Modifiers, CharEncoding, lower || upper>::type
           , typename detail::get_casetag<Modifiers, lower || upper>::type
         > result_type;

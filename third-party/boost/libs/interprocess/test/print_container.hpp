@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //
-// (C) Copyright Ion Gaztanaga 2004-2009. Distributed under the Boost
+// (C) Copyright Ion Gaztanaga 2004-2012. Distributed under the Boost
 // Software License, Version 1.0. (See accompanying file
 // LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
@@ -8,8 +8,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef BOOST_PRINTCONTAINER_HPP
-#define BOOST_PRINTCONTAINER_HPP
+#ifndef BOOST_INTERPROCESS_TEST_PRINTCONTAINER_HPP
+#define BOOST_INTERPROCESS_TEST_PRINTCONTAINER_HPP
 
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <functional>
@@ -48,8 +48,8 @@ void PrintContainers(MyShmCont *shmcont, MyStdCont *stdcont)
    for(; itshm != itshmend; ++itshm){
       std::cout << *itshm << std::endl;
    }
-   std::cout << "MyStdCont" << std::endl; 
-  
+   std::cout << "MyStdCont" << std::endl;
+
    for(; itstd != itstdend; ++itstd){
       std::cout << *itstd << std::endl;
    }
@@ -61,4 +61,4 @@ void PrintContainers(MyShmCont *shmcont, MyStdCont *stdcont)
 
 #include <boost/interprocess/detail/config_end.hpp>
 
-#endif //#ifndef BOOST_PRINTCONTAINER_HPP
+#endif //#ifndef BOOST_INTERPROCESS_TEST_PRINTCONTAINER_HPP

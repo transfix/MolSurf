@@ -116,6 +116,10 @@
     <!-- Strip off any call -->
     <xsl:variable name="name">
       <xsl:choose>
+        <xsl:when test="contains($fullname, 'operator()')">
+          <xsl:value-of select="substring-before($fullname, 'operator()')"/>
+          <xsl:value-of select="'operator()'"/>
+        </xsl:when>
         <xsl:when test="contains($fullname, '(')">
           <xsl:value-of select="substring-before($fullname, '(')"/>
         </xsl:when>
@@ -374,7 +378,21 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match="programlisting" mode="annotation">
+    <programlisting>
+      <xsl:apply-templates mode="annotation">
+        <xsl:with-param name="highlight" select="true()"/>
+      </xsl:apply-templates>
+    </programlisting>
+  </xsl:template>
+  
   <xsl:template match="code" mode="annotation">
+    <computeroutput>
+      <xsl:apply-templates mode="annotation"/>
+    </computeroutput>
+  </xsl:template>
+
+  <xsl:template match="code[@language='jam']" mode="annotation">
     <computeroutput>
       <xsl:apply-templates mode="annotation"/>
     </computeroutput>
@@ -387,6 +405,10 @@
   </xsl:template>
 
   <xsl:template match="description" mode="annotation">
+    <xsl:apply-templates mode="annotation"/>
+  </xsl:template>
+
+  <xsl:template match="type" mode="annotation">
     <xsl:apply-templates mode="annotation"/>
   </xsl:template>
 

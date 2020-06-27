@@ -11,14 +11,16 @@
 
 #include <iostream>
 
-test::seed_t seed(3298597);
+test::seed_t initialize_seed(3298597);
 
 template <class T>
 struct rehash_test_base : public test::exception_base
 {
     test::random_values<T> values;
     unsigned int n;
-    rehash_test_base(unsigned int count = 100, unsigned int n = 0) : values(count), n(n) {}
+    rehash_test_base(unsigned int count = 100, unsigned int n = 0)
+        : values(count), n(n)
+    {}
 
     typedef T data_type;
     typedef test::strong<T> strong_type;
@@ -28,7 +30,9 @@ struct rehash_test_base : public test::exception_base
         return x;
     }
 
-    void check(T const& x, strong_type const& strong) const {
+    void check BOOST_PREVENT_MACRO_SUBSTITUTION(T const& x,
+        strong_type const& strong) const
+    {
         std::string scope(test::scope);
 
         if(scope.find("hash::operator()") == std::string::npos &&

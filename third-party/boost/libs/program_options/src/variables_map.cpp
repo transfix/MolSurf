@@ -38,64 +38,73 @@ namespace boost { namespace program_options {
         // Declared once, to please Intel in VC++ mode;
         unsigned i;
 
-        // First, convert/store all given options
-        for (i = 0; i < options.options.size(); ++i) {
+        // Declared here so can be used to provide context for exceptions
+        string option_name;
+        string original_token;
 
-            const string& name = options.options[i].string_key;
-            // Skip positional options without name
-            if (name.empty())
-                continue;
+        try
+        {
 
-            // Ignore unregistered option. The 'unregistered'
-            // field can be true only if user has explicitly asked
-            // to allow unregistered options. We can't store them
-            // to variables map (lacking any information about paring), 
-            // so just ignore them.
-            if (options.options[i].unregistered)
-                continue;
+            // First, convert/store all given options
+            for (i = 0; i < options.options.size(); ++i) {
 
-            // If option has final value, skip this assignment
-            if (xm.m_final.count(name))
-                continue;
+                option_name = options.options[i].string_key;
+                original_token = options.options[i].original_tokens.size() ? 
+                                options.options[i].original_tokens[0] :
+                                option_name;
+                // Skip positional options without name
+                if (option_name.empty())
+                    continue;
 
-            // Ignore options which are not described
-            //TODO: consider this.
-            //if (desc.count(name) == 0)
-            //    continue;
+                // Ignore unregistered option. The 'unregistered'
+                // field can be true only if user has explicitly asked
+                // to allow unregistered options. We can't store them
+                // to variables map (lacking any information about paring), 
+                // so just ignore them.
+                if (options.options[i].unregistered)
+                    continue;
 
-            const option_description& d = desc.find(name, false);
+                // If option has final value, skip this assignment
+                if (xm.m_final.count(option_name))
+                    continue;
 
-            variable_value& v = m[name];            
-            if (v.defaulted()) {
-                // Explicit assignment here erases defaulted value
-                v = variable_value();
-            }
-            
-            try {
+                string original_token = options.options[i].original_tokens.size() ? 
+                                        options.options[i].original_tokens[0]     : "";
+                const option_description& d = desc.find(option_name, false, 
+                                                        false, false);
+
+                variable_value& v = m[option_name];            
+                if (v.defaulted()) {
+                    // Explicit assignment here erases defaulted value
+                    v = variable_value();
+                }
+                
                 d.semantic()->parse(v.value(), options.options[i].value, utf8);
+
+                v.m_value_semantic = d.semantic();
+                
+                // The option is not composing, and the value is explicitly
+                // provided. Ignore values of this option for subsequent
+                // calls to 'store'. We store this to a temporary set,
+                // so that several assignment inside *this* 'store' call
+                // are allowed.
+                if (!d.semantic()->is_composing())
+                    new_final.insert(option_name);
             }
+        } 
 #ifndef BOOST_NO_EXCEPTIONS
-            catch(validation_error& e)
-            {
-                e.set_option_name(name);
-                throw;
-            }
-#endif
-            v.m_value_semantic = d.semantic();
-            
-            // The option is not composing, and the value is explicitly
-            // provided. Ignore values of this option for subsequent
-            // calls to 'store'. We store this to a temporary set,
-            // so that several assignment inside *this* 'store' call
-            // are allowed.
-            if (!d.semantic()->is_composing())
-                new_final.insert(name);
+        catch(error_with_option_name& e)
+        {
+            // add context and rethrow
+            e.add_context(option_name, original_token, options.m_options_prefix);
+            throw;
         }
+#endif
         xm.m_final.insert(new_final.begin(), new_final.end());
 
         
         
-        // Second, apply default values.
+        // Second, apply default values and store required options.
         const vector<shared_ptr<option_description> >& all = desc.options();
         for(i = 0; i < all.size(); ++i)
         {
@@ -117,7 +126,19 @@ namespace boost { namespace program_options {
                     m[key] = variable_value(def, true);
                     m[key].m_value_semantic = d.semantic();
                 }
-            }        
+            }  
+
+            // add empty value if this is an required option
+            if (d.semantic()->is_required()) {
+
+                // For option names specified in multiple ways, e.g. on the command line,
+                // config file etc, the following precedence rules apply:
+                //  "--"  >  ("-" or "/")  >  ""
+                //  Precedence is set conveniently by a single call to length()
+                string canonical_name = d.canonical_display_name(options.m_options_prefix);
+                if (canonical_name.length() > xm.m_required[key].length())
+                    xm.m_required[key] = canonical_name;
+            }
         }
     }
 
@@ -130,22 +151,7 @@ namespace boost { namespace program_options {
     BOOST_PROGRAM_OPTIONS_DECL 
     void notify(variables_map& vm)
     {        
-        // Lastly, run notify actions.
-        for (map<string, variable_value>::iterator k = vm.begin(); 
-             k != vm.end(); 
-             ++k) 
-        {
-            /* Users might wish to use variables_map to store their own values
-               that are not parsed, and therefore will not have value_semantics
-               defined. Do no crash on such values. In multi-module programs,
-               one module might add custom values, and the 'notify' function
-               will be called after that, so we check that value_sematics is 
-               not NULL. See:
-                   https://svn.boost.org/trac/boost/ticket/2782
-            */
-            if (k->second.m_value_semantic)
-                k->second.m_value_semantic->notify(k->second.value());
-        }               
+        vm.notify();               
     }
 
     abstract_variables_map::abstract_variables_map()
@@ -186,6 +192,13 @@ namespace boost { namespace program_options {
     : abstract_variables_map(next)
     {}
 
+    void variables_map::clear()
+    {
+        std::map<std::string, variable_value>::clear();
+        m_final.clear();
+        m_required.clear();
+    }
+
     const variable_value&
     variables_map::get(const std::string& name) const
     {
@@ -196,4 +209,41 @@ namespace boost { namespace program_options {
         else
             return i->second;
     }
+    
+    void
+    variables_map::notify()
+    {
+        // This checks if all required options occur
+        for (map<string, string>::const_iterator r = m_required.begin();
+             r != m_required.end();
+             ++r)
+        {
+            const string& opt = r->first;
+            const string& display_opt = r->second;
+            map<string, variable_value>::const_iterator iter = find(opt);
+            if (iter == end() || iter->second.empty()) 
+            {
+                boost::throw_exception(required_option(display_opt));
+            
+            }
+        }
+
+        // Lastly, run notify actions.
+        for (map<string, variable_value>::iterator k = begin(); 
+             k != end(); 
+             ++k) 
+        {
+            /* Users might wish to use variables_map to store their own values
+               that are not parsed, and therefore will not have value_semantics
+               defined. Do no crash on such values. In multi-module programs,
+               one module might add custom values, and the 'notify' function
+               will be called after that, so we check that value_sematics is 
+               not NULL. See:
+                   https://svn.boost.org/trac/boost/ticket/2782
+            */
+            if (k->second.m_value_semantic)
+                k->second.m_value_semantic->notify(k->second.value());
+        }               
+    }
+    
 }}

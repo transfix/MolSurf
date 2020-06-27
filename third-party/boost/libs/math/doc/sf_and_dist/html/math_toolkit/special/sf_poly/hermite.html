@@ -1,9 +1,9 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
 <title>Hermite Polynomials</title>
-<link rel="stylesheet" href="../../../../../../../../doc/html/boostbook.css" type="text/css">
-<meta name="generator" content="DocBook XSL Stylesheets V1.74.0">
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.77.1">
 <link rel="home" href="../../../index.html" title="Math Toolkit">
 <link rel="up" href="../sf_poly.html" title="Polynomials">
 <link rel="prev" href="laguerre.html" title="Laguerre (and Associated) Polynomials">
@@ -20,18 +20,17 @@
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="laguerre.html"><img src="../../../../../../../../doc/html/images/prev.png" alt="Prev"></a><a accesskey="u" href="../sf_poly.html"><img src="../../../../../../../../doc/html/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../../doc/html/images/home.png" alt="Home"></a><a accesskey="n" href="sph_harm.html"><img src="../../../../../../../../doc/html/images/next.png" alt="Next"></a>
+<a accesskey="p" href="laguerre.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../sf_poly.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="sph_harm.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
-<div class="section" lang="en">
+<div class="section math_toolkit_special_sf_poly_hermite">
 <div class="titlepage"><div><div><h4 class="title">
-<a name="math_toolkit.special.sf_poly.hermite"></a><a class="link" href="hermite.html" title="Hermite Polynomials"> Hermite Polynomials</a>
+<a name="math_toolkit.special.sf_poly.hermite"></a><a class="link" href="hermite.html" title="Hermite Polynomials">Hermite Polynomials</a>
 </h4></div></div></div>
-<a name="math_toolkit.special.sf_poly.hermite.synopsis"></a><h5>
-<a name="id888753"></a>
-          <a class="link" href="hermite.html#math_toolkit.special.sf_poly.hermite.synopsis">Synopsis</a>
+<h5>
+<a name="math_toolkit.special.sf_poly.hermite.h0"></a>
+          <span class="phrase"><a name="math_toolkit.special.sf_poly.hermite.synopsis"></a></span><a class="link" href="hermite.html#math_toolkit.special.sf_poly.hermite.synopsis">Synopsis</a>
         </h5>
 <p>
-          
 </p>
 <pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">math</span><span class="special">/</span><span class="identifier">special_functions</span><span class="special">/</span><span class="identifier">hermite</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
 </pre>
@@ -47,12 +46,12 @@
 
 <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">T1</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">T2</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">T3</span><span class="special">&gt;</span>
 <a class="link" href="../../main_overview/result_type.html" title="Calculation of the Type of the Result"><span class="emphasis"><em>calculated-result-type</em></span></a> <span class="identifier">hermite_next</span><span class="special">(</span><span class="keyword">unsigned</span> <span class="identifier">n</span><span class="special">,</span> <span class="identifier">T1</span> <span class="identifier">x</span><span class="special">,</span> <span class="identifier">T2</span> <span class="identifier">Hn</span><span class="special">,</span> <span class="identifier">T3</span> <span class="identifier">Hnm1</span><span class="special">);</span>
-   
-<span class="special">}}</span> <span class="comment">// namespaces
-</span></pre>
-<a name="math_toolkit.special.sf_poly.hermite.description"></a><h5>
-<a name="id889120"></a>
-          <a class="link" href="hermite.html#math_toolkit.special.sf_poly.hermite.description">Description</a>
+
+<span class="special">}}</span> <span class="comment">// namespaces</span>
+</pre>
+<h5>
+<a name="math_toolkit.special.sf_poly.hermite.h1"></a>
+          <span class="phrase"><a name="math_toolkit.special.sf_poly.hermite.description"></a></span><a class="link" href="hermite.html#math_toolkit.special.sf_poly.hermite.description">Description</a>
         </h5>
 <p>
           The return type of these functions is computed using the <a class="link" href="../../main_overview/result_type.html" title="Calculation of the Type of the Result"><span class="emphasis"><em>result
@@ -74,14 +73,9 @@
           <span class="inlinemediaobject"><img src="../../../../equations/hermite_0.png"></span>
         </p>
 <p>
-          </p>
-<p>
-            The final <a class="link" href="../../policy.html" title="Policies">Policy</a> argument
-            is optional and can be used to control the behaviour of the function:
-            how it handles errors, what level of precision to use etc. Refer to the
-            <a class="link" href="../../policy.html" title="Policies">policy documentation for more details</a>.
-          </p>
-<p>
+          The final <a class="link" href="../../policy.html" title="Policies">Policy</a> argument is
+          optional and can be used to control the behaviour of the function: how
+          it handles errors, what level of precision to use etc. Refer to the <a class="link" href="../../policy.html" title="Policies">policy documentation for more details</a>.
         </p>
 <p>
           The following graph illustrates the behaviour of the first few Hermite
@@ -105,8 +99,8 @@
           For example we could produce a vector of the first 10 polynomial values
           using:
         </p>
-<pre class="programlisting"><span class="keyword">double</span> <span class="identifier">x</span> <span class="special">=</span> <span class="number">0.5</span><span class="special">;</span>  <span class="comment">// Abscissa value
-</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">double</span><span class="special">&gt;</span> <span class="identifier">v</span><span class="special">;</span>
+<pre class="programlisting"><span class="keyword">double</span> <span class="identifier">x</span> <span class="special">=</span> <span class="number">0.5</span><span class="special">;</span>  <span class="comment">// Abscissa value</span>
+<span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">double</span><span class="special">&gt;</span> <span class="identifier">v</span><span class="special">;</span>
 <span class="identifier">v</span><span class="special">.</span><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">hermite</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">x</span><span class="special">)).</span><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">hermite</span><span class="special">(</span><span class="number">1</span><span class="special">,</span> <span class="identifier">x</span><span class="special">));</span>
 <span class="keyword">for</span><span class="special">(</span><span class="keyword">unsigned</span> <span class="identifier">l</span> <span class="special">=</span> <span class="number">1</span><span class="special">;</span> <span class="identifier">l</span> <span class="special">&lt;</span> <span class="number">10</span><span class="special">;</span> <span class="special">++</span><span class="identifier">l</span><span class="special">)</span>
    <span class="identifier">v</span><span class="special">.</span><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">hermite_next</span><span class="special">(</span><span class="identifier">l</span><span class="special">,</span> <span class="identifier">x</span><span class="special">,</span> <span class="identifier">v</span><span class="special">[</span><span class="identifier">l</span><span class="special">],</span> <span class="identifier">v</span><span class="special">[</span><span class="identifier">l</span><span class="special">-</span><span class="number">1</span><span class="special">]));</span>
@@ -116,28 +110,28 @@
         </p>
 <div class="variablelist">
 <p class="title"><b></b></p>
-<dl>
+<dl class="variablelist">
 <dt><span class="term">n</span></dt>
 <dd><p>
-              The degree <span class="emphasis"><em>n</em></span> of the last polynomial calculated.
-            </p></dd>
+                The degree <span class="emphasis"><em>n</em></span> of the last polynomial calculated.
+              </p></dd>
 <dt><span class="term">x</span></dt>
 <dd><p>
-              The abscissa value
-            </p></dd>
+                The abscissa value
+              </p></dd>
 <dt><span class="term">Hn</span></dt>
 <dd><p>
-              The value of the polynomial evaluated at degree <span class="emphasis"><em>n</em></span>.
-            </p></dd>
+                The value of the polynomial evaluated at degree <span class="emphasis"><em>n</em></span>.
+              </p></dd>
 <dt><span class="term">Hnm1</span></dt>
 <dd><p>
-              The value of the polynomial evaluated at degree <span class="emphasis"><em>n-1</em></span>.
-            </p></dd>
+                The value of the polynomial evaluated at degree <span class="emphasis"><em>n-1</em></span>.
+              </p></dd>
 </dl>
 </div>
-<a name="math_toolkit.special.sf_poly.hermite.accuracy"></a><h5>
-<a name="id890291"></a>
-          <a class="link" href="hermite.html#math_toolkit.special.sf_poly.hermite.accuracy">Accuracy</a>
+<h5>
+<a name="math_toolkit.special.sf_poly.hermite.h2"></a>
+          <span class="phrase"><a name="math_toolkit.special.sf_poly.hermite.accuracy"></a></span><a class="link" href="hermite.html#math_toolkit.special.sf_poly.hermite.accuracy">Accuracy</a>
         </h5>
 <p>
           The following table shows peak errors (in units of epsilon) for various
@@ -146,7 +140,7 @@
           zero error</a>.
         </p>
 <div class="table">
-<a name="id890309"></a><p class="title"><b>Table 34. Peak Errors In the Hermite Polynomial</b></p>
+<a name="math_toolkit.special.sf_poly.hermite.peak_errors_in_the_hermite_polynomial"></a><p class="title"><b>Table&#160;37.&#160;Peak Errors In the Hermite Polynomial</b></p>
 <div class="table-contents"><table class="table" summary="Peak Errors In the Hermite Polynomial">
 <colgroup>
 <col>
@@ -155,92 +149,92 @@
 </colgroup>
 <thead><tr>
 <th>
-              <p>
-                Significand Size
-              </p>
-              </th>
+                  <p>
+                    Significand Size
+                  </p>
+                </th>
 <th>
-              <p>
-                Platform and Compiler
-              </p>
-              </th>
+                  <p>
+                    Platform and Compiler
+                  </p>
+                </th>
 <th>
-              <p>
-                Errors in range
-              </p>
-              <p>
-                0 &lt; l &lt; 20
-              </p>
-              </th>
+                  <p>
+                    Errors in range
+                  </p>
+                  <p>
+                    0 &lt; l &lt; 20
+                  </p>
+                </th>
 </tr></thead>
 <tbody>
 <tr>
 <td>
-              <p>
-                53
-              </p>
-              </td>
+                  <p>
+                    53
+                  </p>
+                </td>
 <td>
-              <p>
-                Win32, Visual C++ 8
-              </p>
-              </td>
+                  <p>
+                    Win32, Visual C++ 8
+                  </p>
+                </td>
 <td>
-              <p>
-                Peak=4.5 Mean=1.5
-              </p>
-              </td>
+                  <p>
+                    Peak=4.5 Mean=1.5
+                  </p>
+                </td>
 </tr>
 <tr>
 <td>
-              <p>
-                64
-              </p>
-              </td>
+                  <p>
+                    64
+                  </p>
+                </td>
 <td>
-              <p>
-                Red Hat Linux IA32, g++ 4.1
-              </p>
-              </td>
+                  <p>
+                    Red Hat Linux IA32, g++ 4.1
+                  </p>
+                </td>
 <td>
-              <p>
-                Peak=6 Mean=2
-              </p>
-              </td>
+                  <p>
+                    Peak=6 Mean=2
+                  </p>
+                </td>
 </tr>
 <tr>
 <td>
-              <p>
-                64
-              </p>
-              </td>
+                  <p>
+                    64
+                  </p>
+                </td>
 <td>
-              <p>
-                Red Hat Linux IA64, g++ 3.4.4
-              </p>
-              </td>
+                  <p>
+                    Red Hat Linux IA64, g++ 3.4.4
+                  </p>
+                </td>
 <td>
-              <p>
-                Peak=6 Mean=2
-              </p>
-              </td>
+                  <p>
+                    Peak=6 Mean=2
+                  </p>
+                </td>
 </tr>
 <tr>
 <td>
-              <p>
-                113
-              </p>
-              </td>
+                  <p>
+                    113
+                  </p>
+                </td>
 <td>
-              <p>
-                HPUX IA64, aCC A.06.06
-              </p>
-              </td>
+                  <p>
+                    HPUX IA64, aCC A.06.06
+                  </p>
+                </td>
 <td>
-              <p>
-                Peak=6 Mean=4
-              </p>
-              </td>
+                  <p>
+                    Peak=6 Mean=4
+                  </p>
+                </td>
 </tr>
 </tbody>
 </table></div>
@@ -252,9 +246,9 @@
           relative errors are likely to grow arbitrarily large when the function
           is very close to a root.
         </p>
-<a name="math_toolkit.special.sf_poly.hermite.testing"></a><h5>
-<a name="id890457"></a>
-          <a class="link" href="hermite.html#math_toolkit.special.sf_poly.hermite.testing">Testing</a>
+<h5>
+<a name="math_toolkit.special.sf_poly.hermite.h3"></a>
+          <span class="phrase"><a name="math_toolkit.special.sf_poly.hermite.testing"></a></span><a class="link" href="hermite.html#math_toolkit.special.sf_poly.hermite.testing">Testing</a>
         </h5>
 <p>
           A mixture of spot tests of values calculated using functions.wolfram.com,
@@ -262,9 +256,9 @@
           <a href="http://shoup.net/ntl/doc/RR.txt" target="_top">NTL::RR</a> at 1000-bit
           precision.
         </p>
-<a name="math_toolkit.special.sf_poly.hermite.implementation"></a><h5>
-<a name="id890479"></a>
-          <a class="link" href="hermite.html#math_toolkit.special.sf_poly.hermite.implementation">Implementation</a>
+<h5>
+<a name="math_toolkit.special.sf_poly.hermite.h4"></a>
+          <span class="phrase"><a name="math_toolkit.special.sf_poly.hermite.implementation"></a></span><a class="link" href="hermite.html#math_toolkit.special.sf_poly.hermite.implementation">Implementation</a>
         </h5>
 <p>
           These functions are implemented using the stable three term recurrence
@@ -274,9 +268,9 @@
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>
-<td align="right"><div class="copyright-footer">Copyright © 2006 , 2007, 2008, 2009 John Maddock, Paul A. Bristow,
-      Hubert Holin, Xiaogang Zhang, Bruno Lalande, Johan Råde, Gautam Sewani
-      and Thijs van den Berg<p>
+<td align="right"><div class="copyright-footer">Copyright &#169; 2006-2010, 2012 John Maddock, Paul A. Bristow, Hubert Holin, Xiaogang
+      Zhang, Bruno Lalande, Johan R&#229;de, Gautam Sewani, Thijs van den Berg and Benjamin
+      Sobotta<p>
         Distributed under the Boost Software License, Version 1.0. (See accompanying
         file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
       </p>
@@ -284,7 +278,7 @@
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="laguerre.html"><img src="../../../../../../../../doc/html/images/prev.png" alt="Prev"></a><a accesskey="u" href="../sf_poly.html"><img src="../../../../../../../../doc/html/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../../doc/html/images/home.png" alt="Home"></a><a accesskey="n" href="sph_harm.html"><img src="../../../../../../../../doc/html/images/next.png" alt="Next"></a>
+<a accesskey="p" href="laguerre.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../sf_poly.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="sph_harm.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
 </body>
 </html>

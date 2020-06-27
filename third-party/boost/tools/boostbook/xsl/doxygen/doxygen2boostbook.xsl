@@ -204,8 +204,7 @@
     <xsl:param name="in-file"/>
     <xsl:param name="with-namespace-refs"/>
 
-    <xsl:if test="contains(string(location/attribute::file), 
-                           concat('/', $in-file)) ">
+    <xsl:if test="string(location/attribute::file)=$in-file">
     
       <!-- The short name of this class -->
       <xsl:variable name="name-with-spec">
@@ -261,7 +260,9 @@
         <xsl:apply-templates select="briefdescription" mode="passthrough"/>
         <xsl:apply-templates select="detaileddescription" mode="passthrough"/>
         <xsl:apply-templates select="inbodydescription" mode="passthrough"/>
-        <xsl:apply-templates/>
+        <xsl:apply-templates>
+          <xsl:with-param name="in-file" select="$in-file"/>  
+        </xsl:apply-templates>
       </xsl:element>
     </xsl:if>
   </xsl:template>
@@ -269,8 +270,7 @@
   <xsl:template name="enum">
     <xsl:param name="in-file"/>
 
-    <xsl:if test="contains(string(location/attribute::file), 
-                           concat('/', $in-file))">
+    <xsl:if test="string(location/attribute::file)=$in-file">
       <xsl:variable name="name">
         <xsl:call-template name="strip-qualifiers">
           <xsl:with-param name="name" select="name"/>
@@ -384,7 +384,7 @@
         <xsl:apply-templates mode="toplevel">
           <xsl:with-param name="with-namespace-refs"
             select="innernamespace"/>
-          <xsl:with-param name="in-file" select="string(compoundname)"/>
+          <xsl:with-param name="in-file" select="location/attribute::file"/>
         </xsl:apply-templates>
       </header>
     </xsl:if>
@@ -484,10 +484,20 @@
           </xsl:if>
 
           <xsl:for-each select="param">
+            <xsl:variable name="name" select="defname/text()"/>
             <macro-parameter>
               <xsl:attribute name="name">
                 <xsl:value-of select="defname/text()"/>
               </xsl:attribute>
+              <xsl:variable name="params"
+                            select="../detaileddescription/para/parameterlist"/>
+              <xsl:variable name="description" select="$params/parameteritem/
+                            parameternamelist/parametername[text() = $name]/../../parameterdescription/para"/>
+              <xsl:if test="$description">
+                <description>
+                  <xsl:apply-templates select="$description" mode="passthrough"/>
+                </description>
+              </xsl:if>
             </macro-parameter>
           </xsl:for-each>
 
@@ -498,11 +508,15 @@
       </xsl:when>
 
       <xsl:when test="@kind='function'">
-        <xsl:call-template name="function" />
+        <xsl:call-template name="function">
+          <xsl:with-param name="in-file" select="$in-file"/>
+        </xsl:call-template>
       </xsl:when>
 
       <xsl:when test="@kind='typedef'">
-        <xsl:call-template name="typedef" />
+        <xsl:call-template name="typedef">
+          <xsl:with-param name="in-file" select="$in-file"/>
+        </xsl:call-template>
       </xsl:when>
 
       <xsl:when test="@kind='variable'">
@@ -562,6 +576,7 @@
   <xsl:template match="param" mode="template">
     <xsl:choose>
       <xsl:when test="string(type)='class' or string(type)='typename'">
+        <xsl:variable name="name" select="normalize-space(string(declname))"/>
         <template-type-parameter>
           <xsl:attribute name="name">
             <xsl:value-of select="normalize-space(string(declname))"/>
@@ -572,6 +587,13 @@
                 mode="passthrough"/>
             </default>
           </xsl:if>
+          <xsl:for-each select="../../detaileddescription//parameterlist[@kind='templateparam']/parameteritem">
+            <xsl:if test="string(parameternamelist/parametername)=$name">
+              <purpose>
+                <xsl:apply-templates select="parameterdescription/para" mode="passthrough"/>
+              </purpose>
+            </xsl:if>
+          </xsl:for-each>
         </template-type-parameter>
       </xsl:when>
       <!-- Doxygen 1.5.8 generates odd xml for template type parameters.
@@ -579,8 +601,11 @@
       <xsl:when test="not(declname) and
         (starts-with(string(type), 'class ') or starts-with(string(type), 'typename '))">
         <template-type-parameter>
-          <xsl:attribute name="name">
+          <xsl:variable name="name">
             <xsl:value-of select="normalize-space(substring-after(string(type), ' '))"/>
+          </xsl:variable>
+          <xsl:attribute name="name">
+            <xsl:value-of select="$name"/>
           </xsl:attribute>
           <xsl:if test="defval">
             <default>
@@ -588,12 +613,22 @@
                 mode="passthrough"/>
             </default>
           </xsl:if>
+          <xsl:for-each select="../../detaileddescription//parameterlist[@kind='templateparam']/parameteritem">
+            <xsl:if test="string(parameternamelist/parametername)=$name">
+              <purpose>
+                <xsl:apply-templates select="parameterdescription/para" mode="passthrough"/>
+              </purpose>
+            </xsl:if>
+          </xsl:for-each>
         </template-type-parameter>
       </xsl:when>
       <xsl:otherwise>
         <template-nontype-parameter>
-          <xsl:attribute name="name">
+          <xsl:variable name="name">
             <xsl:value-of select="normalize-space(string(declname))"/>
+          </xsl:variable>
+          <xsl:attribute name="name">
+            <xsl:value-of select="$name"/>
           </xsl:attribute>
           <type>
             <xsl:apply-templates select="type"/>
@@ -604,6 +639,13 @@
                 mode="passthrough"/>
             </default>
           </xsl:if>
+          <xsl:for-each select="../../detaileddescription//parameterlist[@kind='templateparam']/parameteritem">
+            <xsl:if test="string(parameternamelist/parametername)=$name">
+              <purpose>
+                <xsl:apply-templates select="parameterdescription/para" mode="passthrough"/>
+              </purpose>
+            </xsl:if>
+          </xsl:for-each>
         </template-nontype-parameter>
       </xsl:otherwise>
     </xsl:choose>
@@ -664,6 +706,7 @@
         <method-group name="public static functions">
           <xsl:apply-templates>
             <xsl:with-param name="in-section" select="true()"/>
+            <xsl:with-param name="in-file" select="$in-file"/>
           </xsl:apply-templates>
         </method-group>
       </xsl:when>
@@ -672,6 +715,7 @@
         <method-group name="protected static functions">
           <xsl:apply-templates>
             <xsl:with-param name="in-section" select="true()"/>
+            <xsl:with-param name="in-file" select="$in-file"/>
           </xsl:apply-templates>
         </method-group>
       </xsl:when>
@@ -680,13 +724,14 @@
         <method-group name="private static functions">
           <xsl:apply-templates>
             <xsl:with-param name="in-section" select="true()"/>
+            <xsl:with-param name="in-file" select="$in-file"/>
           </xsl:apply-templates>
         </method-group>
       </xsl:when>
       <xsl:when test="@kind='public-func'">
         <xsl:variable name="members" select="./memberdef"/>
         <xsl:variable name="num-internal-only">
-          <xsl:value-of 
+          <xsl:value-of
             select="count($members[contains(detaileddescription/para,
                                   'INTERNAL ONLY')])"/>
         </xsl:variable>
@@ -694,6 +739,7 @@
           <method-group name="public member functions">
             <xsl:apply-templates>
               <xsl:with-param name="in-section" select="true()"/>
+              <xsl:with-param name="in-file" select="$in-file"/>
             </xsl:apply-templates>
           </method-group>
           <xsl:apply-templates/>
@@ -703,6 +749,7 @@
         <method-group name="protected member functions">
           <xsl:apply-templates>
             <xsl:with-param name="in-section" select="true()"/>
+            <xsl:with-param name="in-file" select="$in-file"/>
           </xsl:apply-templates>
         </method-group>
         <xsl:apply-templates/>
@@ -718,16 +765,37 @@
           <method-group name="private member functions">
             <xsl:apply-templates>
               <xsl:with-param name="in-section" select="true()"/>
+              <xsl:with-param name="in-file" select="$in-file"/>
             </xsl:apply-templates>
           </method-group>
         </xsl:if>
         <xsl:apply-templates/>
       </xsl:when>
+      <xsl:when test="@kind='friend'">
+        <xsl:if test="./memberdef/detaileddescription/para or ./memberdef/briefdescription/para">
+          <method-group name="friend functions">
+            <xsl:apply-templates>
+              <xsl:with-param name="in-section" select="true()"/>
+              <xsl:with-param name="in-file" select="$in-file"/>
+            </xsl:apply-templates>
+          </method-group>
+        </xsl:if>
+      </xsl:when>
       <xsl:when test="@kind='public-static-attrib' or @kind='public-attrib'">
-        <xsl:apply-templates/>
+        <xsl:apply-templates>
+          <xsl:with-param name="in-file" select="$in-file"/>
+        </xsl:apply-templates>
       </xsl:when>
       <xsl:when test="@kind='public-type'">
-        <xsl:apply-templates/>
+        <xsl:apply-templates>
+          <xsl:with-param name="in-file" select="$in-file"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <xsl:when test="@kind='private-type'">
+        <!--skip private members-->
+      </xsl:when>
+      <xsl:when test="@kind='private-static-attrib' or @kind='private-attrib'">
+        <!--skip private members-->
       </xsl:when>
       <xsl:when test="@kind='func'">
         <xsl:apply-templates>
@@ -750,7 +818,9 @@
         </xsl:apply-templates>
       </xsl:when>
       <xsl:when test="@kind='user-defined'">
-        <xsl:apply-templates/>
+        <xsl:apply-templates>
+          <xsl:with-param name="in-file" select="$in-file"/>
+        </xsl:apply-templates>
       </xsl:when>
       <xsl:when test="@kind=''">
         <xsl:apply-templates select="memberdef[generate-id() =
@@ -795,11 +865,22 @@
           <xsl:otherwise>
             <!-- We are in a class -->
             <!-- The name of the class we are in -->
-            <xsl:variable name="in-class">
+            <xsl:variable name="in-class-full">
               <xsl:call-template name="strip-qualifiers">
                 <xsl:with-param name="name" 
                   select="string(ancestor::compounddef/compoundname/text())"/>
               </xsl:call-template>
+            </xsl:variable>
+
+            <xsl:variable name ="in-class">
+              <xsl:choose>
+                <xsl:when test="contains($in-class-full, '&lt;')">
+                  <xsl:value-of select="substring-before($in-class-full, '&lt;')"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="$in-class-full"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </xsl:variable>
             
             <xsl:choose>
@@ -833,6 +914,11 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
+      <xsl:when test="@kind='friend'">
+        <xsl:if test="./detaileddescription/para or ./briefdescription/para">
+          <xsl:call-template name="method"/>
+        </xsl:if>
+      </xsl:when>
       <xsl:when test="@kind='enum'">
         <xsl:call-template name="enum">
           <xsl:with-param name="in-file" select="$in-file"/>
@@ -855,8 +941,7 @@
   <xsl:template name="typedef">
     <xsl:param name="in-file" select="''"/>
 
-    <xsl:if test="contains(string(location/attribute::file), 
-                           concat('/', $in-file))">
+    <xsl:if test="string(location/attribute::file)=$in-file">
       <!-- TBD: Handle public/protected/private -->
       <typedef>
         <!-- Name of the type -->
@@ -973,12 +1058,6 @@
           mode="function-clauses"/>
       </throws>
     </xsl:if>
-    <xsl:variable name="notes" select="*[self::detaileddescription or self::inbodydescription]/para/simplesect[@kind='note' or @kind='attention']"/>
-    <xsl:if test="count($notes) &gt; 0"> 
-      <notes>
-        <xsl:apply-templates select="$notes" mode="function-clauses"/>
-      </notes>
-    </xsl:if>
   </xsl:template>
 
   <!-- Handle free functions -->
@@ -987,8 +1066,7 @@
 
     <xsl:variable name="firstpara" 
       select="normalize-space(detaileddescription/para[1])"/>
-    <xsl:if test="contains(string(location/attribute::file), 
-                           concat('/', $in-file))
+    <xsl:if test="string(location/attribute::file)=$in-file
                   and 
                   not($firstpara=normalize-space($boost.doxygen.overload))">
 
@@ -1070,6 +1148,9 @@
   <!-- Handle constructors -->
   <xsl:template name="constructor">
     <constructor>
+      <xsl:if test="@explicit = 'yes'">
+        <xsl:attribute name="specifiers">explicit</xsl:attribute>
+      </xsl:if>
       <xsl:call-template name="function.children"/>
     </constructor>
   </xsl:template>
@@ -1108,6 +1189,10 @@
             <xsl:text>volatile</xsl:text>
           </xsl:if>
         </xsl:attribute>
+      </xsl:if>
+
+      <xsl:if test="@explicit = 'yes'">
+        <xsl:attribute name="specifiers">explicit</xsl:attribute>
       </xsl:if>
 
       <!-- Conversion type -->
@@ -1162,8 +1247,7 @@
   <!-- Handle member variables -->
   <xsl:template name="variable">
     <xsl:param name="in-file"/>
-    <xsl:if test="contains(string(location/attribute::file), 
-                           concat('/', $in-file))">
+    <xsl:if test="string(location/attribute::file)=$in-file">
     <data-member>
       <xsl:attribute name="name">
         <xsl:value-of select="name/text()"/>
@@ -1205,15 +1289,54 @@
       <xsl:apply-templates mode="passthrough"/>
     </para>
   </xsl:template>
+  <xsl:template match="copydoc" mode="passthrough">
+    <xsl:apply-templates mode="passthrough"/>
+  </xsl:template>
+  <xsl:template match="verbatim" mode="passthrough">
+    <xsl:copy-of select="node()"/>
+  </xsl:template>
 
   <xsl:template match="para/simplesect" mode="passthrough">
     <xsl:if test="not (@kind='pre') and
                   not (@kind='return') and 
                   not (@kind='post') and
                   not (@kind='attention') and
-                  not (@kind='note')">
+                  not (@kind='see') and
+                  not (@kind='warning') 
+                  ">
       <xsl:apply-templates mode="passthrough"/>
     </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="para/simplesect[@kind='note' or @kind='attention']" mode="passthrough">
+    <note>
+      <xsl:apply-templates mode="passthrough"/>
+    </note>
+  </xsl:template>
+
+  <xsl:template match="para/simplesect[@kind='warning']" mode="passthrough">
+    <warning>
+      <xsl:apply-templates mode="passthrough"/>
+    </warning>
+  </xsl:template>
+
+  <xsl:template match="para/simplesect[@kind='par']" mode="passthrough">
+    <formalpara>
+      <xsl:apply-templates mode="passthrough"/>
+    </formalpara>
+  </xsl:template>
+
+  <xsl:template match="para/simplesect[@kind='see']" mode="passthrough">
+    <para>
+      <emphasis role="bold">
+        <xsl:text>See Also:</xsl:text>
+      </emphasis>
+      <xsl:apply-templates mode="passthrough"/>
+    </para>
+  </xsl:template>
+
+  <xsl:template match="simplesectsep" mode="passthrough">
+    <xsl:apply-templates mode="passthrough"/>
   </xsl:template>
 
   <xsl:template match="*" mode="passthrough">
@@ -1262,7 +1385,20 @@
   <!-- Ignore ref elements for now, as there is a lot of documentation which
        will have incorrect ref elements at the moment -->
   <xsl:template match="ref" mode="passthrough">
-    <xsl:apply-templates mode="passthrough"/>
+    <xsl:variable name="as-class" select="key('compounds-by-id', @refid)[@kind='class' or @kind='struct']"/>
+    <xsl:choose>
+      <xsl:when test="$as-class">
+        <classname>
+          <xsl:attribute name="alt">
+            <xsl:value-of select="$as-class/compoundname/text()"/>
+          </xsl:attribute>
+          <xsl:value-of select="text()"/>
+        </classname>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates mode="passthrough"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Handle function clauses -->
@@ -1282,9 +1418,6 @@
         <xsl:apply-templates mode="passthrough"/>
       </postconditions>
     </xsl:if>
-    <xsl:if test="@kind='note' or @kind='attention'">
-      <xsl:apply-templates mode="passthrough"/>
-    </xsl:if>
   </xsl:template>
 
   <xsl:template match="parameterlist" mode="function-clauses">
@@ -1300,8 +1433,8 @@
             </classname>
             <xsl:text> </xsl:text>
             <xsl:apply-templates 
-              select="parameterdescription/para/text()
-                      |parameterdescription/para/*"
+              select=".//parameterdescription/para/text()
+                      |.//parameterdescription/para/*"
               mode="passthrough"/>
           </xsl:otherwise>
         </xsl:choose>
