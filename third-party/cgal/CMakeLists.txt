@@ -5,9 +5,6 @@
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
 project(CGAL CXX C)
 
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_MULTITHREADED ON)
-
 # Minimal version of CMake:
 if(WIN32)
   cmake_minimum_required(VERSION 2.8.6)
