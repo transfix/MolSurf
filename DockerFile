@@ -1,0 +1,36 @@
+# How to use that:
+# 1. install docker then run this file with docker build
+# 2. check with the package that is installed here to make sure everything is set properly.
+
+FROM ubuntu:16.04
+
+# not sure if libopencv-dev is needed
+RUN apt-get update && \
+    apt-get install -y libopencv-dev protobuf-compiler
+
+WORKDIR src
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y git
+
+# Uncomment this line if you need clone the repo; The oauth token is panzer_wy's.
+RUN git clone https://2f9fd1ae38cc99f7afa3c6eb411368f060ca4f02:x-oauth-basic@github.com/CVC-Lab/MolSurf.git
+# Uncomment this line if you do have MolSurf on your machine and want to copy it in. Make sure to check the first argument which is the physical location on your machine.
+# ADD ./MolSurf /src/MolSurf
+
+WORKDIR /src/MolSurf/
+
+RUN mkdir build
+
+WORKDIR /src/MolSurf/build
+
+RUN apt-get update && \
+    apt-get -y install cmake && \
+    apt-get install -y m4 gfortran libglu1-mesa-dev freeglut3-dev mesa-utils libboost-all-dev
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release 
+RUN make
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release -DPRE_BUILD=OFF 
+RUN make
+
+# The build is here: /src/MolSurf/build/bin/MolSurf
