@@ -47,7 +47,7 @@ SET(CMAKE_MODULE_PATH
 
 
 # include macro for setting up Boost
-# include( SetupBoost )
+include( SetupBoost )
 include( SetupFFTW )
 include( SetupNFFT )
 include( SetupLapack )
