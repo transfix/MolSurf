@@ -14,8 +14,8 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y git
 
-# Uncomment this line if you need clone the repo; The oauth token is panzer_wy's.
-RUN git clone https://2f9fd1ae38cc99f7afa3c6eb411368f060ca4f02:x-oauth-basic@github.com/CVC-Lab/MolSurf.git
+# Uncomment this line if you need clone the repo; You need to fill in an <oauth token> in order to use that.
+RUN git clone https://<oauth token>:x-oauth-basic@github.com/CVC-Lab/MolSurf.git
 # Uncomment this line if you do have MolSurf on your machine and want to copy it in. Make sure to check the first argument which is the physical location on your machine.
 # ADD ./MolSurf /src/MolSurf
 
