@@ -137,7 +137,9 @@ jobs:
             libgmp-dev \
             libmpfr-dev \
             liblapack-dev \
-            libblas-dev
+            libblas-dev \
+            libgl1-mesa-dev libglu1-mesa-dev \
+            libxext-dev libxi-dev libxmu-dev libx11-dev
 
       # ── macOS dependencies ──
       - name: Install dependencies (macOS)
@@ -147,14 +149,23 @@ jobs:
             cmake \
             ninja \
             autoconf automake libtool pkg-config \
-            boost \
             fftw \
             cgal \
             gmp \
             mpfr \
             lapack
-          echo "BOOST_ROOT=$(brew --prefix boost)" >> $GITHUB_ENV
-          echo "CMAKE_PREFIX_PATH=$(brew --prefix boost):$(brew --prefix lapack)" >> $GITHUB_ENV
+          # Homebrew's current `boost` formula (Boost 1.90) ships an
+          # incomplete CMake config that is missing per-component config
+          # files like boost_system-config.cmake. Use the versioned
+          # `boost@1.86` formula whose bottle has complete configs.
+          brew install boost@1.86 || brew install boost
+          if brew --prefix boost@1.86 >/dev/null 2>&1; then
+            BOOST_PREFIX=$(brew --prefix boost@1.86)
+          else
+            BOOST_PREFIX=$(brew --prefix boost)
+          fi
+          echo "BOOST_ROOT=$BOOST_PREFIX" >> $GITHUB_ENV
+          echo "CMAKE_PREFIX_PATH=$BOOST_PREFIX:$(brew --prefix lapack)" >> $GITHUB_ENV
           # NFFT has no Homebrew formula; SetupNFFT.cmake fetches it via
           # FetchContent and builds with autotools.
 
@@ -269,7 +280,9 @@ jobs:
             autoconf automake libtool pkg-config \
             libboost-all-dev libfftw3-dev libnfft3-dev \
             libcgal-dev libgmp-dev libmpfr-dev \
-            liblapack-dev libblas-dev
+            liblapack-dev libblas-dev \
+            libgl1-mesa-dev libglu1-mesa-dev \
+            libxext-dev libxi-dev libxmu-dev libx11-dev
 
       - name: Configure
         run: |
@@ -346,9 +359,17 @@ jobs:
       - name: Install dependencies
         run: |
           brew install cmake ninja autoconf automake libtool pkg-config \
-            boost fftw cgal gmp mpfr lapack
-          echo "BOOST_ROOT=$(brew --prefix boost)" >> $GITHUB_ENV
-          echo "CMAKE_PREFIX_PATH=$(brew --prefix boost):$(brew --prefix lapack)" >> $GITHUB_ENV
+            fftw cgal gmp mpfr lapack
+          # See ci.yml note on boost@1.86: current Homebrew `boost` is
+          # missing per-component CMake configs.
+          brew install boost@1.86 || brew install boost
+          if brew --prefix boost@1.86 >/dev/null 2>&1; then
+            BOOST_PREFIX=$(brew --prefix boost@1.86)
+          else
+            BOOST_PREFIX=$(brew --prefix boost)
+          fi
+          echo "BOOST_ROOT=$BOOST_PREFIX" >> $GITHUB_ENV
+          echo "CMAKE_PREFIX_PATH=$BOOST_PREFIX:$(brew --prefix lapack)" >> $GITHUB_ENV
 
       - name: Configure
         run: |

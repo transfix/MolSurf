@@ -31,7 +31,9 @@ jobs:
             autoconf automake libtool pkg-config \
             libboost-all-dev libfftw3-dev libnfft3-dev \
             libcgal-dev libgmp-dev libmpfr-dev \
-            liblapack-dev libblas-dev
+            liblapack-dev libblas-dev \
+            libgl1-mesa-dev libglu1-mesa-dev \
+            libxext-dev libxi-dev libxmu-dev libx11-dev
 
       - name: Configure
         run: |
@@ -106,7 +108,15 @@ jobs:
       - name: Install dependencies
         run: |
           brew install cmake ninja autoconf automake libtool pkg-config \
-            boost fftw cgal gmp mpfr lapack
+            fftw cgal gmp mpfr lapack
+          brew install boost@1.86 || brew install boost
+          if brew --prefix boost@1.86 >/dev/null 2>&1; then
+            BOOST_PREFIX=$(brew --prefix boost@1.86)
+          else
+            BOOST_PREFIX=$(brew --prefix boost)
+          fi
+          echo "BOOST_ROOT=$BOOST_PREFIX" >> $GITHUB_ENV
+          echo "CMAKE_PREFIX_PATH=$BOOST_PREFIX:$(brew --prefix lapack)" >> $GITHUB_ENV
 
       - name: Configure
         run: |
