@@ -155,6 +155,23 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Export GitHub Actions cache env (vcpkg)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+            core.exportVariable('VCPKG_BINARY_SOURCES', 'clear;x-gha,readwrite');
+
+      - name: Cache CMake FetchContent _deps
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: deps-Windows-release-${{ hashFiles('CMakeLists.txt', 'CMake/Setup*.cmake') }}
+          restore-keys: |
+            deps-Windows-release-
+            deps-Windows-
+
       - name: Compute artifact metadata
         id: meta
         shell: bash
