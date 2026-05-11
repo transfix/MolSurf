@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -29,7 +29,7 @@
 #include <memory.h>
 #include <Contour/edgehash.h>
 
-#if ! defined (__APPLE__)
+#if !defined(__APPLE__)
 #include <malloc.h>
 #else
 #include <stdlib.h>
@@ -41,60 +41,51 @@
 extern int verbose;
 
 // EdgeHash - construct a new hash
-EdgeHash::EdgeHash()
-{
-	nbuckets = NBUCKETS;
-	nitems  = (int*)malloc(sizeof(int) * nbuckets);
-	buckets  = (EdgeHashBucket*)malloc(sizeof(EdgeHashBucket) * nbuckets);
-	// initialize each bucket
-	for(int b=0; b<nbuckets; b++)
-	{
-		nitems[b] = 0;
-		buckets[b].elsize = 5;
-		buckets[b].items = (EdgeHashEl*)malloc(sizeof(EdgeHashEl)* buckets[b].elsize);
-	}
+EdgeHash::EdgeHash() {
+  nbuckets = NBUCKETS;
+  nitems = (int *)malloc(sizeof(int) * nbuckets);
+  buckets = (EdgeHashBucket *)malloc(sizeof(EdgeHashBucket) * nbuckets);
+  // initialize each bucket
+  for (int b = 0; b < nbuckets; b++) {
+    nitems[b] = 0;
+    buckets[b].elsize = 5;
+    buckets[b].items =
+        (EdgeHashEl *)malloc(sizeof(EdgeHashEl) * buckets[b].elsize);
+  }
 }
 
 // LookupBucket - search a given bucket for a given key
-int EdgeHash::LookupBucket(int* nitems, EdgeHashBucket* b, int key)
-{
-	int vnum;
-	// loop through the items
-	for(int i=0; i<(*nitems); i++)
-	{
-		if(b->items[i].key == key)
-		{
-			// found the requested key
-			vnum = b->items[i].vnum;
-			if(++(b->items[i].nref) == 4)
-			{
-				// edges referenced 4 times will not be used again
-				if((*nitems) > 1)
-				{
-					b->items[i] = b->items[(*nitems)-1];
-				}
-				(*nitems)--;
-			}
-			return(vnum);
-		}
-	}
-	return(-1);
+int EdgeHash::LookupBucket(int *nitems, EdgeHashBucket *b, int key) {
+  int vnum;
+  // loop through the items
+  for (int i = 0; i < (*nitems); i++) {
+    if (b->items[i].key == key) {
+      // found the requested key
+      vnum = b->items[i].vnum;
+      if (++(b->items[i].nref) == 4) {
+        // edges referenced 4 times will not be used again
+        if ((*nitems) > 1) {
+          b->items[i] = b->items[(*nitems) - 1];
+        }
+        (*nitems)--;
+      }
+      return (vnum);
+    }
+  }
+  return (-1);
 }
 
 // InsertBucket - insert an item in the given bucket
-void EdgeHash::InsertBucket(int* nitems, EdgeHashBucket* b, int key, int vnum)
-{
-	int n = (*nitems)++;
-	if(n >= b->elsize)
-	{
-		b->elsize*=2;
-		b->items = (EdgeHashEl*)realloc(b->items, sizeof(EdgeHashEl)* b->elsize);
-		if(verbose > 1)
-		{
-			printf("hash size: %d\n", b->elsize);
-		}
-	}
-	b->items[n].key  = key;
-	b->items[n].vnum = vnum;
-	b->items[n].nref = 1;
+void EdgeHash::InsertBucket(int *nitems, EdgeHashBucket *b, int key, int vnum) {
+  int n = (*nitems)++;
+  if (n >= b->elsize) {
+    b->elsize *= 2;
+    b->items = (EdgeHashEl *)realloc(b->items, sizeof(EdgeHashEl) * b->elsize);
+    if (verbose > 1) {
+      printf("hash size: %d\n", b->elsize);
+    }
+  }
+  b->items[n].key = key;
+  b->items[n].vnum = vnum;
+  b->items[n].nref = 1;
 }

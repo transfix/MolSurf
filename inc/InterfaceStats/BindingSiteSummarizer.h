@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -35,62 +35,60 @@ using namespace std;
 using CCVOpenGLMath::Matrix;
 using CCVOpenGLMath::Vector;
 
-struct triangle
-{
-	int vertex[3];
+struct triangle {
+  int vertex[3];
 };
 
-class BindingSiteSummarizer
-{
-	public:
-		BindingSiteSummarizer(string receptorFName, string ligandFName, string outputFName, double interfaceWidth, bool verbose = false);	
-		// Surface File 1 = receptor (on which the footprint is computed)
-		// Surface File 2 = ligand
-		// xforms are applied to ligand
+class BindingSiteSummarizer {
+public:
+  BindingSiteSummarizer(string receptorFName, string ligandFName,
+                        string outputFName, double interfaceWidth,
+                        bool verbose = false);
+  // Surface File 1 = receptor (on which the footprint is computed)
+  // Surface File 2 = ligand
+  // xforms are applied to ligand
 
-		virtual ~BindingSiteSummarizer();
+  virtual ~BindingSiteSummarizer();
 
-		bool computeSiteSummary(vector<Matrix>& xforms);
-		bool computeSiteSummary(vector<Matrix>& xforms, vector<double>& scores);
+  bool computeSiteSummary(vector<Matrix> &xforms);
+  bool computeSiteSummary(vector<Matrix> &xforms, vector<double> &scores);
 
-	private:
-		bool verbose;
+private:
+  bool verbose;
 
-		string receptorSurfaceFileName;
-		string ligandSurfaceFileName;
+  string receptorSurfaceFileName;
+  string ligandSurfaceFileName;
 
-		string bindingSitesFileName;
+  string bindingSitesFileName;
 
-		double interfaceWidth;
-		Matrix xform;
+  double interfaceWidth;
+  Matrix xform;
 
-		int numXforms;
+  int numXforms;
 
-		double maxTimesOnSite;
-		double minTimesOnSite;
-	
-		int numVertR, numTriangR;
-		int numVertL, numTriangL;
+  double maxTimesOnSite;
+  double minTimesOnSite;
 
-		bool useScore;
-		double score;
+  int numVertR, numTriangR;
+  int numVertL, numTriangL;
 
-		DPG::PG *pgL;
+  bool useScore;
+  double score;
 
-		vector<DPG::WeightedPoint*> receptorPoints;
-		vector<DPG::Point*> ligandPoints;
-		vector<DPG::Point*> ligandPointsXformed;
-		vector<triangle> receptorTriangles;
-		vector<triangle> ligandTriangles;
+  DPG::PG *pgL;
 
-		bool filesRead;
+  vector<DPG::WeightedPoint *> receptorPoints;
+  vector<DPG::Point *> ligandPoints;
+  vector<DPG::Point *> ligandPointsXformed;
+  vector<triangle> receptorTriangles;
+  vector<triangle> ligandTriangles;
 
+  bool filesRead;
 
-		void cleanup();
-		bool initialize();
-		bool detectInterfacePoints(Matrix xform);
-		bool prepareBindingSiteSurfaceFile();
+  void cleanup();
+  bool initialize();
+  bool detectInterfacePoints(Matrix xform);
+  bool prepareBindingSiteSurfaceFile();
 };
-
 
 #endif

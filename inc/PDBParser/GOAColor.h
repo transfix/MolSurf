@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -28,68 +28,78 @@
 #include <PDBParser/ResidueInformation.h>
 #include <ColorManager/PastelColorGenerator.h>
 
-namespace ColorManager
-{
-	class ColorGenerator;
+namespace ColorManager {
+class ColorGenerator;
 }
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class Atom;
-	const int NumTokens = 12;
-	class GOAColor
-	{
-		public:
-			GOAColor();
-			~GOAColor();
-			void parseColormapFile(char*);
-			void parseColormapString(vector<std::string> strings);
-			void printColormap() const;
-			void ApplyColormap(PDBParser::GroupOfAtoms*, int transIndex = 0) const;
-			void ApplyColorsByGOALevel(PDBParser::GroupOfAtoms* molecule, PDBParser::GroupOfAtoms::GOA_TYPE colorLevel);
-			void ApplyElementColors(PDBParser::GroupOfAtoms*) const;
-			void ApplyResidueColors(PDBParser::GroupOfAtoms*) const;
-			void ApplyChainColors(PDBParser::GroupOfAtoms* grp, ColorManager::ColorGenerator* colorGenerator) const;
-			bool UsesDefaultColoring(int transIndex) const;
-			struct ColormapEntry
-			{
-				int transformSection;
-				int molecule;
-				int chainIndex;
-				char chainID;
-				int ssIndex;
-				int resIndex;
-				char resName[4];
-				char atomName[5];
-				int atomIndex;
-				unsigned int lineNum;
-				double red;
-				double green;
-				double blue;
-				double alpha;
-			};
+namespace PDBParser {
+class GroupOfAtoms;
+class Atom;
+const int NumTokens = 12;
+class GOAColor {
+public:
+  GOAColor();
+  ~GOAColor();
+  void parseColormapFile(char *);
+  void parseColormapString(vector<std::string> strings);
+  void printColormap() const;
+  void ApplyColormap(PDBParser::GroupOfAtoms *, int transIndex = 0) const;
+  void ApplyColorsByGOALevel(PDBParser::GroupOfAtoms *molecule,
+                             PDBParser::GroupOfAtoms::GOA_TYPE colorLevel);
+  void ApplyElementColors(PDBParser::GroupOfAtoms *) const;
+  void ApplyResidueColors(PDBParser::GroupOfAtoms *) const;
+  void ApplyChainColors(PDBParser::GroupOfAtoms *grp,
+                        ColorManager::ColorGenerator *colorGenerator) const;
+  bool UsesDefaultColoring(int transIndex) const;
+  struct ColormapEntry {
+    int transformSection;
+    int molecule;
+    int chainIndex;
+    char chainID;
+    int ssIndex;
+    int resIndex;
+    char resName[4];
+    char atomName[5];
+    int atomIndex;
+    unsigned int lineNum;
+    double red;
+    double green;
+    double blue;
+    double alpha;
+  };
 
-			void ApplyColormapEntryToGOA(const ColormapEntry&,PDBParser::GroupOfAtoms*) const;
-			void ApplyColormapEntryToGOA_old(const ColormapEntry&,PDBParser::GroupOfAtoms*) const;
-			void ApplyColorToGOA(double,double,double,double, PDBParser::GroupOfAtoms*) const;
-			void ApplyColorToAtom(float,float,float,float, PDBParser::Atom*) const;
+  void ApplyColormapEntryToGOA(const ColormapEntry &,
+                               PDBParser::GroupOfAtoms *) const;
+  void ApplyColormapEntryToGOA_old(const ColormapEntry &,
+                                   PDBParser::GroupOfAtoms *) const;
+  void ApplyColorToGOA(double, double, double, double,
+                       PDBParser::GroupOfAtoms *) const;
+  void ApplyColorToAtom(float, float, float, float, PDBParser::Atom *) const;
 
-		private:
-			PDBParser::Atom* getAnAtom(PDBParser::GroupOfAtoms* grp) const;
-			void printEntry(const ColormapEntry&) const;
-			char* eatWhitespace(char*);
-			char** parseEntryLine(char*);
-			int parseSectionMarker(char*);
-			bool genEntryFromTokens(char**, ColormapEntry*);
-			void freeTokens(char**);
-			enum TokenFields
-			{
-				MolIndex=0, ChainIndex,ChainID, SSIndex, ResidueIndex,ResidueName,
-				AtomName,AtomIndex, Red,Green,Blue,Alpha
-			};
-			vector<ColormapEntry> m_EntList;
-	};
+private:
+  PDBParser::Atom *getAnAtom(PDBParser::GroupOfAtoms *grp) const;
+  void printEntry(const ColormapEntry &) const;
+  char *eatWhitespace(char *);
+  char **parseEntryLine(char *);
+  int parseSectionMarker(char *);
+  bool genEntryFromTokens(char **, ColormapEntry *);
+  void freeTokens(char **);
+  enum TokenFields {
+    MolIndex = 0,
+    ChainIndex,
+    ChainID,
+    SSIndex,
+    ResidueIndex,
+    ResidueName,
+    AtomName,
+    AtomIndex,
+    Red,
+    Green,
+    Blue,
+    Alpha
+  };
+  vector<ColormapEntry> m_EntList;
 };
+}; // namespace PDBParser
 
 #endif

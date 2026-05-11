@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,28 +25,26 @@
 #include <Utility/utility.h>
 #include <PDBParser/Atom.h>
 
-namespace PDBParser
-{
-	class Atom;
-	// Implements 3-D vector ops
-	class GOAVector
-	{
-		public:
-			GOAVector();
-			GOAVector(double ax, double ay, double az);
-			GOAVector(Atom* atom);
-			~GOAVector();
+namespace PDBParser {
+class Atom;
+// Implements 3-D vector ops
+class GOAVector {
+public:
+  GOAVector();
+  GOAVector(double ax, double ay, double az);
+  GOAVector(Atom *atom);
+  ~GOAVector();
 
-			void print();
-			void norm();
+  void print();
+  void norm();
 
-			double x, y, z;
-	};
-	GOAVector* subtractAtoms(Atom* atomA, Atom* atomB);
-	GOAVector* scalarProduct(double c, GOAVector* v1);
-	GOAVector* crossProduct(GOAVector* v1, GOAVector* v2);
-	double dotProduct(GOAVector* v1, GOAVector* v2);
-	double dotProductAngle(GOAVector* v1, GOAVector* v2);
+  double x, y, z;
 };
+GOAVector *subtractAtoms(Atom *atomA, Atom *atomB);
+GOAVector *scalarProduct(double c, GOAVector *v1);
+GOAVector *crossProduct(GOAVector *v1, GOAVector *v2);
+double dotProduct(GOAVector *v1, GOAVector *v2);
+double dotProductAngle(GOAVector *v1, GOAVector *v2);
+}; // namespace PDBParser
 
 #endif

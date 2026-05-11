@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -41,106 +41,112 @@
 #include <Contour/CellSearch.h>
 #include <sys/types.h>
 
-#define MIN2(x,y) ((x)<(y)?(x):(y))
-#define MAX2(x,y) ((x)>(y)?(x):(y))
+#define MIN2(x, y) ((x) < (y) ? (x) : (y))
+#define MAX2(x, y) ((x) > (y) ? (x) : (y))
 
-#define MIN3(x,y,z) ((x)<(y)?((x)<(z)?(x):(z)):((y)<(z)?(y):(z)))
-#define MAX3(x,y,z) ((x)>(y)?((x)>(z)?(x):(z)):((y)>(z)?(y):(z)))
+#define MIN3(x, y, z)                                                          \
+  ((x) < (y) ? ((x) < (z) ? (x) : (z)) : ((y) < (z) ? (y) : (z)))
+#define MAX3(x, y, z)                                                          \
+  ((x) > (y) ? ((x) > (z) ? (x) : (z)) : ((y) > (z) ? (y) : (z)))
 
-#define MIN4(x,y,z,w) ((x)<(y)?((x)<(z)?((x)<(w)?(x):(w)):((w)<(z)?(w):(z))):\
-                       ((y)<(z)?((y)<(w)?(y):(w)):((z)<(w)?(z):(w))))
-#define MAX4(x,y,z,w) ((x)>(y)?((x)>(z)?((x)>(w)?(x):(w)):((w)>(z)?(w):(z))):\
-                       ((y)>(z)?((y)>(w)?(y):(w)):((z)>(w)?(z):(w))))
+#define MIN4(x, y, z, w)                                                       \
+  ((x) < (y)                                                                   \
+       ? ((x) < (z) ? ((x) < (w) ? (x) : (w)) : ((w) < (z) ? (w) : (z)))       \
+       : ((y) < (z) ? ((y) < (w) ? (y) : (w)) : ((z) < (w) ? (z) : (w))))
+#define MAX4(x, y, z, w)                                                       \
+  ((x) > (y)                                                                   \
+       ? ((x) > (z) ? ((x) > (w) ? (x) : (w)) : ((w) > (z) ? (w) : (z)))       \
+       : ((y) > (z) ? ((y) > (w) ? (y) : (w)) : ((z) > (w) ? (z) : (w))))
 
-#define MIN6(min,a1,a2,a3,a4,a5,a6)       \
-   do {                                   \
-      float __min1, __min2;               \
-      __min1 = MIN3(a1,a2,a3);            \
-      __min2 = MIN3(a4,a5,a6);            \
-      min = MIN2(__min1, __min2);         \
-   } while (0)
+#define MIN6(min, a1, a2, a3, a4, a5, a6)                                      \
+  do {                                                                         \
+    float __min1, __min2;                                                      \
+    __min1 = MIN3(a1, a2, a3);                                                 \
+    __min2 = MIN3(a4, a5, a6);                                                 \
+    min = MIN2(__min1, __min2);                                                \
+  } while (0)
 
-#define MAX6(max,a1,a2,a3,a4,a5,a6)       \
-   do {                                   \
-      float __max1, __max2;               \
-      __max1 = MAX3(a1,a2,a3);            \
-      __max2 = MAX3(a4,a5,a6);            \
-      max = MAX2(__max1, __max2);         \
-   } while (0)
+#define MAX6(max, a1, a2, a3, a4, a5, a6)                                      \
+  do {                                                                         \
+    float __max1, __max2;                                                      \
+    __max1 = MAX3(a1, a2, a3);                                                 \
+    __max2 = MAX3(a4, a5, a6);                                                 \
+    max = MAX2(__max1, __max2);                                                \
+  } while (0)
 
-#define MIN7(min,a1,a2,a3,a4,a5,a6,a7)    \
-   do {                                   \
-      float __min1, __min2;               \
-      __min1 = MIN3(a1,a2,a3);            \
-      __min2 = MIN4(a4,a5,a6,a7);         \
-      min = MIN2(__min1, __min2);         \
-   } while (0)
+#define MIN7(min, a1, a2, a3, a4, a5, a6, a7)                                  \
+  do {                                                                         \
+    float __min1, __min2;                                                      \
+    __min1 = MIN3(a1, a2, a3);                                                 \
+    __min2 = MIN4(a4, a5, a6, a7);                                             \
+    min = MIN2(__min1, __min2);                                                \
+  } while (0)
 
-#define MAX7(max,a1,a2,a3,a4,a5,a6,a7)    \
-   do {                                   \
-      float __max1, __max2;               \
-      __max1 = MAX3(a1,a2,a3);            \
-      __max2 = MAX4(a4,a5,a6,a7);         \
-      max = MAX2(__max1, __max2);         \
-   } while (0)
+#define MAX7(max, a1, a2, a3, a4, a5, a6, a7)                                  \
+  do {                                                                         \
+    float __max1, __max2;                                                      \
+    __max1 = MAX3(a1, a2, a3);                                                 \
+    __max2 = MAX4(a4, a5, a6, a7);                                             \
+    max = MAX2(__max1, __max2);                                                \
+  } while (0)
 
-#define MIN8(min,a1,a2,a3,a4,a5,a6,a7,a8) \
-   do {                                   \
-      float __min1, __min2;               \
-      __min1 = MIN4(a1,a2,a3,a4);         \
-      __min2 = MIN4(a5,a6,a7,a8);         \
-      min = MIN2(__min1, __min2);         \
-   } while (0)
+#define MIN8(min, a1, a2, a3, a4, a5, a6, a7, a8)                              \
+  do {                                                                         \
+    float __min1, __min2;                                                      \
+    __min1 = MIN4(a1, a2, a3, a4);                                             \
+    __min2 = MIN4(a5, a6, a7, a8);                                             \
+    min = MIN2(__min1, __min2);                                                \
+  } while (0)
 
-#define MAX8(max,a1,a2,a3,a4,a5,a6,a7,a8) \
-   do {                                   \
-      float __max1, __max2;               \
-      __max1 = MAX4(a1,a2,a3,a4);         \
-      __max2 = MAX4(a5,a6,a7,a8);         \
-      max = MAX2(__max1, __max2);         \
-   } while (0)
+#define MAX8(max, a1, a2, a3, a4, a5, a6, a7, a8)                              \
+  do {                                                                         \
+    float __max1, __max2;                                                      \
+    __max1 = MAX4(a1, a2, a3, a4);                                             \
+    __max2 = MAX4(a5, a6, a7, a8);                                             \
+    max = MAX2(__max1, __max2);                                                \
+  } while (0)
 
-#define MIN4MERGE(min,a1,a2,a3,a4)        \
-   do {                                   \
-      float __min;                        \
-      __min = MIN4(a1,a2,a3,a4);          \
-      if (__min < min) min = __min;       \
-   } while (0)
+#define MIN4MERGE(min, a1, a2, a3, a4)                                         \
+  do {                                                                         \
+    float __min;                                                               \
+    __min = MIN4(a1, a2, a3, a4);                                              \
+    if (__min < min)                                                           \
+      min = __min;                                                             \
+  } while (0)
 
-#define MAX4MERGE(max,a1,a2,a3,a4)        \
-   do {                                   \
-      float __max;                        \
-      __max = MAX4(a1,a2,a3,a4);          \
-      if (__max > max) max = __max;       \
-   } while (0)
+#define MAX4MERGE(max, a1, a2, a3, a4)                                         \
+  do {                                                                         \
+    float __max;                                                               \
+    __max = MAX4(a1, a2, a3, a4);                                              \
+    if (__max > max)                                                           \
+      max = __max;                                                             \
+  } while (0)
 
 // Segment Tree Class
-class SegTree : public CellSearch
-{
-	public:
-		SegTree(u_int n = 0, float* v = NULL);
-		~SegTree();
+class SegTree : public CellSearch {
+public:
+  SegTree(u_int n = 0, float *v = NULL);
+  ~SegTree();
 
-		void Done(void) {}
-		void Init(u_int n, float* v);
-		void Dump(void);
-		void Info(void);
-		void Traverse(float, void (*f)(u_int, void*), void*);
-		u_int getCells(float, u_int*);
-		void InsertSeg(u_int cellid, float min, float max)
-		{
-			InsertSegR(cellid, min, max, 0, nleaf-1, -1e10, 1e10);
-		}
+  void Done(void) {}
+  void Init(u_int n, float *v);
+  void Dump(void);
+  void Info(void);
+  void Traverse(float, void (*f)(u_int, void *), void *);
+  u_int getCells(float, u_int *);
+  void InsertSeg(u_int cellid, float min, float max) {
+    InsertSegR(cellid, min, max, 0, nleaf - 1, -1e10, 1e10);
+  }
 
-	protected:
-		void InsertSegR(u_int, float, float, int, int, float, float);
+protected:
+  void InsertSegR(u_int, float, float, int, int, float, float);
 
-	private:
-		int nleaf;
-		float* vals;
-		CellBucket* leqthan;
-		CellBucket* lessthan;
-		CellBucket* grtrthan;
+private:
+  int nleaf;
+  float *vals;
+  CellBucket *leqthan;
+  CellBucket *lessthan;
+  CellBucket *grtrthan;
 };
 
 #endif

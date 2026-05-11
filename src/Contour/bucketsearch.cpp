@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -28,7 +28,7 @@
 #ifndef WIN32
 #include <unistd.h>
 #endif
-#if ! defined (__APPLE__)
+#if !defined(__APPLE__)
 #include <malloc.h>
 #else
 #include <stdlib.h>
@@ -43,105 +43,88 @@ typedef unsigned int u_int;
 extern int verbose;
 
 // BucketSearch() - construct a segment tree for the given range of values
-BucketSearch::BucketSearch(u_int n, float* val)
-{
-	if(n==0)
-	{
-		minval = maxval = 0;
-		nbuckets = 0;
-		buckets = NULL;
-		return;
-	}
-	Init(n, val);
+BucketSearch::BucketSearch(u_int n, float *val) {
+  if (n == 0) {
+    minval = maxval = 0;
+    nbuckets = 0;
+    buckets = NULL;
+    return;
+  }
+  Init(n, val);
 }
 
 // Init() - Initialize the segment tree for the given set of values
-void BucketSearch::Init(u_int n, float* val)
-{
-	minval = val[0];
-	maxval = val[n-1];
-	nbuckets = int(val[n-1] - val[0]);
-	buckets = new CellBucket[nbuckets];
+void BucketSearch::Init(u_int n, float *val) {
+  minval = val[0];
+  maxval = val[n - 1];
+  nbuckets = int(val[n - 1] - val[0]);
+  buckets = new CellBucket[nbuckets];
 }
 
 // ~BucketSearch() - free storage for a segment tree
-BucketSearch::~BucketSearch()
-{
-	if(verbose)
-	{
-		printf("BucketSearch destructor\n");
-	}
-	/* should free inside buckets here */
-	delete [] buckets;
+BucketSearch::~BucketSearch() {
+  if (verbose) {
+    printf("BucketSearch destructor\n");
+  }
+  /* should free inside buckets here */
+  delete[] buckets;
 }
 
-void
-BucketSearch::Done(void)
-{
-}
+void BucketSearch::Done(void) {}
 
 // InsertSet() - recursively insert a segment into the tree
-void BucketSearch::InsertSeg(u_int cellid, float min, float max)
-{
-	u_int first, last;
-	u_int b;
-	first = whichBucket(min);
-	last = whichBucket(max);
-	for(b=first; b<last; b++)
-	{
-		buckets[b].insert(cellid);
-	}
+void BucketSearch::InsertSeg(u_int cellid, float min, float max) {
+  u_int first, last;
+  u_int b;
+  first = whichBucket(min);
+  last = whichBucket(max);
+  for (b = first; b < last; b++) {
+    buckets[b].insert(cellid);
+  }
 }
 
 // Traverse() - Traverse the tree, calling the given function for
 //              each stored segment containing the given value
-void BucketSearch::Traverse(float val, void (*f)(u_int, void*), void* data)
-{
-	u_int b;
-	b = whichBucket(val);
-	buckets[b].traverseCells(f, data);
+void BucketSearch::Traverse(float val, void (*f)(u_int, void *), void *data) {
+  u_int b;
+  b = whichBucket(val);
+  buckets[b].traverseCells(f, data);
 }
 
 // getCells() - traverse the tree, storing the cell id's of all
 //              segments containing the given value in a list
-u_int BucketSearch::getCells(float val, u_int* cells)
-{
-	u_int b;
-	u_int ncells;
-	ncells=0;
-	b = whichBucket(val);
-	buckets[b].getCells(cells, ncells);
-	return(ncells);
+u_int BucketSearch::getCells(float val, u_int *cells) {
+  u_int b;
+  u_int ncells;
+  ncells = 0;
+  b = whichBucket(val);
+  buckets[b].getCells(cells, ncells);
+  return (ncells);
 }
 
 // Dump() - dump the tree
-void BucketSearch::Dump(void)
-{
-	int i;
-	for(i=0; i<nbuckets; i++)
-	{
-		printf("%d: value %f\n", i, minval+i);
-		buckets[i].dump((char*)"   cells:");
-		printf("\n");
-	}
+void BucketSearch::Dump(void) {
+  int i;
+  for (i = 0; i < nbuckets; i++) {
+    printf("%d: value %f\n", i, minval + i);
+    buckets[i].dump((char *)"   cells:");
+    printf("\n");
+  }
 }
 
 // Info() - print some stats about the tree
-void BucketSearch::Info(void)
-{
-	int i, total, max;
-	printf("______BUCKET STATS_____\n");
-	printf("%d buckets\n", nbuckets);
-	total = max = 0;
-	for(i=0; i<nbuckets; i++)
-	{
-		total += buckets[i].nCells();
-		if(buckets[i].nCells() > max)
-		{
-			max = buckets[i].nCells();
-		}
-	}
-	printf("total labels in buckets: %d\n", total);
-	printf("maximum labels in one list: %d\n", max);
-	printf("______BUCKET STATS_____\n");
+void BucketSearch::Info(void) {
+  int i, total, max;
+  printf("______BUCKET STATS_____\n");
+  printf("%d buckets\n", nbuckets);
+  total = max = 0;
+  for (i = 0; i < nbuckets; i++) {
+    total += buckets[i].nCells();
+    if (buckets[i].nCells() > max) {
+      max = buckets[i].nCells();
+    }
+  }
+  printf("total labels in buckets: %d\n", total);
+  printf("maximum labels in one list: %d\n", max);
+  printf("______BUCKET STATS_____\n");
 }

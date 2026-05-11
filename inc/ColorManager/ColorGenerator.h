@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -28,21 +28,19 @@ using namespace ColorManager;
 
 static const int MAX_ITERATIONS_ALLOWED = 3;
 
+namespace ColorManager {
+class ColorGenerator {
+public:
+  ColorGenerator();
+  void reset();
+  virtual ~ColorGenerator();
+  virtual Color getNextColor() = 0;
+  virtual bool valid(Color color);
 
-namespace ColorManager
-{
-	class ColorGenerator
-	{
-		public:
-			ColorGenerator();
-			void reset();
-			virtual ~ColorGenerator();
-			virtual Color getNextColor() = 0;
-			virtual bool valid(Color color);
-		private:
-			Color m_PrevColor;
-			int numIter;
-	};
+private:
+  Color m_PrevColor;
+  int numIter;
 };
+}; // namespace ColorManager
 
 #endif

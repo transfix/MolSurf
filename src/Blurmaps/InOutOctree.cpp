@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -21,19 +21,14 @@
 */
 #include <Blurmaps/InOutOctree.h>
 
-InOutOctree::InOutOctree(int depth, float* min, float* max, float* orig, float* span)
-{
-}
+InOutOctree::InOutOctree(int depth, float *min, float *max, float *orig,
+                         float *span) {}
 
-InOutOctree::~InOutOctree()
-{
-}
+InOutOctree::~InOutOctree() {}
 
-void InOutOctree::updateOctree(float cx, float cy, float cz, float r, int iIndex, int jIndex, int kIndex)
-{
-}
+void InOutOctree::updateOctree(float cx, float cy, float cz, float r,
+                               int iIndex, int jIndex, int kIndex) {}
 
-double InOutOctree::getClosestDistance(int iIndex, int jIndex, int kIndex)
-{
-	return 0;
+double InOutOctree::getClosestDistance(int iIndex, int jIndex, int kIndex) {
+  return 0;
 }

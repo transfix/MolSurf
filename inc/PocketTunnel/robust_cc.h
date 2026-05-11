@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,12 +25,15 @@
 #include <Utility/utility.h>
 #include <PocketTunnel/datastruct_pt.h>
 
-Point nondg_voronoi_point(const Point& a, const Point& b, const Point& c, const Point& d, bool& is_correct_computation);
-Point dg_voronoi_point(const Point& a, const Point& b, const Point& c, const Point& d, bool& is_correct_computation);
-Point nondg_cc_tr_3(const Point& a, const Point& b, const Point& c, bool& is_correct_computation);
-Point cc_tr_3(const Point& a, const Point& b, const Point& c);
-double sq_cr_tr_3(const Point& a, const Point& b, const Point& c);
-Point circumcenter(const Facet& f);
-double circumradius(const Facet& f);
+Point nondg_voronoi_point(const Point &a, const Point &b, const Point &c,
+                          const Point &d, bool &is_correct_computation);
+Point dg_voronoi_point(const Point &a, const Point &b, const Point &c,
+                       const Point &d, bool &is_correct_computation);
+Point nondg_cc_tr_3(const Point &a, const Point &b, const Point &c,
+                    bool &is_correct_computation);
+Point cc_tr_3(const Point &a, const Point &b, const Point &c);
+double sq_cr_tr_3(const Point &a, const Point &b, const Point &c);
+Point circumcenter(const Facet &f);
+double circumradius(const Facet &f);
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,7 +26,7 @@
 #include <Contour/seedchkr2.h>
 #include <Contour/datareg2.h>
 
-#if ! defined (__APPLE__)
+#if !defined(__APPLE__)
 #include <malloc.h>
 #else
 #include <stdlib.h>
@@ -35,36 +35,33 @@
 #include <unistd.h>
 #endif
 
-void seedChkr2::compSeeds(void)
-{
-	Datareg2& reg2 = (Datareg2&)data;
-	int i, j;
-	int xdim, ydim;
-	float val[4];
-	float min4, max4;
-	int nseed = 0;
-	xdim = reg2.dim[0];
-	ydim = reg2.dim[1];
-	// proceed through the slices computing seeds
-	// process the k'th slab
-	for(i=0; i<xdim-1; i+=2)
-		for(j=0; j<ydim-1; j+=2)
-		{
-			// load the voxel data
-			reg2.getCellValues(i, j, val);
-			min4 = MIN4(val[0], val[1], val[2], val[3]);
-			max4 = MAX4(val[0], val[1], val[2], val[3]);
-			seeds.AddSeed(reg2.index2cell(i,j), min4, max4);
-			nseed++;
-		}
-	for(i=1; i<xdim-1; i+=2)
-		for(j=1; j<ydim-1; j+=2)
-		{
-			// load the voxel data
-			reg2.getCellValues(i, j, val);
-			min4 = MIN4(val[0], val[1], val[2], val[3]);
-			max4 = MAX4(val[0], val[1], val[2], val[3]);
-			seeds.AddSeed(reg2.index2cell(i,j), min4, max4);
-			nseed++;
-		}
+void seedChkr2::compSeeds(void) {
+  Datareg2 &reg2 = (Datareg2 &)data;
+  int i, j;
+  int xdim, ydim;
+  float val[4];
+  float min4, max4;
+  int nseed = 0;
+  xdim = reg2.dim[0];
+  ydim = reg2.dim[1];
+  // proceed through the slices computing seeds
+  // process the k'th slab
+  for (i = 0; i < xdim - 1; i += 2)
+    for (j = 0; j < ydim - 1; j += 2) {
+      // load the voxel data
+      reg2.getCellValues(i, j, val);
+      min4 = MIN4(val[0], val[1], val[2], val[3]);
+      max4 = MAX4(val[0], val[1], val[2], val[3]);
+      seeds.AddSeed(reg2.index2cell(i, j), min4, max4);
+      nseed++;
+    }
+  for (i = 1; i < xdim - 1; i += 2)
+    for (j = 1; j < ydim - 1; j += 2) {
+      // load the voxel data
+      reg2.getCellValues(i, j, val);
+      min4 = MIN4(val[0], val[1], val[2], val[3]);
+      max4 = MAX4(val[0], val[1], val[2], val[3]);
+      seeds.AddSeed(reg2.index2cell(i, j), min4, max4);
+      nseed++;
+    }
 }

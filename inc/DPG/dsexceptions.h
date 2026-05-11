@@ -1,8 +1,8 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -20,14 +20,14 @@
   along with MolSurf; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-        #ifndef DSEXCEPTIONS_H_
-        #define DSEXCEPTIONS_H_
+#ifndef DSEXCEPTIONS_H_
+#define DSEXCEPTIONS_H_
 
-        namespace DPG {
-        class Underflow { };
-        class Overflow  { };
-        class OutOfMemory { };
-        class BadIterator { };
-        }
+namespace DPG {
+class Underflow {};
+class Overflow {};
+class OutOfMemory {};
+class BadIterator {};
+} // namespace DPG
 
-        #endif
+#endif

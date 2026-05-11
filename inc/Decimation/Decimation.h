@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,16 +24,19 @@
 
 #include <LBIE_lib/Geoframe.h>
 
-class Decimation
-{
-	private:
-		double minx, miny, minz, maxx, maxy, maxz;
-	public:
-		Decimation() {}
-		void loadGeoframe(Geoframe& geo);
-		void saveGeoframe(Geoframe& geo);
-		void Decimate(const char* in_file, const char* out_file, int niter, float controllor, float variation, float innerangle);
-		void DecimatePercentage(const char* in_file, const char* out_file, float percentage, float control, float vari, float inangle);
+class Decimation {
+private:
+  double minx, miny, minz, maxx, maxy, maxz;
+
+public:
+  Decimation() {}
+  void loadGeoframe(Geoframe &geo);
+  void saveGeoframe(Geoframe &geo);
+  void Decimate(const char *in_file, const char *out_file, int niter,
+                float controllor, float variation, float innerangle);
+  void DecimatePercentage(const char *in_file, const char *out_file,
+                          float percentage, float control, float vari,
+                          float inangle);
 };
 
 #endif

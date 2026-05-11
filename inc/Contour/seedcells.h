@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,60 +27,37 @@
 #include <Utility/utility.h>
 #include <Contour/basic.h>
 
-typedef struct SeedCell
-{
-	float min, max;
-	u_int cell_id;
+typedef struct SeedCell {
+  float min, max;
+  u_int cell_id;
 } *SeedCellP;
 
-class SeedCells
-{
-	public:
-		SeedCells();
-		~SeedCells();
+class SeedCells {
+public:
+  SeedCells();
+  ~SeedCells();
 
-		int    getNCells(void)
-		{
-			return(ncells);
-		}
-		u_int  getCellID(int i)
-		{
-			return(cells[i].cell_id);
-		}
-		float  getMin(int i)
-		{
-			return(cells[i].min);
-		}
-		float  getMax(int i)
-		{
-			return(cells[i].max);
-		}
-		void   Clear(void)
-		{
-			ncells = 0;
-		}
-		SeedCell* getCellPointer()
-		{
-			return(cells);
-		}
+  int getNCells(void) { return (ncells); }
+  u_int getCellID(int i) { return (cells[i].cell_id); }
+  float getMin(int i) { return (cells[i].min); }
+  float getMax(int i) { return (cells[i].max); }
+  void Clear(void) { ncells = 0; }
+  SeedCell *getCellPointer() { return (cells); }
 
-		int AddSeed(u_int, float, float);
-		void AddToRange(u_int i, float mn, float mx)
-		{
-			if(mn < cells[i].min)
-			{
-				cells[i].min = mn;
-			}
-			if(mx > cells[i].max)
-			{
-				cells[i].max = mx;
-			}
-		}
+  int AddSeed(u_int, float, float);
+  void AddToRange(u_int i, float mn, float mx) {
+    if (mn < cells[i].min) {
+      cells[i].min = mn;
+    }
+    if (mx > cells[i].max) {
+      cells[i].max = mx;
+    }
+  }
 
-	private:
-		int ncells;
-		int cell_size;
-		SeedCellP cells;
+private:
+  int ncells;
+  int cell_size;
+  SeedCellP cells;
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,15 +25,15 @@
 #include <Utility/utility.h>
 #include <Summation/DirectSummationModule.h>
 
-namespace CCVSummationModule
-{
-	class DirectToScatteredPointsSummationModule
-	 : public SummationModule
-	{
-		public:
-			DirectToScatteredPointsSummationModule(double* centers, double* radii, double* weights, int numberOfCenters, Kernel* kernel, OutputGrid* outputGrid);
-			virtual ~DirectToScatteredPointsSummationModule();
-	};
+namespace CCVSummationModule {
+class DirectToScatteredPointsSummationModule : public SummationModule {
+public:
+  DirectToScatteredPointsSummationModule(double *centers, double *radii,
+                                         double *weights, int numberOfCenters,
+                                         Kernel *kernel,
+                                         OutputGrid *outputGrid);
+  virtual ~DirectToScatteredPointsSummationModule();
 };
+}; // namespace CCVSummationModule
 
 #endif

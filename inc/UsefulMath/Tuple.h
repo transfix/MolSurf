@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,25 +24,24 @@
 
 #include <Utility/utility.h>
 
-namespace CCVOpenGLMath
-{
-	class Tuple
-	{
-		public:
-			Tuple(float x, float y, float z, float w);
-			Tuple();
-			virtual ~Tuple();
-			Tuple(const Tuple& copy);
-			Tuple& operator=(const Tuple& copy);
-			void print() const;
-			Tuple& set(float x, float y, float z, float w);
-			Tuple& set(float* array);
-			Tuple& set(const Tuple& copy);
-			float& operator[](unsigned int i);
-			const float& operator[](unsigned int i) const;
-		protected:
-			float p[4];
-	};
+namespace CCVOpenGLMath {
+class Tuple {
+public:
+  Tuple(float x, float y, float z, float w);
+  Tuple();
+  virtual ~Tuple();
+  Tuple(const Tuple &copy);
+  Tuple &operator=(const Tuple &copy);
+  void print() const;
+  Tuple &set(float x, float y, float z, float w);
+  Tuple &set(float *array);
+  Tuple &set(const Tuple &copy);
+  float &operator[](unsigned int i);
+  const float &operator[](unsigned int i) const;
+
+protected:
+  float p[4];
 };
+}; // namespace CCVOpenGLMath
 
 #endif

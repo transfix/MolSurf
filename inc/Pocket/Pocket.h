@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -35,18 +35,18 @@
 #include <VolumeFileTypes/VolumeLoader.h>
 
 class Geometry;
-namespace PDBParser
-{
-	class GroupOfAtoms;
+namespace PDBParser {
+class GroupOfAtoms;
 }
 
-class Pocket
-{
-	public:
-		Pocket();
-		virtual ~Pocket();
-		void constructPockets(PDBParser::GroupOfAtoms* pAtoms, string fileName, float distance, Geometry** pocketGeometry, int size);
-		void constructPockets(Geometry* geometry, string fileName, float distance, Geometry** pocketGeometry, int size);
+class Pocket {
+public:
+  Pocket();
+  virtual ~Pocket();
+  void constructPockets(PDBParser::GroupOfAtoms *pAtoms, string fileName,
+                        float distance, Geometry **pocketGeometry, int size);
+  void constructPockets(Geometry *geometry, string fileName, float distance,
+                        Geometry **pocketGeometry, int size);
 };
 
 #endif

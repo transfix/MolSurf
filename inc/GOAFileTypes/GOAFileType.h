@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -28,21 +28,22 @@
 
 using std::string;
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
+namespace PDBParser {
+class GroupOfAtoms;
 };
 
-class GOAFileType
-{
-	public:
-		GOAFileType();
-		virtual ~GOAFileType();
-		virtual PDBParser::GroupOfAtoms* loadFile(const string& fileName, bool deleteWater = false) = 0;
-		virtual bool checkType(const string& fileName) = 0;
-		virtual bool saveFile(PDBParser::GroupOfAtoms* groupOfAtoms, const string& fileName, unsigned int level=0, CCVOpenGLMath::Matrix* transformation = 0) = 0;
-		virtual string extension() = 0;
-		virtual string filter() = 0;
+class GOAFileType {
+public:
+  GOAFileType();
+  virtual ~GOAFileType();
+  virtual PDBParser::GroupOfAtoms *loadFile(const string &fileName,
+                                            bool deleteWater = false) = 0;
+  virtual bool checkType(const string &fileName) = 0;
+  virtual bool saveFile(PDBParser::GroupOfAtoms *groupOfAtoms,
+                        const string &fileName, unsigned int level = 0,
+                        CCVOpenGLMath::Matrix *transformation = 0) = 0;
+  virtual string extension() = 0;
+  virtual string filter() = 0;
 };
 
 #endif

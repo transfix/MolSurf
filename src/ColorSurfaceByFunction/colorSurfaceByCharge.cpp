@@ -2,7 +2,7 @@
   Copyright 2011 The University of Texas at Austin
 
         Author: Muhibur Rasheed <muhib@ices.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,198 +26,180 @@
 #include <string>
 #include <sstream>
 
-
-ColorSurfaceByCharge::ColorSurfaceByCharge(string pqrf, string sf, string csf, int m, double dist, double bl)
-{
-	pqrFileName = pqrf;
-	surfaceFileName = sf;
-	coloredSurfaceFileName = csf;
-	mode = m;
-	distanceCutoff = dist;
-	blobbyness = bl;
+ColorSurfaceByCharge::ColorSurfaceByCharge(string pqrf, string sf, string csf,
+                                           int m, double dist, double bl) {
+  pqrFileName = pqrf;
+  surfaceFileName = sf;
+  coloredSurfaceFileName = csf;
+  mode = m;
+  distanceCutoff = dist;
+  blobbyness = bl;
 }
 
-ColorSurfaceByCharge::~ColorSurfaceByCharge()
-{
+ColorSurfaceByCharge::~ColorSurfaceByCharge() {}
 
-}
+bool ColorSurfaceByCharge::colorify() {
 
-bool ColorSurfaceByCharge::colorify()
-{
+  /* Reading the atoms and inserting into dpg */
 
-/* Reading the atoms and inserting into dpg */
+  PDBParser::GroupOfAtoms *molecule = 0;
+  GOALoader *gLoader = new GOALoader();
+  molecule = gLoader->loadFile(pqrFileName.c_str());
+  delete gLoader;
 
-	PDBParser::GroupOfAtoms* molecule = 0;
-	GOALoader* gLoader = new GOALoader();
-	molecule = gLoader->loadFile(pqrFileName.c_str());
-	delete gLoader;
+  if (!molecule) {
+    cout << "could not open pqr file " << surfaceFileName.c_str() << endl;
+    return false;
+  }
 
-	if(!molecule)
-	{
-		cout<<"could not open pqr file "<< surfaceFileName.c_str() << endl;
-		return false;
-	}
+  vector<PDBParser::Atom *> m_AtomList;
 
-	vector<PDBParser::Atom*> m_AtomList;
+  PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType;
+  if (!PDBParser::GroupOfAtoms::intToRadiusType(&radiusType, 0)) {
+    return false;
+  }
+  PDBParser::CollectionData *collectionData = 0;
+  if (molecule->type == PDBParser::COLLECTION_TYPE) {
+    collectionData = molecule->m_CollectionData;
+  }
+  FlattenGOA(molecule, m_AtomList, collectionData, 0, 0, 0, radiusType,
+             PDBParser::ATOM_TYPE, false);
 
-	PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType;
-	if(!PDBParser::GroupOfAtoms::intToRadiusType(&radiusType, 0))
-	{
-		return false;
-	}
-	PDBParser::CollectionData* collectionData = 0;
-	if(molecule->type == PDBParser::COLLECTION_TYPE)
-	{
-		collectionData = molecule->m_CollectionData;
-	}
-	FlattenGOA(molecule, m_AtomList, collectionData, 0, 0, 0, radiusType, PDBParser::ATOM_TYPE, false);
+  DPG::PG *pg1 = new DPG::PG(10.0, 1000.0, 3.0);
 
-	DPG::PG *pg1 = new DPG::PG(10.0, 1000.0, 3.0);
+  int numAtoms = m_AtomList.size();
+  DPG::PG *pg = new DPG::PG(10.0, 1000.0, 3.0);
 
-	int numAtoms = m_AtomList.size();
-	DPG::PG *pg = new DPG::PG(10.0, 1000.0, 3.0);
+  for (int i = 0; i < numAtoms; i++) {
+    pg->addPoint(m_AtomList[i]);
+  }
 
-	for(int i=0; i<numAtoms; i++)
-	{
-		pg->addPoint(m_AtomList[i]);
-	}
+  /* creating output file */
 
+  FILE *coloredSurfaceFile;
+  coloredSurfaceFile = fopen(coloredSurfaceFileName.c_str(), "wt");
 
-/* creating output file */
+  if (!coloredSurfaceFile) {
+    cout << "could not create output file " << coloredSurfaceFileName << endl;
+    return false;
+  }
 
-	FILE *coloredSurfaceFile;
-	coloredSurfaceFile = fopen(coloredSurfaceFileName.c_str(), "wt");
+  /* opening surface file */
+  FILE *surfaceFile;
 
-	if(!coloredSurfaceFile)
-	{
-		cout<<"could not create output file "<< coloredSurfaceFileName << endl;
-		return false;
-	}
+  surfaceFile = fopen(surfaceFileName.c_str(), "rt");
+  if (!surfaceFile) {
+    cout << "could not open surface file " << surfaceFileName.c_str() << endl;
+    return false;
+  }
 
-/* opening surface file */
-	FILE *surfaceFile;
+  int numVert, numTriang;
+  if (fscanf(surfaceFile, "%d", &numVert) != 1) {
+    cout << "could not read number of vertices " << surfaceFileName.c_str()
+         << endl;
+    return false;
+  }
+  if (fscanf(surfaceFile, "%d", &numTriang) != 1) {
+    cout << "could not read number of triangles " << surfaceFileName.c_str()
+         << endl;
+    return false;
+  }
 
-	surfaceFile = fopen(surfaceFileName.c_str(), "rt");
-	if(!surfaceFile)
-	{
-		cout<<"could not open surface file "<< surfaceFileName.c_str() << endl;
-		return false;
-	}
+  fprintf(coloredSurfaceFile, "%d %d\n", numVert, numTriang);
 
-	int numVert, numTriang;
-	if(fscanf(surfaceFile, "%d", &numVert) != 1)
-	{
-		cout<<"could not read number of vertices "<< surfaceFileName.c_str() << endl;
-		return false;
-	}
-	if(fscanf(surfaceFile, "%d", &numTriang) != 1)
-	{
-		cout<<"could not read number of triangles "<< surfaceFileName.c_str() << endl;
-		return false;
-	}
+  /* Reading points from the surface file and computing the charge density
+   * values and saving them */
 
-	fprintf(coloredSurfaceFile, "%d %d\n", numVert, numTriang);
+  double min = 100000;
+  double max = -100000;
 
-/* Reading points from the surface file and computing the charge density values and saving them */
+  for (int i = 0; i < numVert; i++) {
+    double x, y, z, nx, ny, nz;
 
-	double min = 100000;
-	double max  = -100000;
+    if (fscanf(surfaceFile, "%lf %lf %lf %lf %lf %lf", &x, &y, &z, &nx, &ny,
+               &nz) != 6) {
+      cout << "could not read vertex " << i + 1 << endl;
+      return false;
+    }
 
-	for(int i=0; i<numVert;i++)
-	{
-		double x, y, z, nx, ny, nz;
+    DPG::Point *p = new DPG::Point(x, y, z);
+    vector<DPG::Point *> results;
+    results = pg->range(p, distanceCutoff);
 
-		if(fscanf(surfaceFile, "%lf %lf %lf %lf %lf %lf", &x, &y, &z, &nx, &ny, &nz ) != 6)
-		{
-			cout<<"could not read vertex "<< i+1 << endl;
-			return false;
-		}
+    double charge = 0.0;
 
-		DPG::Point *p = new DPG::Point(x, y, z);
-		vector <DPG::Point*> results;
-		results = pg->range(p, distanceCutoff);
+    int numAtoms = results.size();
+    if (numAtoms > 0) {
+      for (int j = 0; j < numAtoms; j++) {
+        PDBParser::Atom *atom = (PDBParser::Atom *)results[j];
 
-		double charge = 0.0;
+        double q = atom->getCharge();
 
-		int numAtoms = results.size();
-		if( numAtoms > 0)
-		{
-			for(int j=0; j<numAtoms; j++)
-			{
-				PDBParser::Atom* atom = (PDBParser::Atom*)results[j];
+        if (mode == 1)
+          charge += q;
 
-				double q = atom->getCharge();
+        else if (mode == 0) {
+          double dx = x - atom->getX();
+          double dy = y - atom->getY();
+          double dz = z - atom->getZ();
 
-				if(mode == 1) 
-					charge += q;
+          double distsq = dx * dx + dy * dy + dz * dz;
 
-				else if(mode == 0)
-				{
-					double dx = x - atom->getX();
-					double dy = y - atom->getY();
-					double dz = z - atom->getZ();
+          double r = atom->getRadius();
 
-					double distsq = dx*dx + dy*dy + dz*dz;
+          double expval = -blobbyness + (blobbyness * distsq) / (r * r);
 
-					double r = atom->getRadius();
+          charge += q * exp(expval);
+        }
+      }
 
-					double expval = -blobbyness + (blobbyness*distsq)/(r*r);
+      if (mode == 1) {
+        charge /= (double)numAtoms;
+      }
+    }
 
-					charge += q*exp(expval);
-				}
-			}
+    results.clear();
 
-			if(mode == 1)
-			{
-				charge /= (double)numAtoms;
-			}
-		}
+    double cr = 1.0, cg = 1.0, cb = 1.0;
 
-		results.clear();
+    if (charge > max)
+      max = charge;
+    if (charge < min)
+      min = charge;
 
-		double cr = 1.0, cg = 1.0, cb = 1.0;
+    printf("%lf\n", charge);
 
-		if(charge > max) max = charge;
-		if(charge < min) min = charge;
+    if (charge < 0.0) {
+      cr = 1.0;
+      cg = 1.0 + charge * 0.5;
+      cb = 1.0 + charge * 0.5;
+    } else if (charge > 0.0) {
+      cb = 1.0;
+      cr = 1.0 - charge * 0.5;
+      cg = 1.0 - charge * 0.5;
+    }
 
-		printf("%lf\n", charge);
+    fprintf(coloredSurfaceFile, "%lf %lf %lf %lf %lf %lf %lf %lf %lf\n", x, y,
+            z, nx, ny, nz, cr, cg, cb);
+  }
 
-		if(charge < 0.0)
-		{
-			cr = 1.0;
-			cg = 1.0 + charge*0.5;
-			cb = 1.0 + charge*0.5;
-		}
-		else if(charge > 0.0)
-		{
-			cb = 1.0;
-			cr = 1.0 - charge*0.5 ;
-			cg = 1.0 - charge*0.5 ;
-		}
+  printf("%lf %lf\n", max, min);
 
-		fprintf(coloredSurfaceFile, "%lf %lf %lf %lf %lf %lf %lf %lf %lf\n", x, y, z, nx, ny, nz, cr, cg, cb);
+  /* Reading triangles and saving them */
 
-	}
+  for (int i = 0; i < numTriang; i++) {
+    int t1, t2, t3;
 
-	printf("%lf %lf\n", max, min);
+    if (fscanf(surfaceFile, "%d %d %d", &t1, &t2, &t3) != 3) {
+      cout << "could not read triangle " << i + 1 << endl;
+      return false;
+    }
 
-/* Reading triangles and saving them */
+    fprintf(coloredSurfaceFile, "%d %d %d\n", t1, t2, t3);
+  }
 
-	for(int i=0; i<numTriang;i++)
-	{
-		int t1, t2, t3;
-
-		if(fscanf(surfaceFile, "%d %d %d", &t1, &t2, &t3 ) != 3)
-		{
-			cout<<"could not read triangle "<< i+1 << endl;
-			return false;
-		}
-
-		fprintf(coloredSurfaceFile, "%d %d %d\n", t1, t2, t3);
-	}
-
-	m_AtomList.clear();
-	fclose(surfaceFile);
-	fclose(coloredSurfaceFile);
-	return true;
+  m_AtomList.clear();
+  fclose(surfaceFile);
+  fclose(coloredSurfaceFile);
+  return true;
 }

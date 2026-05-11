@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,43 +24,44 @@
 #include <Decimation/arandDecimation.h>
 
 // note: control is no longer used since arandDecimate has replaced XuDecimate
-void Decimation::Decimate(const char* in_file, const char* out_file, int niter, float control, float vari, float inangle)
-{
-	int showpoly;           // show poly or not (doesn't matter)
-	int grouping;           // ?? some flag
-	int retriways;          // if (retriways  == 1) MinimalAngleConnection
-	int savenorm;            // save file flag
-	//Geoframe input = Geoframe(in_file);
-	Geoframe input(in_file);
-	showpoly = 0;
-	grouping = 1;
-	retriways = 1;
-	savenorm = 1;
-	float controllor = control;
-	float variation = vari;
-	float innerangle = inangle;
-	ArandDecimation ad;
-	ad.arandDecimate(input, niter, 0.0, inangle, vari);
-	ad.printRaw(out_file);
+void Decimation::Decimate(const char *in_file, const char *out_file, int niter,
+                          float control, float vari, float inangle) {
+  int showpoly;  // show poly or not (doesn't matter)
+  int grouping;  // ?? some flag
+  int retriways; // if (retriways  == 1) MinimalAngleConnection
+  int savenorm;  // save file flag
+  // Geoframe input = Geoframe(in_file);
+  Geoframe input(in_file);
+  showpoly = 0;
+  grouping = 1;
+  retriways = 1;
+  savenorm = 1;
+  float controllor = control;
+  float variation = vari;
+  float innerangle = inangle;
+  ArandDecimation ad;
+  ad.arandDecimate(input, niter, 0.0, inangle, vari);
+  ad.printRaw(out_file);
 }
 
 // note: control is no longer used since arandDecimate has replaced XuDecimate
-void Decimation::DecimatePercentage(const char* in_file, const char* out_file, float percentage, float control, float vari, float inangle)
-{
-	int showpoly;           // show poly or not (doesn't matter)
-	int grouping;           // ?? some flag
-	int retriways;          // if (retriways  == 1) MinimalAngleConnection
-	int savenorm;            // save file flag
-	//Geoframe input = Geoframe(in_file);
-	Geoframe input(in_file);
-	showpoly = 0;
-	grouping = 1;
-	retriways = 1;
-	savenorm = 1;
-	float controllor = control;
-	float variation = vari;
-	float innerangle = inangle;
-	ArandDecimation ad;
-	ad.arandDecimate(input, 40, percentage, inangle, vari);
-	ad.printRaw(out_file);
+void Decimation::DecimatePercentage(const char *in_file, const char *out_file,
+                                    float percentage, float control, float vari,
+                                    float inangle) {
+  int showpoly;  // show poly or not (doesn't matter)
+  int grouping;  // ?? some flag
+  int retriways; // if (retriways  == 1) MinimalAngleConnection
+  int savenorm;  // save file flag
+  // Geoframe input = Geoframe(in_file);
+  Geoframe input(in_file);
+  showpoly = 0;
+  grouping = 1;
+  retriways = 1;
+  savenorm = 1;
+  float controllor = control;
+  float variation = vari;
+  float innerangle = inangle;
+  ArandDecimation ad;
+  ad.arandDecimate(input, 40, percentage, inangle, vari);
+  ad.printRaw(out_file);
 }

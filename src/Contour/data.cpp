@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,7 +23,7 @@
 // Copyright (c) 1997 Dan Schikore
 
 #include <stdio.h>
-#if ! defined (__APPLE__)
+#if !defined(__APPLE__)
 #include <malloc.h>
 #else
 #include <stdlib.h>
@@ -36,23 +36,19 @@ int Data::funtopol1;
 int Data::funtopol2;
 
 // Data() - alternative constructor for the libcontour library
-Data::Data(Data::DataType t, int _ndata, u_char* data)
-{
-	type     = t;
-	ndata    = _ndata;
-	filename = NULL;
-	min = NULL;
-	max = NULL;
-	if(ndata > 1)
-	{
-		funcolor = 1;
-		funcontour = 0;
-		funtopol1 = 0;
-		funtopol2 = 1;
-	}
-	else
-	{
-		funcontour = 0;
-		funcolor = 0;
-	}
+Data::Data(Data::DataType t, int _ndata, u_char *data) {
+  type = t;
+  ndata = _ndata;
+  filename = NULL;
+  min = NULL;
+  max = NULL;
+  if (ndata > 1) {
+    funcolor = 1;
+    funcontour = 0;
+    funtopol1 = 0;
+    funtopol2 = 1;
+  } else {
+    funcontour = 0;
+    funcolor = 0;
+  }
 }

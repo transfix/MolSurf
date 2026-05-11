@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,6 +26,10 @@
 #include <SmoothingFunction/SmoothingFunction.h>
 #include <fftw3.h>
 
-bool getCenterFrequencies(int numAtoms, double alpha, int interpFuncExtent, int numFreqCubeRoot, int gridSize, double* xk, double* yk, double* zk, fftw_complex* fk, fftw_complex* ourFrequencies, FILE* fOut, SmoothingFunction* smoothingFunction);
+bool getCenterFrequencies(int numAtoms, double alpha, int interpFuncExtent,
+                          int numFreqCubeRoot, int gridSize, double *xk,
+                          double *yk, double *zk, fftw_complex *fk,
+                          fftw_complex *ourFrequencies, FILE *fOut,
+                          SmoothingFunction *smoothingFunction);
 
 #endif

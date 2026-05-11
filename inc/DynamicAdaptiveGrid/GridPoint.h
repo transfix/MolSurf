@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,79 +26,84 @@
 #include <DynamicAdaptiveGrid/GridCell.h>
 #include <PDBParser/Atom.h>
 
-namespace DynamicAdaptiveGrid
-{
-	enum { 	VDW_POINT,
-		SAS_POINT, 
-		OUT_POINT, 
-		UNDEFINED_POINT
-	};
+namespace DynamicAdaptiveGrid {
+enum { VDW_POINT, SAS_POINT, OUT_POINT, UNDEFINED_POINT };
 
-	class GridCell;
+class GridCell;
 
-	class GridPoint: public DPG::Point
-	{
-		private:
-			DPG::PG *exposedAtomPG;
-			int defaultMode;
-			double solventRad;
-			static int gridPointIDGenerator;
-			int gridPointID;
-			bool hasVal;
-			bool hasVDW;
-			bool hasSES;
-			bool hasGauss;
-			int paircount, triplecount, pairprob, tripleprob, tripletestcount, pairtestcount;
-			void generateGridPointID();
-			double getPointToCircleDistance(DPG::Ball* a1, DPG::Ball* a2, double x, double y, double z, double solventRad);
-			bool getSDFForIntersectingSpheres(DPG::Ball* a, DPG::Ball* b, double x, double y, double z, double solventRad, double &sdf);
-			bool getSDFForTripleIntersect(DPG::Ball* a, DPG::Ball* b, DPG::Ball* c, double x, double y, double z, double solventRad, double &sdf);
+class GridPoint : public DPG::Point {
+private:
+  DPG::PG *exposedAtomPG;
+  int defaultMode;
+  double solventRad;
+  static int gridPointIDGenerator;
+  int gridPointID;
+  bool hasVal;
+  bool hasVDW;
+  bool hasSES;
+  bool hasGauss;
+  int paircount, triplecount, pairprob, tripleprob, tripletestcount,
+      pairtestcount;
+  void generateGridPointID();
+  double getPointToCircleDistance(DPG::Ball *a1, DPG::Ball *a2, double x,
+                                  double y, double z, double solventRad);
+  bool getSDFForIntersectingSpheres(DPG::Ball *a, DPG::Ball *b, double x,
+                                    double y, double z, double solventRad,
+                                    double &sdf);
+  bool getSDFForTripleIntersect(DPG::Ball *a, DPG::Ball *b, DPG::Ball *c,
+                                double x, double y, double z, double solventRad,
+                                double &sdf);
 
-		protected:
-			double functionValue;
-			int state;
-			vector<GridCell *> gridCells;
-			
-		public:
-			GridPoint();
-			GridPoint(const GridPoint &gp);
-			GridPoint(double a, double b, double c);
-			GridPoint(double a, double b, double c, double F);
-			GridPoint(double a, double b, double c, double F, int s);
+protected:
+  double functionValue;
+  int state;
+  vector<GridCell *> gridCells;
 
-			int getState();
-			double getFunctionValue();
-			double getFunctionValue(int mode);	// 0 = vdw, 1 = ses, 2 = gauss
-			int getGridPointID();
-			vector<GridCell *> getGridCells();
-			GridCell * getGridCell(int i);
-			int getNumGridCells();
-			bool hasValue();
+public:
+  GridPoint();
+  GridPoint(const GridPoint &gp);
+  GridPoint(double a, double b, double c);
+  GridPoint(double a, double b, double c, double F);
+  GridPoint(double a, double b, double c, double F, int s);
 
-			void setState(int s);
-			void setMode(int m){defaultMode = m;}
-			void markAsNoVal(){hasVal = false; hasVDW = false; hasSES = false; hasGauss = false;}
-			void setPG(DPG::PG *ePG){exposedAtomPG = ePG;}
-			void setSolventRad(double rad){solventRad = rad;}
-			void setFunctionValue(double f);
-			void addToFunctionValue(double f);
-			void setGridCells(vector<Point *> gcs);
+  int getState();
+  double getFunctionValue();
+  double getFunctionValue(int mode); // 0 = vdw, 1 = ses, 2 = gauss
+  int getGridPointID();
+  vector<GridCell *> getGridCells();
+  GridCell *getGridCell(int i);
+  int getNumGridCells();
+  bool hasValue();
 
-			void sesAtPoint();
-			void vdwAtPoint();
-			void gaussAtPoint();
-			void gaussAtPointSingleAtom(PDBParser::Atom* at, bool sub);
+  void setState(int s);
+  void setMode(int m) { defaultMode = m; }
+  void markAsNoVal() {
+    hasVal = false;
+    hasVDW = false;
+    hasSES = false;
+    hasGauss = false;
+  }
+  void setPG(DPG::PG *ePG) { exposedAtomPG = ePG; }
+  void setSolventRad(double rad) { solventRad = rad; }
+  void setFunctionValue(double f);
+  void addToFunctionValue(double f);
+  void setGridCells(vector<Point *> gcs);
 
-			void setPosition(double a, double b, double c);
+  void sesAtPoint();
+  void vdwAtPoint();
+  void gaussAtPoint();
+  void gaussAtPointSingleAtom(PDBParser::Atom *at, bool sub);
 
-			int getPairCount(){return paircount;}
-			int getPairProb(){return pairprob;}
-			int getTripleCount(){return triplecount;}
-			int getTripleProb(){return tripleprob;}
-			int getTripleTestCount(){return tripletestcount;}
-			int getPairTestCount(){return pairtestcount;}
-	};
+  void setPosition(double a, double b, double c);
 
+  int getPairCount() { return paircount; }
+  int getPairProb() { return pairprob; }
+  int getTripleCount() { return triplecount; }
+  int getTripleProb() { return tripleprob; }
+  int getTripleTestCount() { return tripletestcount; }
+  int getPairTestCount() { return pairtestcount; }
 };
+
+}; // namespace DynamicAdaptiveGrid
 
 #endif

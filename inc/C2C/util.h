@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,7 +22,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -48,9 +48,9 @@
 #include <C2C/arithlib/bitbuffer.h>
 #include <C2C/arithlib/libdjvu++/ByteStream.h>
 
-void writeBitBuffer(BitBuffer* buf, DiskIO* io);
-void writeBitBuffer(BitBuffer* buf, ByteStream* stream);
-BitBuffer* readBitBuffer(DiskIO* io);
-BitBuffer* readBitBuffer(ByteStream* stream);
+void writeBitBuffer(BitBuffer *buf, DiskIO *io);
+void writeBitBuffer(BitBuffer *buf, ByteStream *stream);
+BitBuffer *readBitBuffer(DiskIO *io);
+BitBuffer *readBitBuffer(ByteStream *stream);
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,6 +26,6 @@
 #include <PocketTunnel/datastruct_pt.h>
 #include <PocketTunnel/util.h>
 
-void detect_handle(Triangulation& triang, map<int, cell_cluster>& cluster_set);
+void detect_handle(Triangulation &triang, map<int, cell_cluster> &cluster_set);
 
 #endif

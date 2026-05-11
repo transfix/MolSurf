@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,32 +24,31 @@
 
 #include <Utility/utility.h>
 
-namespace SDFLibrary
-{
-	//First, set the parameters of the SDF grid.
-	bool setParameters(int size, int isNormalFlip, float* mins, float* maxs);
+namespace SDFLibrary {
+// First, set the parameters of the SDF grid.
+bool setParameters(int size, int isNormalFlip, float *mins, float *maxs);
 
-	typedef struct RAWIV_header
-	{
-		float minext[3];	//Co-ords of the first voxel
-		float maxext[3];	//Co-ords of the last voxel
-		float origin[3];	//Co-ords of the first voxel a.k.a. Origin
-		float span[3];		//Span between grid points
-		int dim[3];			//number of grid points
+typedef struct RAWIV_header {
+  float minext[3]; // Co-ords of the first voxel
+  float maxext[3]; // Co-ords of the last voxel
+  float origin[3]; // Co-ords of the first voxel a.k.a. Origin
+  float span[3];   // Span between grid points
+  int dim[3];      // number of grid points
 
-		int ngridpts;		//Total grid points
-		int ncells;			//Total cells
-		int size;			//Octree size
+  int ngridpts; // Total grid points
+  int ncells;   // Total cells
+  int size;     // Octree size
 
-	} RAWIV_header;
+} RAWIV_header;
 
-	//Then, call the function with the input triangulated data. The SDF values are returned
-	float* computeSDF(int nverts, float* verts, int ntris, int* tris);
+// Then, call the function with the input triangulated data. The SDF values are
+// returned
+float *computeSDF(int nverts, float *verts, int ntris, int *tris);
 
-	RAWIV_header* getVolumeInfo();
+RAWIV_header *getVolumeInfo();
 
-	// compact library call which contains all above calls in one
-	SimpleVolumeData* getSDF(Geometry* geometry, int size);
-};
+// compact library call which contains all above calls in one
+SimpleVolumeData *getSDF(Geometry *geometry, int size);
+}; // namespace SDFLibrary
 
 #endif

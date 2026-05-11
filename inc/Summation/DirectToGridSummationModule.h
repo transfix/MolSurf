@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,20 +25,20 @@
 #include <Utility/utility.h>
 #include <Summation/DirectSummationModule.h>
 
-namespace CCVSummationModule
-{
-	class UniformOutputGrid;
-	class DirectToGridSummationModule
-	 : public SummationModule
-	{
-		public:
-			DirectToGridSummationModule(double* centers, double* radii, double* weights, int numberOfCenters, Kernel* kernel, OutputGrid* outputGrid);
-			virtual ~DirectToGridSummationModule();
-			virtual bool sum();
-		protected:
-			double sumAtPoint(int iIndex, int jIndex, int kIndex, int center);
-			UniformOutputGrid* m_UniformOutputGrid;
-	};
+namespace CCVSummationModule {
+class UniformOutputGrid;
+class DirectToGridSummationModule : public SummationModule {
+public:
+  DirectToGridSummationModule(double *centers, double *radii, double *weights,
+                              int numberOfCenters, Kernel *kernel,
+                              OutputGrid *outputGrid);
+  virtual ~DirectToGridSummationModule();
+  virtual bool sum();
+
+protected:
+  double sumAtPoint(int iIndex, int jIndex, int kIndex, int center);
+  UniformOutputGrid *m_UniformOutputGrid;
 };
+}; // namespace CCVSummationModule
 
 #endif

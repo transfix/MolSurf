@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,23 +23,19 @@
 
 using namespace CCVSummationModule;
 
-UniformOutputGrid::UniformOutputGrid(float* output, float* origin, float* span, unsigned int* dimensions)
-{
-	m_Output = output;
-	m_Origin = origin;
-	m_Span = span;
-	m_Dimensions = dimensions;
+UniformOutputGrid::UniformOutputGrid(float *output, float *origin, float *span,
+                                     unsigned int *dimensions) {
+  m_Output = output;
+  m_Origin = origin;
+  m_Span = span;
+  m_Dimensions = dimensions;
 }
 
-UniformOutputGrid::~UniformOutputGrid()
-{
-}
+UniformOutputGrid::~UniformOutputGrid() {}
 
-bool UniformOutputGrid::initialized()
-{
-	if(!m_Output || !m_Origin || !m_Span || !m_Dimensions)
-	{
-		return false;
-	}
-	return true;
+bool UniformOutputGrid::initialized() {
+  if (!m_Output || !m_Origin || !m_Span || !m_Dimensions) {
+    return false;
+  }
+  return true;
 }

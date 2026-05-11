@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,7 +26,7 @@
 #include <PocketTunnel/robust_cc.h>
 #include <PocketTunnel/op.h>
 
-void initialize(Triangulation& triang);
-void compute_voronoi_vertex_and_cell_radius(Triangulation& triang);
+void initialize(Triangulation &triang);
+void compute_voronoi_vertex_and_cell_radius(Triangulation &triang);
 
 #endif

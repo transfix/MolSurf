@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,28 +24,33 @@
 
 #include <Utility/utility.h>
 
-class RadiusOptimizer
-{
-	public:
-		RadiusOptimizer();
-		virtual ~RadiusOptimizer();
-		bool init();
-		bool getOptimizedRadii(double* centers, double* radii, int numberOfAtoms);
+class RadiusOptimizer {
+public:
+  RadiusOptimizer();
+  virtual ~RadiusOptimizer();
+  bool init();
+  bool getOptimizedRadii(double *centers, double *radii, int numberOfAtoms);
 
-	protected:
-		bool getExtents(double* centers, double* radii, int numberOfAtoms, double* min, double* max, double* minRadius, double* maxRadius, double* avgRadius);
-		bool classifyVolume(double* centers, double* radii, int numberOfAtoms, double* minExt, double* maxExt, double* span, unsigned char* volume, int size);
-		void Func_Gradient_Sum_Gauss(double* centers, int numb_atom, double* p, double C, double* func, double* grad,
-									 int* classify, int curAtom,double* radii);
-		void Curvature_Sum_Gauss(double* atoms, int numb_atom, double* p, double C, int* classify, int mo,double* maxk);
-		void Spherical_Fit(double* x, double* y, double* z, int npts, double* radius);
-		void gaussinverse(double* a, int n, double eps, int* message);
-		void Exchangerowcolumn(double* a, int n, int k, int ik, int jk);
-		void MatrixTimesMatrix(double* a, double* v, double* x, int m, int n, int l);
-		double DotProduct(double* p1, double* p2);
-		int numb_vert;
-		double* vert;
-		bool m_Initialized;
+protected:
+  bool getExtents(double *centers, double *radii, int numberOfAtoms,
+                  double *min, double *max, double *minRadius,
+                  double *maxRadius, double *avgRadius);
+  bool classifyVolume(double *centers, double *radii, int numberOfAtoms,
+                      double *minExt, double *maxExt, double *span,
+                      unsigned char *volume, int size);
+  void Func_Gradient_Sum_Gauss(double *centers, int numb_atom, double *p,
+                               double C, double *func, double *grad,
+                               int *classify, int curAtom, double *radii);
+  void Curvature_Sum_Gauss(double *atoms, int numb_atom, double *p, double C,
+                           int *classify, int mo, double *maxk);
+  void Spherical_Fit(double *x, double *y, double *z, int npts, double *radius);
+  void gaussinverse(double *a, int n, double eps, int *message);
+  void Exchangerowcolumn(double *a, int n, int k, int ik, int jk);
+  void MatrixTimesMatrix(double *a, double *v, double *x, int m, int n, int l);
+  double DotProduct(double *p1, double *p2);
+  int numb_vert;
+  double *vert;
+  bool m_Initialized;
 };
 
 #endif

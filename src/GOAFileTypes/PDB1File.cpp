@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -19,7 +19,7 @@
   along with MolSurf; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-//#include <Blurmaps/BlurMapsDataManager.h>
+// #include <Blurmaps/BlurMapsDataManager.h>
 #include <GOAFileTypes/PDB1File.h>
 #include <math.h>
 #include <PDBParser/Atom.h>
@@ -33,40 +33,33 @@
 
 PDB1File PDB1File::ms_PDB1FileRepresentative;
 
-PDB1File::PDB1File()
-{
+PDB1File::PDB1File() {}
+
+PDB1File::~PDB1File() {}
+
+PDBParser::GroupOfAtoms *PDB1File::loadFile(const string &fileName,
+                                            bool deleteWater) {
+  PDBParser::parserPDBtoGOA *p = new PDBParser::parserPDBtoGOA();
+  PDBParser::GroupOfAtoms *molecule =
+      p->parsePDBModels(fileName.c_str(), deleteWater);
+  delete p;
+  return molecule;
 }
 
-PDB1File::~PDB1File()
-{
+bool PDB1File::checkType(const string &fileName) { return false; }
+
+bool PDB1File::saveFile(PDBParser::GroupOfAtoms *molecule,
+                        const string &fileName, unsigned int level,
+                        CCVOpenGLMath::Matrix *transformation) {
+  FILE *fp = fopen(fileName.c_str(), "w");
+  if (!fp) {
+    return false;
+  }
+  bool ret = PDBParser::writeGOA2PDB(fp, molecule, level, 0);
+  fclose(fp);
+  return ret;
 }
 
-PDBParser::GroupOfAtoms* PDB1File::loadFile(const string& fileName, bool deleteWater)
-{
-	PDBParser::parserPDBtoGOA* p = new PDBParser::parserPDBtoGOA();
-	PDBParser::GroupOfAtoms* molecule = p->parsePDBModels(fileName.c_str(), deleteWater);
-	delete p;
-	return molecule;
-}
-
-bool PDB1File::checkType(const string& fileName)
-{
-	return false;
-}
-
-bool PDB1File::saveFile(PDBParser::GroupOfAtoms* molecule, const string& fileName, unsigned int level, CCVOpenGLMath::Matrix* transformation)
-{
-	FILE* fp = fopen(fileName.c_str(), "w");
-	if(!fp)
-	{
-		return false;
-	}
-	bool ret = PDBParser::writeGOA2PDB(fp, molecule, level, 0);
-	fclose(fp);
-	return ret;
-}
-
-GOAFileType* PDB1File::getRepresentative()
-{
-	return &ms_PDB1FileRepresentative;
+GOAFileType *PDB1File::getRepresentative() {
+  return &ms_PDB1FileRepresentative;
 }

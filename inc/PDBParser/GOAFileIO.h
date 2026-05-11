@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -33,18 +33,20 @@
 #include <PDBParser/Atom.h>
 #include <UsefulMath/Vector.h>
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class Atom;
-	void printAtomPDB(FILE* stream, Atom* atom, CCVOpenGLMath::Matrix* transformation);
-	void printGOA(GroupOfAtoms* currGOA, int indent);
-	int writeGOA2PTS(char* filename, GroupOfAtoms* currGOA);
-	bool writeGOA2PDB(FILE* stream, GroupOfAtoms* currGOA, int type, CCVOpenGLMath::Matrix* transformation);
-	bool writeGOAtoFile(FILE* stream, GroupOfAtoms* currGOA);
-	bool writeTorsionAngles(FILE* stream, GroupOfAtoms* currGOA);
-};
+namespace PDBParser {
+class GroupOfAtoms;
+class Atom;
+void printAtomPDB(FILE *stream, Atom *atom,
+                  CCVOpenGLMath::Matrix *transformation);
+void printGOA(GroupOfAtoms *currGOA, int indent);
+int writeGOA2PTS(char *filename, GroupOfAtoms *currGOA);
+bool writeGOA2PDB(FILE *stream, GroupOfAtoms *currGOA, int type,
+                  CCVOpenGLMath::Matrix *transformation);
+bool writeGOAtoFile(FILE *stream, GroupOfAtoms *currGOA);
+bool writeTorsionAngles(FILE *stream, GroupOfAtoms *currGOA);
+}; // namespace PDBParser
 
-void printAtomPDB(FILE* stream, PDBParser::Atom* atom, CCVOpenGLMath::Matrix* transformation);
+void printAtomPDB(FILE *stream, PDBParser::Atom *atom,
+                  CCVOpenGLMath::Matrix *transformation);
 
 #endif

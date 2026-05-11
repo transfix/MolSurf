@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,27 +27,26 @@
 #endif
 
 #if defined(__APPLE__)
-# include <OpenGL/gl.h>
-# include <OpenGL/glu.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
 #else
-# include <GL/gl.h>
-# include <GL/glu.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #endif
 
-class Texture2D
-{
-	public:
-		Texture2D(int width, int height, unsigned char* data, int numBytesPerEntry);
-		virtual ~Texture2D();
-		Texture2D(const Texture2D& copy);
-		Texture2D& operator=(const Texture2D& copy);
-		Texture2D& set(const Texture2D& copy);
-		bool enable(bool enable);
-		GLsizei m_Width;
-		GLsizei m_Height;
-		unsigned char* m_Data;
-		GLuint m_Id;
-		int m_NumBytesPerEntry;
+class Texture2D {
+public:
+  Texture2D(int width, int height, unsigned char *data, int numBytesPerEntry);
+  virtual ~Texture2D();
+  Texture2D(const Texture2D &copy);
+  Texture2D &operator=(const Texture2D &copy);
+  Texture2D &set(const Texture2D &copy);
+  bool enable(bool enable);
+  GLsizei m_Width;
+  GLsizei m_Height;
+  unsigned char *m_Data;
+  GLuint m_Id;
+  int m_NumBytesPerEntry;
 };
 
 #endif

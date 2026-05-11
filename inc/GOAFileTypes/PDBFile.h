@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,31 +24,26 @@
 
 #include <GOAFileTypes/GOAFileType.h>
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
+namespace PDBParser {
+class GroupOfAtoms;
 };
 
-class PDBFile : public GOAFileType
-{
-	public:
-		virtual ~PDBFile();
-		virtual PDBParser::GroupOfAtoms* loadFile(const string& fileName, bool deleteWater = false);
-		virtual bool checkType(const string& fileName);
-		virtual bool saveFile(PDBParser::GroupOfAtoms* groupOfAtoms, const string& fileName, unsigned int level=0, CCVOpenGLMath::Matrix* transformation = 0);
-		virtual string extension()
-		{
-			return "pdb";
-		};
-		virtual string filter()
-		{
-			return "PDB files (*.pdb)";
-		};
-		static PDBFile ms_PDBFileRepresentative;
-		static GOAFileType* getRepresentative();
+class PDBFile : public GOAFileType {
+public:
+  virtual ~PDBFile();
+  virtual PDBParser::GroupOfAtoms *loadFile(const string &fileName,
+                                            bool deleteWater = false);
+  virtual bool checkType(const string &fileName);
+  virtual bool saveFile(PDBParser::GroupOfAtoms *groupOfAtoms,
+                        const string &fileName, unsigned int level = 0,
+                        CCVOpenGLMath::Matrix *transformation = 0);
+  virtual string extension() { return "pdb"; };
+  virtual string filter() { return "PDB files (*.pdb)"; };
+  static PDBFile ms_PDBFileRepresentative;
+  static GOAFileType *getRepresentative();
 
-	protected:
-		PDBFile();
+protected:
+  PDBFile();
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,7 +22,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -55,13 +55,13 @@
 // replication factor
 #define REP_FAC 6
 
-//#define _LITTLE_ENDIAN 1
+// #define _LITTLE_ENDIAN 1
 
 #ifdef WIN32
 typedef __int64 int64;
 #else
 typedef long long int64;
-#endif		// WIN32
+#endif // WIN32
 
 // Disk block pointer(index)
 typedef int64 Pointer;
@@ -70,6 +70,6 @@ typedef int64 Pointer;
 #define STRDUP(x) _strdup(x)
 #else
 #define STRDUP(x) strdup(x)
-#endif		//WIN32
+#endif // WIN32
 
 #endif

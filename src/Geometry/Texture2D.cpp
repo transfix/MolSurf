@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -21,107 +21,92 @@
 */
 #include <Geometry/Texture2D.h>
 
-Texture2D::Texture2D(int width, int height, unsigned char* data, int numBytesPerEntry)
-{
-	m_Width = width;
-	m_Height = height;
-	m_NumBytesPerEntry = numBytesPerEntry;
-	m_Data = new unsigned char[width*height*m_NumBytesPerEntry];
-	int i;
-	for(i=0; i<width*height*m_NumBytesPerEntry; i++)
-	{
-		m_Data[i] = data[i];
-	}
-	m_Id = -1;
+Texture2D::Texture2D(int width, int height, unsigned char *data,
+                     int numBytesPerEntry) {
+  m_Width = width;
+  m_Height = height;
+  m_NumBytesPerEntry = numBytesPerEntry;
+  m_Data = new unsigned char[width * height * m_NumBytesPerEntry];
+  int i;
+  for (i = 0; i < width * height * m_NumBytesPerEntry; i++) {
+    m_Data[i] = data[i];
+  }
+  m_Id = -1;
 }
 
-Texture2D::~Texture2D()
-{
-	delete []m_Data;
-	m_Data = 0;
-	if(m_Id != -1)
-	{
-		glDeleteTextures(1, &m_Id);
-	}
-	m_Id = -1;
+Texture2D::~Texture2D() {
+  delete[] m_Data;
+  m_Data = 0;
+  if (m_Id != -1) {
+    glDeleteTextures(1, &m_Id);
+  }
+  m_Id = -1;
 }
 
-Texture2D::Texture2D(const Texture2D& copy)
-{
-	set(copy);
+Texture2D::Texture2D(const Texture2D &copy) { set(copy); }
+
+Texture2D &Texture2D::operator=(const Texture2D &copy) { return set(copy); }
+
+Texture2D &Texture2D::set(const Texture2D &copy) {
+  if (this != &copy) {
+    if (m_Data) {
+      delete[] m_Data;
+      m_Data = 0;
+    }
+    m_Width = copy.m_Width;
+    m_Height = copy.m_Height;
+    m_NumBytesPerEntry = copy.m_NumBytesPerEntry;
+    if (copy.m_Data) {
+      m_Data = new unsigned char[m_Width * m_Height * m_NumBytesPerEntry];
+      int i;
+      for (i = 0; i < m_Width * m_Height * m_NumBytesPerEntry; i++) {
+        m_Data[i] = copy.m_Data[i];
+      }
+    }
+  }
+  return *this;
 }
 
-Texture2D& Texture2D::operator=(const Texture2D& copy)
-{
-	return set(copy);
-}
-
-Texture2D& Texture2D::set(const Texture2D& copy)
-{
-	if(this!=&copy)
-	{
-		if(m_Data)
-		{
-			delete []m_Data;
-			m_Data = 0;
-		}
-		m_Width = copy.m_Width;
-		m_Height = copy.m_Height;
-		m_NumBytesPerEntry = copy.m_NumBytesPerEntry;
-		if(copy.m_Data)
-		{
-			m_Data = new unsigned char[m_Width*m_Height*m_NumBytesPerEntry];
-			int i;
-			for(i=0; i<m_Width*m_Height*m_NumBytesPerEntry; i++)
-			{
-				m_Data[i] = copy.m_Data[i];
-			}
-		}
-	}
-	return *this;
-}
-
-bool Texture2D::enable(bool enable)
-{
-	if(enable)
-	{
-		if(!m_Data)
-		{
-			return false;
-		}
-		if(m_NumBytesPerEntry < 1)
-		{
-			return false;
-		}
-		if(m_Id == -1)
-		{
-			glGenTextures(1, &m_Id);
-			glBindTexture(GL_TEXTURE_2D, m_Id);
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			switch(m_NumBytesPerEntry)
-			{
-				case 1:
-					glTexImage2D(GL_TEXTURE_2D, 0, m_NumBytesPerEntry, m_Width, m_Height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_Data);
-					break;
-				case 2:
-					glTexImage2D(GL_TEXTURE_2D, 0, m_NumBytesPerEntry, m_Width, m_Height, 0, GL_LUMINANCE_ALPHA , GL_UNSIGNED_BYTE, m_Data);
-					break;
-				case 3:
-					glTexImage2D(GL_TEXTURE_2D, 0, m_NumBytesPerEntry, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, m_Data);
-					break;
-				case 4:
-					glTexImage2D(GL_TEXTURE_2D, 0, m_NumBytesPerEntry, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_Data);
-					break;
-				default: // should be safe to just use 1
-					glTexImage2D(GL_TEXTURE_2D, 0, m_NumBytesPerEntry, m_Width, m_Height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, m_Data);
-					break;
-			}
-		}
-	}
-	return true;
+bool Texture2D::enable(bool enable) {
+  if (enable) {
+    if (!m_Data) {
+      return false;
+    }
+    if (m_NumBytesPerEntry < 1) {
+      return false;
+    }
+    if (m_Id == -1) {
+      glGenTextures(1, &m_Id);
+      glBindTexture(GL_TEXTURE_2D, m_Id);
+      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+      switch (m_NumBytesPerEntry) {
+      case 1:
+        glTexImage2D(GL_TEXTURE_2D, 0, m_NumBytesPerEntry, m_Width, m_Height, 0,
+                     GL_LUMINANCE, GL_UNSIGNED_BYTE, m_Data);
+        break;
+      case 2:
+        glTexImage2D(GL_TEXTURE_2D, 0, m_NumBytesPerEntry, m_Width, m_Height, 0,
+                     GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, m_Data);
+        break;
+      case 3:
+        glTexImage2D(GL_TEXTURE_2D, 0, m_NumBytesPerEntry, m_Width, m_Height, 0,
+                     GL_RGB, GL_UNSIGNED_BYTE, m_Data);
+        break;
+      case 4:
+        glTexImage2D(GL_TEXTURE_2D, 0, m_NumBytesPerEntry, m_Width, m_Height, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, m_Data);
+        break;
+      default: // should be safe to just use 1
+        glTexImage2D(GL_TEXTURE_2D, 0, m_NumBytesPerEntry, m_Width, m_Height, 0,
+                     GL_LUMINANCE, GL_UNSIGNED_BYTE, m_Data);
+        break;
+      }
+    }
+  }
+  return true;
 }

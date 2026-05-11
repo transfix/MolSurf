@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -29,30 +29,28 @@
 
 using namespace std;
 
-namespace DynamicAdaptiveGrid
-{
-	class VertexContainer
-	{
-		protected:
-			map<string,MeshVertex*> vertexCont;
-			map<string,int> vertMap;
-//			VertexMap vertMap;
+namespace DynamicAdaptiveGrid {
+class VertexContainer {
+protected:
+  map<string, MeshVertex *> vertexCont;
+  map<string, int> vertMap;
+  //                      VertexMap vertMap;
 
-		public:
-			VertexContainer();
-			~VertexContainer();			
+public:
+  VertexContainer();
+  ~VertexContainer();
 
-			void addVertex(string, MeshVertex*);
-			void removeVertex(string);
-			void updateVertex(string, MeshVertex*);
-			MeshVertex* getVertex(string);
-			void printVerticesAndUpdateMap(std::ofstream *outputFile);
-			int getVertexIndex(string);
-			int size();
-			void clearMap();
-			void clearContainer();
-	};
-	
+  void addVertex(string, MeshVertex *);
+  void removeVertex(string);
+  void updateVertex(string, MeshVertex *);
+  MeshVertex *getVertex(string);
+  void printVerticesAndUpdateMap(std::ofstream *outputFile);
+  int getVertexIndex(string);
+  int size();
+  void clearMap();
+  void clearContainer();
 };
+
+}; // namespace DynamicAdaptiveGrid
 
 #endif

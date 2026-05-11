@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -20,7 +20,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 // endian_io.h - routines to read and (possibly) perform little to big
-//		 endian conversions on input data
+//               endian conversions on input data
 
 #ifndef _ENDIAN_IO_H_
 #define _ENDIAN_IO_H_
@@ -40,15 +40,15 @@ float convert_float(float i);
 double convert_double(double i);
 
 // fread_short() - read (and possibly convert) short integer data
-size_t fread_short(void* ptr, size_t size, size_t nitems, FILE* stream);
+size_t fread_short(void *ptr, size_t size, size_t nitems, FILE *stream);
 
 // fread_int() - read (and possibly convert) long integer data
-size_t fread_int(void* ptr, size_t size, size_t nitems, FILE* stream);
+size_t fread_int(void *ptr, size_t size, size_t nitems, FILE *stream);
 
 // fread_float() - read (and possibly convert) single precision data
-size_t fread_float(void* ptr, size_t size, size_t nitems, FILE* stream);
+size_t fread_float(void *ptr, size_t size, size_t nitems, FILE *stream);
 
 // fread_double() - read (and possibly convert) double precision data
-size_t fread_double(void* ptr, size_t size, size_t nitems, FILE* stream);
+size_t fread_double(void *ptr, size_t size, size_t nitems, FILE *stream);
 
 #endif /* of _ENDIAN_IO_H_ */

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,6 +27,8 @@
 #include <PocketTunnel/hfn_util.h>
 #include <PocketTunnel/robust_cc.h>
 
-void curate(Triangulation& triang, map<int, cell_cluster> &cluster_set, const vector<int> &sorted_cluster_index_vector, const int output_tunnel_count, const int output_pocket_count);
+void curate(Triangulation &triang, map<int, cell_cluster> &cluster_set,
+            const vector<int> &sorted_cluster_index_vector,
+            const int output_tunnel_count, const int output_pocket_count);
 
 #endif

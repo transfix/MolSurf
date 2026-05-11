@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -30,37 +30,37 @@
 #include <time.h>
 
 // Issue a warning message.
-void warning(const char* msg);
+void warning(const char *msg);
 
 // Print an error message and exit.
-void panic(const char* msg);
+void panic(const char *msg);
 
 // Initialize random numebr generator (based on current clock).
 void initrand(void);
 
 // Print date, time, host.
-void run_stamp(char* msg, int sz);
+void run_stamp(char *msg, int sz);
 
 // read gzip'ed files
-class gzifstream: public std::ifstream
-{
-	public:
-		// Default c'tor
-		gzifstream();
-		/* Open file #name# for reading. If the file name ends with a ".gz"
-		  extension, it is assumed to be a gzip'ed file and will be piped through zcat */
-		gzifstream(const char* name);
-		// D'tor
-		~gzifstream();
-		// Open file #name# for reading.
-		void open(const char* name);
+class gzifstream : public std::ifstream {
+public:
+  // Default c'tor
+  gzifstream();
+  /* Open file #name# for reading. If the file name ends with a ".gz"
+    extension, it is assumed to be a gzip'ed file and will be piped through zcat
+  */
+  gzifstream(const char *name);
+  // D'tor
+  ~gzifstream();
+  // Open file #name# for reading.
+  void open(const char *name);
 
-	private:
-		int gzopen(const char* name);
-		int gzclose();
+private:
+  int gzopen(const char *name);
+  int gzclose();
 
-		bool pipe;
-		FILE* fp;
+  bool pipe;
+  FILE *fp;
 };
 
 // timing
@@ -77,7 +77,7 @@ void brake_init(void);
 // Check Bool condition
 
 // Check Boolean condition.
-void check(int cond, const char* msg);
+void check(int cond, const char *msg);
 
 // Reset check counter.
 void check_reset(void);

@@ -1,26 +1,25 @@
-//C- -*- C++ -*-
-//C- Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.
-//C-
-//C- This software (the "Original Code") is subject to, and may be
-//C- distributed under, the GNU General Public License, Version 2.
-//C- You may obtain a copy of the license from the Free Software
-//C- Foundation at http://www.fsf.org.
-//C-
-//C- With respect to the Original Code, and subject to any third party
-//C- intellectual property claims, LizardTech grants recipient a worldwide,
-//C- royalty-free, non-exclusive license under patent claims infringed by
-//C- making, using, or selling Original Code which are now or hereafter
-//C- owned or controlled by LizardTech, but solely to the extent that any
-//C- such patent is reasonably necessary to enable you to make, have made,
-//C- practice, sell, or otherwise dispose of Original Code (or portions
-//C- thereof) and not to any greater extent that may be necessary to utilize
-//C- further modifications or combinations.
-//C-
-//C- The Original Code is provided "AS IS" WITHOUT WARRANTY OF ANY KIND,
-//C- EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY
-//C- OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF MERCHANTIBILITY OF
-//C- FITNESS FOR A PARTICULAR PURPOSE.
-
+// C- -*- C++ -*-
+// C- Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.
+// C-
+// C- This software (the "Original Code") is subject to, and may be
+// C- distributed under, the GNU General Public License, Version 2.
+// C- You may obtain a copy of the license from the Free Software
+// C- Foundation at http://www.fsf.org.
+// C-
+// C- With respect to the Original Code, and subject to any third party
+// C- intellectual property claims, LizardTech grants recipient a worldwide,
+// C- royalty-free, non-exclusive license under patent claims infringed by
+// C- making, using, or selling Original Code which are now or hereafter
+// C- owned or controlled by LizardTech, but solely to the extent that any
+// C- such patent is reasonably necessary to enable you to make, have made,
+// C- practice, sell, or otherwise dispose of Original Code (or portions
+// C- thereof) and not to any greater extent that may be necessary to utilize
+// C- further modifications or combinations.
+// C-
+// C- The Original Code is provided "AS IS" WITHOUT WARRANTY OF ANY KIND,
+// C- EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY
+// C- OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF MERCHANTIBILITY OF
+// C- FITNESS FOR A PARTICULAR PURPOSE.
 
 #ifndef _ZPCODEC_H
 #define _ZPCODEC_H
@@ -31,7 +30,6 @@
 #ifdef __GNUC__
 #pragma interface
 #endif
-
 
 /** @name ZPCodec.h
 
@@ -93,8 +91,8 @@
     bit, all the context variables in the decoder program must contain the same
     values as for the encoder program.  This is guaranteed as long as
     each prediction only depends on already coded bits: {\em the coding context,
-    on which the each prediction is based, must be composed of message bits which
-    have already been coded. }
+    on which the each prediction is based, must be composed of message bits
+   which have already been coded. }
 
     {\bf Usage} ---
     Once you know how to organize the predictions (i.e. which coding context
@@ -121,8 +119,8 @@
     bits and context variables fast enough.
 
     {\bf History} --- The ZP-Coder is similar in function and performance to
-    the seminal Q-Coder (Pennebaker, Mitchell, Langdon, Arps, IBM J. Res Dev. 32,
-    1988). An improved version of the Q-Coder, named QM-Coder, has been
+    the seminal Q-Coder (Pennebaker, Mitchell, Langdon, Arps, IBM J. Res Dev.
+   32, 1988). An improved version of the Q-Coder, named QM-Coder, has been
     described in certain parts of the JPEG standard.  Unfortunate patent
     policies have made these coders very difficult to use in general purpose
     applications.  The Z-Coder is constructed using a new approach based on an
@@ -148,7 +146,6 @@
     L\'eon Bottou <leonb@research.att.com> */
 //@{
 
-
 /** Context variable.
     Variables of type #BitContext# hold a single byte describing how to encode
     or decode message bits with similar statistical properties.  This single
@@ -166,8 +163,7 @@
     decoded message bits and decode the current bit using the same context as
     the encoder.  This is critical for proper decoding.
 */
-typedef unsigned char  BitContext;
-
+typedef unsigned char BitContext;
 
 /** Performs ZP-Coder encoding and decoding.  A ZPCodec object must either
     constructed for encoding or for decoding.  The ZPCodec object is connected
@@ -198,188 +194,155 @@ typedef unsigned char  BitContext;
     pascal style string), or of defining a termination code (like a null
     terminated string).  */
 
-class ZPCodec
-{
-	public:
-		~ZPCodec();
-		/** Constructs a ZP-Coder.  If argument #encoding# is zero, the ZP-Coder
-		    object will read code bits from the ByteStream #bs# and return a message
-		    bit whenever function #decoder# is called.  If argument #encoding# is
-		    non zero, the ZP-Coder object will process the message bits provided by
-		    function #encoder# and write code bits to ByteStream #bs#. */
-		ZPCodec(ByteStream& bs, int encoding=0);
-		/** Encodes bit #bit# using context variable #ctx#.  Argument #bit# must be
-		    #0# or #1#. This function should only be used with ZP-Coder objects
-		    created for encoding. It may modify the contents of variable #ctx# in
-		    order to perform context adaptation. */
-		void encoder(int bit, BitContext& ctx);
-		/** Decodes a bit using context variable #ctx#. This function should only be
-		    used with ZP-Coder objects created for decoding. It may modify the
-		    contents of variable #ctx# in order to perform context adaptation. */
-		int  decoder(BitContext& ctx);
-		/** Encodes bit #bit# without compression (pass-thru encoder).  Argument
-		    #bit# must be #0# or #1#. No compression will be applied. Calling this
-		    function always increases the length of the code bit sequence by one
-		    bit. */
-		void encoder(int bit);
-		/** Decodes a bit without compression (pass-thru decoder).  This function
-		    retrieves bits encoded with the pass-thru encoder. */
-		int  decoder();
+class ZPCodec {
+public:
+  ~ZPCodec();
+  /** Constructs a ZP-Coder.  If argument #encoding# is zero, the ZP-Coder
+      object will read code bits from the ByteStream #bs# and return a message
+      bit whenever function #decoder# is called.  If argument #encoding# is
+      non zero, the ZP-Coder object will process the message bits provided by
+      function #encoder# and write code bits to ByteStream #bs#. */
+  ZPCodec(ByteStream &bs, int encoding = 0);
+  /** Encodes bit #bit# using context variable #ctx#.  Argument #bit# must be
+      #0# or #1#. This function should only be used with ZP-Coder objects
+      created for encoding. It may modify the contents of variable #ctx# in
+      order to perform context adaptation. */
+  void encoder(int bit, BitContext &ctx);
+  /** Decodes a bit using context variable #ctx#. This function should only be
+      used with ZP-Coder objects created for decoding. It may modify the
+      contents of variable #ctx# in order to perform context adaptation. */
+  int decoder(BitContext &ctx);
+  /** Encodes bit #bit# without compression (pass-thru encoder).  Argument
+      #bit# must be #0# or #1#. No compression will be applied. Calling this
+      function always increases the length of the code bit sequence by one
+      bit. */
+  void encoder(int bit);
+  /** Decodes a bit without compression (pass-thru decoder).  This function
+      retrieves bits encoded with the pass-thru encoder. */
+  int decoder();
 #ifdef ZPCODEC_BITCOUNT
-		/** Counter for code bits (requires #-DZPCODEC_BITCOUNT#). This member
-		    variable is available when the ZP-Coder is compiled with option
-		    #-DZPCODEC_BITCOUNT#.  Variable #bitcount# counts the number of code
-		    bits generated by the encoder since the construction of the object.
-		    This variable can be used to evaluate how many code bits are spent on
-		    various components of the message. */
-		int bitcount;
+  /** Counter for code bits (requires #-DZPCODEC_BITCOUNT#). This member
+      variable is available when the ZP-Coder is compiled with option
+      #-DZPCODEC_BITCOUNT#.  Variable #bitcount# counts the number of code
+      bits generated by the encoder since the construction of the object.
+      This variable can be used to evaluate how many code bits are spent on
+      various components of the message. */
+  int bitcount;
 #endif
-		// Table management (advanced stuff)
-		struct Table
-		{
-			unsigned short p;
-			unsigned short m;
-			BitContext     up;
-			BitContext     dn;
-		};
-		void newtable(ZPCodec::Table* table);
-		BitContext state(float prob1);
-		// Non-adaptive encoder/decoder
-		void encoder_nolearn(int pix, BitContext& ctx);
-		int  decoder_nolearn(BitContext& ctx);
-	protected:
-		// coder status
-		ByteStream* bs;               // Where the data goes/comes from
-		char encoding;                // Direction (0=decoding, 1=encoding)
-		unsigned char byte;
-		unsigned char scount;
-		unsigned char delay;
-		unsigned int  a;
-		unsigned int  code;
-		unsigned int  fence;
-		unsigned int  subend;
-		unsigned int  buffer;
-		unsigned int  nrun;
-		// table
-		unsigned int  p[256];
-		unsigned int  m[256];
-		BitContext    up[256];
-		BitContext    dn[256];
-		// machine independent ffz
-		char          ffzt[256];
-		// encoder private
-		void einit(void);
-		void eflush(void);
-		void outbit(int bit);
-		void emit(int b);
-		void encode_mps(BitContext& ctx, unsigned int z);
-		void encode_lps(BitContext& ctx, unsigned int z);
-		void encode_mps_simple(unsigned int z);
-		void encode_lps_simple(unsigned int z);
-		void encode_mps_nolearn(unsigned int z);
-		void encode_lps_nolearn(unsigned int z);
-		// decoder private
-		void dinit(void);
-		void preload(void);
-		int  ffz(unsigned int x);
-		int  decode_sub(BitContext& ctx, unsigned int z);
-		int  decode_sub_simple(int mps, unsigned int z);
-		int  decode_sub_nolearn(int mps, unsigned int z);
-	private:
-		// no copy allowed (hate c++)
-		ZPCodec(const ZPCodec&);
-		ZPCodec& operator=(const ZPCodec&);
+  // Table management (advanced stuff)
+  struct Table {
+    unsigned short p;
+    unsigned short m;
+    BitContext up;
+    BitContext dn;
+  };
+  void newtable(ZPCodec::Table *table);
+  BitContext state(float prob1);
+  // Non-adaptive encoder/decoder
+  void encoder_nolearn(int pix, BitContext &ctx);
+  int decoder_nolearn(BitContext &ctx);
+
+protected:
+  // coder status
+  ByteStream *bs; // Where the data goes/comes from
+  char encoding;  // Direction (0=decoding, 1=encoding)
+  unsigned char byte;
+  unsigned char scount;
+  unsigned char delay;
+  unsigned int a;
+  unsigned int code;
+  unsigned int fence;
+  unsigned int subend;
+  unsigned int buffer;
+  unsigned int nrun;
+  // table
+  unsigned int p[256];
+  unsigned int m[256];
+  BitContext up[256];
+  BitContext dn[256];
+  // machine independent ffz
+  char ffzt[256];
+  // encoder private
+  void einit(void);
+  void eflush(void);
+  void outbit(int bit);
+  void emit(int b);
+  void encode_mps(BitContext &ctx, unsigned int z);
+  void encode_lps(BitContext &ctx, unsigned int z);
+  void encode_mps_simple(unsigned int z);
+  void encode_lps_simple(unsigned int z);
+  void encode_mps_nolearn(unsigned int z);
+  void encode_lps_nolearn(unsigned int z);
+  // decoder private
+  void dinit(void);
+  void preload(void);
+  int ffz(unsigned int x);
+  int decode_sub(BitContext &ctx, unsigned int z);
+  int decode_sub_simple(int mps, unsigned int z);
+  int decode_sub_nolearn(int mps, unsigned int z);
+
+private:
+  // no copy allowed (hate c++)
+  ZPCodec(const ZPCodec &);
+  ZPCodec &operator=(const ZPCodec &);
 };
-
-
-
-
-
 
 // INLINE CODE
 
-inline void
-ZPCodec::encoder(int bit, BitContext& ctx)
-{
-	unsigned int z = a + p[ctx];
-	if(bit != (ctx & 1))
-	{
-		encode_lps(ctx, z);
-	}
-	else if(z >= 0x8000)
-	{
-		encode_mps(ctx, z);
-	}
-	else
-	{
-		a = z;
-	}
+inline void ZPCodec::encoder(int bit, BitContext &ctx) {
+  unsigned int z = a + p[ctx];
+  if (bit != (ctx & 1)) {
+    encode_lps(ctx, z);
+  } else if (z >= 0x8000) {
+    encode_mps(ctx, z);
+  } else {
+    a = z;
+  }
 }
 
-inline int
-ZPCodec::decoder(BitContext& ctx)
-{
-	unsigned int z = a + p[ctx];
-	if(z <= fence)
-	{
-		a = z;
-		return (ctx&1);
-	}
-	return decode_sub(ctx, z);
+inline int ZPCodec::decoder(BitContext &ctx) {
+  unsigned int z = a + p[ctx];
+  if (z <= fence) {
+    a = z;
+    return (ctx & 1);
+  }
+  return decode_sub(ctx, z);
 }
 
-inline void
-ZPCodec::encoder_nolearn(int bit, BitContext& ctx)
-{
-	unsigned int z = a + p[ctx];
-	if(bit != (ctx & 1))
-	{
-		encode_lps_nolearn(z);
-	}
-	else if(z >= 0x8000)
-	{
-		encode_mps_nolearn(z);
-	}
-	else
-	{
-		a = z;
-	}
+inline void ZPCodec::encoder_nolearn(int bit, BitContext &ctx) {
+  unsigned int z = a + p[ctx];
+  if (bit != (ctx & 1)) {
+    encode_lps_nolearn(z);
+  } else if (z >= 0x8000) {
+    encode_mps_nolearn(z);
+  } else {
+    a = z;
+  }
 }
 
-inline int
-ZPCodec::decoder_nolearn(BitContext& ctx)
-{
-	unsigned int z = a + p[ctx];
-	if(z <= fence)
-	{
-		a = z;
-		return (ctx&1);
-	}
-	return decode_sub_nolearn((ctx&1), z);
+inline int ZPCodec::decoder_nolearn(BitContext &ctx) {
+  unsigned int z = a + p[ctx];
+  if (z <= fence) {
+    a = z;
+    return (ctx & 1);
+  }
+  return decode_sub_nolearn((ctx & 1), z);
 }
 
-inline void
-ZPCodec::encoder(int bit)
-{
-	if(bit)
-	{
-		encode_lps_simple(0x8000 + (a>>1));
-	}
-	else
-	{
-		encode_mps_simple(0x8000 + (a>>1));
-	}
+inline void ZPCodec::encoder(int bit) {
+  if (bit) {
+    encode_lps_simple(0x8000 + (a >> 1));
+  } else {
+    encode_mps_simple(0x8000 + (a >> 1));
+  }
 }
 
-inline int
-ZPCodec::decoder()
-{
-	return decode_sub_simple(0, 0x8000 + (a>>1));
+inline int ZPCodec::decoder() {
+  return decode_sub_simple(0, 0x8000 + (a >> 1));
 }
 
 // ------------ THE END
 #endif
-
 
 // ------------ ADDITIONAL DOCUMENTATION
 

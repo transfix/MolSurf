@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,8 +25,10 @@
 #include <PocketTunnel/datastruct_pt.h>
 #include <PocketTunnel/util.h>
 
-bool does_intersect_ray3_seg3_in_plane(const cgal_Ray& r, const Segment& s);
-Point intersect_ray3_seg3(const cgal_Ray& r, const Segment& s, bool& is_correct_intersection);
-bool does_intersect_convex_polygon_segment_3_in_3d(const vector<Point>& conv_poly, const Segment& s);
+bool does_intersect_ray3_seg3_in_plane(const cgal_Ray &r, const Segment &s);
+Point intersect_ray3_seg3(const cgal_Ray &r, const Segment &s,
+                          bool &is_correct_intersection);
+bool does_intersect_convex_polygon_segment_3_in_3d(
+    const vector<Point> &conv_poly, const Segment &s);
 
 #endif

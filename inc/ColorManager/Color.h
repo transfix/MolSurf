@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,22 +24,20 @@
 
 #include <UsefulMath/Tuple.h>
 
-namespace ColorManager
-{
-	class Color : public CCVOpenGLMath::Tuple
-	{
-		public:
-			Color(float r, float g, float b, float a);
-			Color(float* array);
-			Color();
-			virtual ~Color();
-			Color(const Color& copy);
-			Color& operator=(const Color& copy);
-			Color& set(float r, float g, float b, float a);
-			Color& set(float* array);
-			Color& set(const Color& copy);
-			static int getMaxRGBIndex(const Color color);
-	};
+namespace ColorManager {
+class Color : public CCVOpenGLMath::Tuple {
+public:
+  Color(float r, float g, float b, float a);
+  Color(float *array);
+  Color();
+  virtual ~Color();
+  Color(const Color &copy);
+  Color &operator=(const Color &copy);
+  Color &set(float r, float g, float b, float a);
+  Color &set(float *array);
+  Color &set(const Color &copy);
+  static int getMaxRGBIndex(const Color color);
 };
+}; // namespace ColorManager
 
 #endif

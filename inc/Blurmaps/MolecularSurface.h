@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -19,7 +19,8 @@
   along with MolSurf; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#if !defined(AFX_MOLECULARSURFACE_H__EEA3AF45_ABF1_46D3_AA6B_121E2FDF6592__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_MOLECULARSURFACE_H__EEA3AF45_ABF1_46D3_AA6B_121E2FDF6592__INCLUDED_)
 #define AFX_MOLECULARSURFACE_H__EEA3AF45_ABF1_46D3_AA6B_121E2FDF6592__INCLUDED_
 
 #include <Utility/utility.h>
@@ -33,22 +34,22 @@
 #include <SimpleVolumeData/SimpleVolumeDataIsocontourer.h>
 #include <VolumeFileTypes/VolumeLoader.h>
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
+namespace PDBParser {
+class GroupOfAtoms;
 };
 
 class Geometry;
 class SimpleVolumeData;
 
-class MolecularSurface
-{
-	public:
-		MolecularSurface();
-		virtual ~MolecularSurface();
+class MolecularSurface {
+public:
+  MolecularSurface();
+  virtual ~MolecularSurface();
 
-		static Geometry* getMolecularSurface(PDBParser::GroupOfAtoms* molecule, int size);
-		static Geometry* getMolecularSurface(PDBParser::GroupOfAtoms* molecule, int size,double enlargedRadius);
+  static Geometry *getMolecularSurface(PDBParser::GroupOfAtoms *molecule,
+                                       int size);
+  static Geometry *getMolecularSurface(PDBParser::GroupOfAtoms *molecule,
+                                       int size, double enlargedRadius);
 };
 
 #endif

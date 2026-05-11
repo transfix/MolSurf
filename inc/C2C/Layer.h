@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,7 +22,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -56,37 +56,30 @@
 #include <unistd.h>
 #endif
 
-class Layer
-{
-	private:
-		// dimension of cell layer , use number of vertices
-		// in each dimension
-		int dim[2];
-		int nc;            //# of cells in the layer
-		u_char*  codes;    //code of cells
+class Layer {
+private:
+  // dimension of cell layer , use number of vertices
+  // in each dimension
+  int dim[2];
+  int nc;        // # of cells in the layer
+  u_char *codes; // code of cells
 
-	public:
-		Layer(int d1, int d2, u_char* cells = NULL);
-		Layer(const Layer& lay);
-		~Layer();
+public:
+  Layer(int d1, int d2, u_char *cells = NULL);
+  Layer(const Layer &lay);
+  ~Layer();
 
-		u_char* getCells(void) const
-		{
-			u_char* c_codes = (u_char*) malloc(sizeof(u_char)*(dim[0]-1)*(dim[1]-1));
-			memcpy(c_codes, codes, (dim[0]-1)*(dim[1]-1));
-			return c_codes;
-		}
-		int*    getDimen(void) const
-		{
-			return (int*)dim;
-		}
-		int     getNC(void) const
-		{
-			return nc;
-		}
-		//diffBits: return difference of two cell layer bitmap
-		BIT*    diffBits(Layer& lay);
-		void    writeOut(FILE* fp);
+  u_char *getCells(void) const {
+    u_char *c_codes =
+        (u_char *)malloc(sizeof(u_char) * (dim[0] - 1) * (dim[1] - 1));
+    memcpy(c_codes, codes, (dim[0] - 1) * (dim[1] - 1));
+    return c_codes;
+  }
+  int *getDimen(void) const { return (int *)dim; }
+  int getNC(void) const { return nc; }
+  // diffBits: return difference of two cell layer bitmap
+  BIT *diffBits(Layer &lay);
+  void writeOut(FILE *fp);
 };
 
 #endif

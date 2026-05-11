@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////
-// 
+//
 //  Levenberg - Marquardt non-linear minimization algorithm
 //  Copyright (C) 2004  Manolis Lourakis (lourakis at ics forth gr)
 //  Institute of Computer Science, Foundation for Research & Technology - Hellas
@@ -17,7 +17,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-/******************************************************************************** 
+/********************************************************************************
  * Levenberg-Marquardt nonlinear minimization. The same core code is used with
  * appropriate #defines to derive single and double precision versions, see
  * also lm_core.c
@@ -32,13 +32,12 @@
 #include "compiler.h"
 #include "misc.h"
 
-#define EPSILON       1E-12
-#define ONE_THIRD     0.3333333334 /* 1.0/3.0 */
+#define EPSILON 1E-12
+#define ONE_THIRD 0.3333333334 /* 1.0/3.0 */
 
 #if !defined(LM_DBL_PREC) && !defined(LM_SNGL_PREC)
 #error At least one of LM_DBL_PREC, LM_SNGL_PREC should be defined!
 #endif
-
 
 #ifdef LM_SNGL_PREC
 /* single precision (float) definitions */

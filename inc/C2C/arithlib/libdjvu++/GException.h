@@ -1,26 +1,25 @@
-//C- -*- C++ -*-
-//C- Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.
-//C-
-//C- This software (the "Original Code") is subject to, and may be
-//C- distributed under, the GNU General Public License, Version 2.
-//C- You may obtain a copy of the license from the Free Software
-//C- Foundation at http://www.fsf.org.
-//C-
-//C- With respect to the Original Code, and subject to any third party
-//C- intellectual property claims, LizardTech grants recipient a worldwide,
-//C- royalty-free, non-exclusive license under patent claims infringed by
-//C- making, using, or selling Original Code which are now or hereafter
-//C- owned or controlled by LizardTech, but solely to the extent that any
-//C- such patent is reasonably necessary to enable you to make, have made,
-//C- practice, sell, or otherwise dispose of Original Code (or portions
-//C- thereof) and not to any greater extent that may be necessary to utilize
-//C- further modifications or combinations.
-//C-
-//C- The Original Code is provided "AS IS" WITHOUT WARRANTY OF ANY KIND,
-//C- EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY
-//C- OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF MERCHANTIBILITY OF
-//C- FITNESS FOR A PARTICULAR PURPOSE.
-
+// C- -*- C++ -*-
+// C- Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.
+// C-
+// C- This software (the "Original Code") is subject to, and may be
+// C- distributed under, the GNU General Public License, Version 2.
+// C- You may obtain a copy of the license from the Free Software
+// C- Foundation at http://www.fsf.org.
+// C-
+// C- With respect to the Original Code, and subject to any third party
+// C- intellectual property claims, LizardTech grants recipient a worldwide,
+// C- royalty-free, non-exclusive license under patent claims infringed by
+// C- making, using, or selling Original Code which are now or hereafter
+// C- owned or controlled by LizardTech, but solely to the extent that any
+// C- such patent is reasonably necessary to enable you to make, have made,
+// C- practice, sell, or otherwise dispose of Original Code (or portions
+// C- thereof) and not to any greater extent that may be necessary to utilize
+// C- further modifications or combinations.
+// C-
+// C- The Original Code is provided "AS IS" WITHOUT WARRANTY OF ANY KIND,
+// C- EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY
+// C- OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF MERCHANTIBILITY OF
+// C- FITNESS FOR A PARTICULAR PURPOSE.
 
 #ifndef _GEXCEPTION_H_
 #define _GEXCEPTION_H_
@@ -84,62 +83,54 @@
     throwing and catching exceptions (see \Ref{GException.h}). These macros
     only deal with exceptions of type #GException#. */
 
-class GException
-{
-	public:
-		/** Constructs a GException.  This constructor is usually called by macro
-		    #THROW#.  Argument #cause# is a plain text error message. As a
-		    convention, string #"EOF"# is used when reaching an unexpected
-		    end-of-file condition and string #"STOP"# is used when the user
-		    interrupts the execution. The remaining arguments are usually provided
-		    by the predefined macros #__FILE__#, #__LINE__#, and (G++ and EGCS only)
-		    #__PRETTY_FUNCTION__#.  */
-		GException(const char* cause, const char* file=0, int line=0, const char* func=0);
-		/** Copy Constructor. */
-		GException(const GException& exc);
-		/** Null Constructor. */
-		GException();
-		/** Destructor. */
-		virtual ~GException(void);
-		/** Copy Operator. */
-		GException& operator=(const GException& exc);
-		/** Prints an error message on stderr.
-		    @param msg: string incorporated into the error message. */
-		void perror(const char* msg = 0) const;
-		/** Returns the string describing the cause of the exception.  The returned
-		    pointer is never null.  Exception handlers should not rely on the value
-		    of the string #cause#.  As a convention however, string #"EOF"# is used
-		    when reaching an unexpected end-of-file condition and string #"STOP"# is
-		    used when the user interrupts the execution. These strings can be tested
-		    by the exception handlers. Similar conventional strings may be defined
-		    in the future. They all will be small strings with only uppercase
-		    characters. */
-		const char* get_cause(void) const;
-		/** Returns the function name from which the exception was thrown.
-		    A null pointer is returned if no function name is available. */
-		const char* get_function(void) const
-		{
-			return func;
-		};
-		/** Returns the file name from which the exception was thrown.
-		    A null pointer is returned if no file name is available. */
-		const char* get_file(void) const
-		{
-			return file;
-		};
-		/** Returns the line number from which the exception was thrown.
-		    A zero is returned if no line number is available. */
-		int get_line(void) const
-		{
-			return line;
-		};
-		//  Magic cause string
-		static const char* const outofmemory;
-	private:
-		const char* cause;
-		const char* file;
-		const char* func;
-		int line;
+class GException {
+public:
+  /** Constructs a GException.  This constructor is usually called by macro
+      #THROW#.  Argument #cause# is a plain text error message. As a
+      convention, string #"EOF"# is used when reaching an unexpected
+      end-of-file condition and string #"STOP"# is used when the user
+      interrupts the execution. The remaining arguments are usually provided
+      by the predefined macros #__FILE__#, #__LINE__#, and (G++ and EGCS only)
+      #__PRETTY_FUNCTION__#.  */
+  GException(const char *cause, const char *file = 0, int line = 0,
+             const char *func = 0);
+  /** Copy Constructor. */
+  GException(const GException &exc);
+  /** Null Constructor. */
+  GException();
+  /** Destructor. */
+  virtual ~GException(void);
+  /** Copy Operator. */
+  GException &operator=(const GException &exc);
+  /** Prints an error message on stderr.
+      @param msg: string incorporated into the error message. */
+  void perror(const char *msg = 0) const;
+  /** Returns the string describing the cause of the exception.  The returned
+      pointer is never null.  Exception handlers should not rely on the value
+      of the string #cause#.  As a convention however, string #"EOF"# is used
+      when reaching an unexpected end-of-file condition and string #"STOP"# is
+      used when the user interrupts the execution. These strings can be tested
+      by the exception handlers. Similar conventional strings may be defined
+      in the future. They all will be small strings with only uppercase
+      characters. */
+  const char *get_cause(void) const;
+  /** Returns the function name from which the exception was thrown.
+      A null pointer is returned if no function name is available. */
+  const char *get_function(void) const { return func; };
+  /** Returns the file name from which the exception was thrown.
+      A null pointer is returned if no file name is available. */
+  const char *get_file(void) const { return file; };
+  /** Returns the line number from which the exception was thrown.
+      A zero is returned if no line number is available. */
+  int get_line(void) const { return line; };
+  //  Magic cause string
+  static const char *const outofmemory;
+
+private:
+  const char *cause;
+  const char *file;
+  const char *func;
+  int line;
 };
 
 //@}
@@ -167,22 +158,20 @@ class GException
 #endif
 #endif
 
-
 #ifndef USE_EXCEPTION_EMULATION
 
 // Compiler supports ANSI C++ exceptions.
 // Defined exception macros accordingly.
 
-#define G_TRY        try
-#define G_CATCH(n)   catch(GException &n) {
-#define G_ENDCATCH   }
-#define G_RETHROW    throw
+#define G_TRY try
+#define G_CATCH(n) catch (GException & n) {
+#define G_ENDCATCH }
+#define G_RETHROW throw
 #ifdef __GNUG__
-#define G_THROW(msg) throw \
-  GException(msg, __FILE__, __LINE__, __PRETTY_FUNCTION__)
+#define G_THROW(msg)                                                           \
+  throw GException(msg, __FILE__, __LINE__, __PRETTY_FUNCTION__)
 #else
-#define G_THROW(msg) throw \
-  GException(msg, __FILE__, __LINE__)
+#define G_THROW(msg) throw GException(msg, __FILE__, __LINE__)
 #endif
 
 #else // USE_EXCEPTION_EMULATION
@@ -192,47 +181,49 @@ class GException
 
 #include <setjmp.h>
 
-class GExceptionHandler
-{
-	public:
-		jmp_buf jump;
-		GExceptionHandler* next;
-		GException current;
-	public:
-		static GExceptionHandler* head;
-		static void emthrow(const GException&);
-	public:
-		GExceptionHandler()
-		{
-			next = head;
-		};
-		~GExceptionHandler()
-		{
-			head = next;
-		};
+class GExceptionHandler {
+public:
+  jmp_buf jump;
+  GExceptionHandler *next;
+  GException current;
+
+public:
+  static GExceptionHandler *head;
+  static void emthrow(const GException &);
+
+public:
+  GExceptionHandler() { next = head; };
+  ~GExceptionHandler() { head = next; };
 };
 
-#define G_TRY    do { GExceptionHandler __exh; \
-                      if (!setjmp(__exh.jump)) \
-                      { GExceptionHandler::head = &__exh;
+#define G_TRY                                                                  \
+  do {                                                                         \
+    GExceptionHandler __exh;                                                   \
+    if (!setjmp(__exh.jump)) {                                                 \
+      GExceptionHandler::head = &__exh;
 
-#define G_CATCH(n) } else { GExceptionHandler::head = __exh.next; \
-                            GException& n = __exh.current;
+#define G_CATCH(n)                                                             \
+  }                                                                            \
+  else {                                                                       \
+    GExceptionHandler::head = __exh.next;                                      \
+    GException &n = __exh.current;
 
-#define G_ENDCATCH } } while(0)
+#define G_ENDCATCH                                                             \
+  }                                                                            \
+  }                                                                            \
+  while (0)
 
-#define G_RETHROW    GExceptionHandler::emthrow(__exh.current)
+#define G_RETHROW GExceptionHandler::emthrow(__exh.current)
 
 #ifdef __GNUG__
-#define G_THROW(msg) GExceptionHandler::emthrow \
-  (GException(msg, __FILE__, __LINE__, __PRETTY_FUNCTION__))
+#define G_THROW(msg)                                                           \
+  GExceptionHandler::emthrow(                                                  \
+      GException(msg, __FILE__, __LINE__, __PRETTY_FUNCTION__))
 #else
-#define G_THROW(m) GExceptionHandler::emthrow \
-  (GException(m, __FILE__, __LINE__))
+#define G_THROW(m) GExceptionHandler::emthrow(GException(m, __FILE__, __LINE__))
 #endif
 
 #endif // !CPP_SUPPORTS_EXCEPTIONS
-
 
 #undef TRY
 #undef CATCH
@@ -244,8 +235,6 @@ class GExceptionHandler
 #define ENDCATCH G_ENDCATCH
 #define RETHROW G_RETHROW
 #define THROW G_THROW
-
-
 
 // -------------- THE END
 #endif

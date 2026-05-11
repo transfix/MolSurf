@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,48 +26,29 @@
 
 #include <Utility/utility.h>
 
-typedef unsigned char  u_char;
+typedef unsigned char u_char;
 typedef unsigned short u_short;
-typedef unsigned int   u_int;
+typedef unsigned int u_int;
 
 // Constant used to designate NULL when indexing into an array.
 const int INDEX_NULL = -1;
 
-
 // Return the square of #x#.
-template<class T>
-T sqr(T x)
-{
-	return x*x;
-}
+template <class T> T sqr(T x) { return x * x; }
 
 /// Return the cube of #x#.
-template<class T>
-T cub(T x)
-{
-	return x*x*x;
-}
+template <class T> T cub(T x) { return x * x * x; }
 
 #ifdef NO_STL
 /// Return the minimum between #x# and #y#.
-template<class T>
-T min(T x, T y)
-{
-	return x <= y ? x : y;
-}
+template <class T> T min(T x, T y) { return x <= y ? x : y; }
 
 /// Return the maximum between #x# and #y#.
-template<class T>
-T max(T x, T y)
-{
-	return x >= y ? x : y;
+template <class T> T max(T x, T y) {
+  return x >= y ? x : y;
 #endif
 
-/// Return the sign of #x#.
-template<class T>
-double sign(T x)
-{
-	return ((x >= 0.0) ? 1.0 : -1.0);
-}
+  /// Return the sign of #x#.
+  template <class T> double sign(T x) { return ((x >= 0.0) ? 1.0 : -1.0); }
 
 #endif

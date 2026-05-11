@@ -1,8 +1,8 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,85 +26,60 @@ using namespace DynamicAdaptiveGrid;
 
 int MeshSimplex::meshSimplexIDGenerator = 0;
 
-MeshSimplex::MeshSimplex()
-{
-	init();
-	generateMeshSimplexID();
+MeshSimplex::MeshSimplex() {
+  init();
+  generateMeshSimplexID();
 }
 
-MeshSimplex::MeshSimplex(const MeshSimplex& ms)
-{
-	numVertices = ms.numVertices;
-	degenerate = ms.degenerate;	
-	vertices.clear();
-	addVertices(ms.vertices);
-	generateMeshSimplexID();
+MeshSimplex::MeshSimplex(const MeshSimplex &ms) {
+  numVertices = ms.numVertices;
+  degenerate = ms.degenerate;
+  vertices.clear();
+  addVertices(ms.vertices);
+  generateMeshSimplexID();
 }
 
-MeshSimplex::MeshSimplex(vector<MeshVertex *> verts)
-{
-	init();
-	addVertices(verts);
-	generateMeshSimplexID();
+MeshSimplex::MeshSimplex(vector<MeshVertex *> verts) {
+  init();
+  addVertices(verts);
+  generateMeshSimplexID();
 }
 
-MeshSimplex::~MeshSimplex()
-{
+MeshSimplex::~MeshSimplex() {}
 
+void MeshSimplex::generateMeshSimplexID() {
+  meshSimplexID = meshSimplexIDGenerator++;
 }
 
-void MeshSimplex::generateMeshSimplexID()
-{
-	meshSimplexID = meshSimplexIDGenerator++;
+void MeshSimplex::init() {
+  numVertices = 0;
+  degenerate = true;
+  vertices.clear();
 }
 
-void MeshSimplex::init()
-{
-	numVertices = 0;
-	degenerate = true;
-	vertices.clear();
+int MeshSimplex::getID() { return meshSimplexID; }
+
+int MeshSimplex::getNumVertices() { return numVertices; }
+
+vector<MeshVertex *> MeshSimplex::getVertices() { return vertices; }
+
+void MeshSimplex::removeVertices() {
+  for (int i = 0; i < numVertices; i++) {
+    vertices[i]->decSimplices();
+  }
+  vertices.clear();
 }
 
-int MeshSimplex::getID()
-{
-	return meshSimplexID;
+bool MeshSimplex::isDegenerate() { return degenerate; }
+
+void MeshSimplex::addVertices(vector<MeshVertex *> verts) {
+  numVertices = verts.size();
+  for (int i = 0; i < numVertices; i++)
+    addVertex(verts[i]);
 }
 
-int MeshSimplex::getNumVertices()
-{
-	return numVertices;
+void MeshSimplex::addVertex(MeshVertex *v) {
+  vertices.push_back(v);
+  numVertices++;
+  v->incSimplices();
 }
-
-vector<MeshVertex *> MeshSimplex::getVertices()
-{
-	return vertices;
-}
-
-void MeshSimplex::removeVertices()
-{
-	for(int i=0;i<numVertices;i++)
-	{
-		vertices[i]->decSimplices();
-	}
-	vertices.clear();
-}
-
-bool MeshSimplex::isDegenerate()
-{
-	return degenerate;
-}
-
-void MeshSimplex::addVertices(vector<MeshVertex *> verts)
-{
-	numVertices = verts.size();
-	for(int i=0;i<numVertices;i++)
-		addVertex(verts[i]);
-}
-
-void MeshSimplex::addVertex(MeshVertex * v)
-{
-	vertices.push_back(v);
-	numVertices++;
-	v->incSimplices();
-}
-

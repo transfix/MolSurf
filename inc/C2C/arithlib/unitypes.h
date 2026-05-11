@@ -1,9 +1,9 @@
 /*
   Copyright 2000-2003 The University of Texas at Austin
 
-	Authors: Xiaoyu Zhang 2000-2002 <xiaoyu@ices.utexas.edu>
-					 John Wiggins 2003 <prok@cs.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Xiaoyu Zhang 2000-2002 <xiaoyu@ices.utexas.edu>
+                                         John Wiggins 2003 <prok@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of iotree.
 
@@ -26,7 +26,6 @@
 
 typedef unsigned int u_int;
 typedef unsigned short u_short;
-typedef unsigned char  u_char;
+typedef unsigned char u_char;
 
 #endif
-

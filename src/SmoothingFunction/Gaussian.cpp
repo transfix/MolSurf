@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,41 +22,36 @@
 #include <SmoothingFunction/Gaussian.h>
 
 Gaussian::Gaussian(double alpha, int m, int n, int N)
- : SmoothingFunction(alpha, m, n, N)
-{
-	precompute();
+    : SmoothingFunction(alpha, m, n, N) {
+  precompute();
 }
 
-Gaussian::~Gaussian()
-{
-}
+Gaussian::~Gaussian() {}
 
-bool Gaussian::precompute()
-{
-	if((m_PhiLength < 1) || (m_PhiHatLength < 1))
-	{
-		return false;
-	}
-	m_Phi = new double[m_PhiLength];
-	m_PhiHat = new double[m_PhiHatLength];
-	double b = 2*alpha*m/(M_PI*(2.0*alpha-1));
-	{
-		int i;
-		for(i=0; i<m_PhiHatLength; i++)
-		{
-			m_PhiHat[i] = exp(-(M_PI / ((double)n))*(M_PI / ((double)n))*b*i*i);
-		}
-	}
-	{
-		double b = 2*alpha*m/(M_PI*(2.0*alpha-1));
-		double expFactor = -n*n/b;
-		double expAmplitude = pow((M_PI*b), (-0.5));
-		int i;
-		for(i=0; i<m_PhiLength; i++)
-		{
-			m_Phi[i] = expAmplitude*exp(i*i*expFactor/((double)n*n*N*N));
-		}
-	}
-	m_Initialized = true;
-	return true;
+bool Gaussian::precompute() {
+  if ((m_PhiLength < 1) || (m_PhiHatLength < 1)) {
+    return false;
+  }
+  m_Phi = new double[m_PhiLength];
+  m_PhiHat = new double[m_PhiHatLength];
+  double b = 2 * alpha * m / (M_PI * (2.0 * alpha - 1));
+  {
+    int i;
+    for (i = 0; i < m_PhiHatLength; i++) {
+      m_PhiHat[i] =
+          exp(-(M_PI / ((double)n)) * (M_PI / ((double)n)) * b * i * i);
+    }
+  }
+  {
+    double b = 2 * alpha * m / (M_PI * (2.0 * alpha - 1));
+    double expFactor = -n * n / b;
+    double expAmplitude = pow((M_PI * b), (-0.5));
+    int i;
+    for (i = 0; i < m_PhiLength; i++) {
+      m_Phi[i] =
+          expAmplitude * exp(i * i * expFactor / ((double)n * n * N * N));
+    }
+  }
+  m_Initialized = true;
+  return true;
 }

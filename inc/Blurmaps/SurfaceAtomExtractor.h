@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -33,56 +33,58 @@
 #include <Blurmaps/BlurMapsDataManager.h>
 #include <SphericalPatchIntersections/SphericalPatch.h>
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class Atom;
-};
+namespace PDBParser {
+class GroupOfAtoms;
+class Atom;
+}; // namespace PDBParser
 
 typedef vector<int> intvec;
 
-class SurfaceAtomExtractor
-{
-	public:
-		SurfaceAtomExtractor();
-		virtual ~SurfaceAtomExtractor();
+class SurfaceAtomExtractor {
+public:
+  SurfaceAtomExtractor();
+  virtual ~SurfaceAtomExtractor();
 
-		bool getBoundaryAtoms(PDBParser::GroupOfAtoms* molecule, int dim1, int dim2, int dim3,
-							  double probeRadius, PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType, bool** boundaryAtom);
+  bool getBoundaryAtoms(PDBParser::GroupOfAtoms *molecule, int dim1, int dim2,
+                        int dim3, double probeRadius,
+                        PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType,
+                        bool **boundaryAtom);
 
-	protected:
+protected:
+  void getSasInterior();
+  void getBoundaryVerticesCells();
+  void getSesSurfaceAndVolume();
 
-		void getSasInterior();
-		void getBoundaryVerticesCells();
-		void getSesSurfaceAndVolume();
+  bool isBoundaryCell(bool *sasCellInterior);
 
-		bool isBoundaryCell(bool* sasCellInterior);
+  int fillBoundaryIndices();
+  void getBoundarySphereIndices(bool **boundaryAtom);
+  void getBoundingBox(int x, int y, int z, int *imin, int *jmin, int *kmin,
+                      int *imax, int *jmax, int *kmax, int iProbeRadius,
+                      int jProbeRadius, int kProbeRadius);
+  bool intersects(double *center, double radius, int cell);
+  bool intersects(double *center, double radius, int iIndex, int jIndex,
+                  int kIndex);
 
-		int fillBoundaryIndices();
-		void getBoundarySphereIndices(bool** boundaryAtom);
-		void getBoundingBox(int x, int y, int z, int* imin, int* jmin, int* kmin, int* imax, int* jmax, int* kmax,
-							int iProbeRadius, int jProbeRadius, int kProbeRadius);
-		bool intersects(double* center, double radius, int cell);
-		bool intersects(double* center, double radius, int iIndex, int jIndex, int kIndex);
+  void getSphereRadiusCenter(PDBParser::Atom *at, double *radius,
+                             double *center);
 
-		void getSphereRadiusCenter(PDBParser::Atom* at, double* radius, double* center);
+  bool *m_SasInteriorVertices;
+  bool *m_SasBoundaryVertices;
+  bool *m_SasBoundaryCells;
 
-		bool* m_SasInteriorVertices;
-		bool* m_SasBoundaryVertices;
-		bool* m_SasBoundaryCells;
+  int *m_IndexOfBoundaryCell;
 
-		int* m_IndexOfBoundaryCell;
+  vector<PDBParser::Atom *> m_AtomList;
+  float m_Min[3], m_Max[3];
+  float m_Orig[3], m_Span[3];
+  unsigned int m_Dim[3];
+  double m_ProbeRadius;
+  PDBParser::GroupOfAtoms::RADIUS_TYPE m_RadiusType;
+  int m_NumBoundaryCells;
 
-		vector<PDBParser::Atom*> m_AtomList;
-		float m_Min[3],m_Max[3];
-		float m_Orig[3],m_Span[3];
-		unsigned int m_Dim[3];
-		double m_ProbeRadius;
-		PDBParser::GroupOfAtoms::RADIUS_TYPE m_RadiusType;
-		int m_NumBoundaryCells;
-
-		int m_NumCells;
-		int m_NumVerts;
+  int m_NumCells;
+  int m_NumVerts;
 };
 
 #endif

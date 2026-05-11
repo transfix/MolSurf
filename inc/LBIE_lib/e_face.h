@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,11 +22,10 @@
 #ifndef __E_FACE_H__
 #define __E_FACE_H__
 
-typedef struct _edge_face
-{
-	int faceidx;
-	int orientation[4];
-	int facebit;
+typedef struct _edge_face {
+  int faceidx;
+  int orientation[4];
+  int facebit;
 } edge_face;
 
 #endif

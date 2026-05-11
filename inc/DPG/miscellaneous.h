@@ -1,8 +1,8 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,24 +26,30 @@
 using namespace std;
 
 namespace DPG {
-int binSearch(int key, const vector<int>& x, int low, int high) {
-  if(high < low) return -1;
+int binSearch(int key, const vector<int> &x, int low, int high) {
+  if (high < low)
+    return -1;
   int mid;
-  while(true) {
-  mid = (low+high)/2;
-  if(x[mid] == key) return mid;
+  while (true) {
+    mid = (low + high) / 2;
+    if (x[mid] == key)
+      return mid;
 
-  else if(low == high) return -1;
+    else if (low == high)
+      return -1;
 
-  else if(low == mid) low = high;
+    else if (low == mid)
+      low = high;
 
-  else if(x[mid] > key) high = mid;
-  else low = mid;
+    else if (x[mid] > key)
+      high = mid;
+    else
+      low = mid;
   }
- /* for(int i=low;i<=high;i++)
-  	if(x[i]==key)
-		return i;
-  return -1;*/
+  /* for(int i=low;i<=high;i++)
+         if(x[i]==key)
+                 return i;
+   return -1;*/
 }
-}
+} // namespace DPG
 #endif

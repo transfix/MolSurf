@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -19,7 +19,8 @@
   along with MolSurf; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-// conplot2d.h - class for preprocessing and extraction of isocurves from 2d data
+// conplot2d.h - class for preprocessing and extraction of isocurves from 2d
+// data
 
 #ifndef CONPLOT_2D_H
 #define CONPLOT_2D_H
@@ -35,45 +36,32 @@
 #include <Contour/seedcells.h>
 #include <Contour/segtree.h>
 
-class Conplot2d : public Conplot
-{
-	public:
-		Conplot2d(Datasetslc* d);
-		virtual ~Conplot2d();
+class Conplot2d : public Conplot {
+public:
+  Conplot2d(Datasetslc *d);
+  virtual ~Conplot2d();
 
-	protected:
-		// extract in 3d (from memory) or slice-by-slice (swap from disk)
-		u_int ExtractAll(float isovalue);
+protected:
+  // extract in 3d (from memory) or slice-by-slice (swap from disk)
+  u_int ExtractAll(float isovalue);
 
-		int InterpEdge(int, float*, u_int*, float, int);
+  int InterpEdge(int, float *, u_int *, float, int);
 
-		// track a contour from a seed cell
-		void TrackContour(float, int);
+  // track a contour from a seed cell
+  void TrackContour(float, int);
 
-		// enqueue faces for propagation of surface
-		inline void EnqueueFaces(int, int, CellQueue&);
+  // enqueue faces for propagation of surface
+  inline void EnqueueFaces(int, int, CellQueue &);
 
-		void Reset(int t)
-		{
-			con2[t].Reset();
-		}
-		int  Size(int t)
-		{
-			return(con2[t].getSize());
-		}
-		int  isDone(int t)
-		{
-			return(con2[t].isDone());
-		}
-		void Done(int t)
-		{
-			con2[t].Done();
-		}
+  void Reset(int t) { con2[t].Reset(); }
+  int Size(int t) { return (con2[t].getSize()); }
+  int isDone(int t) { return (con2[t].isDone()); }
+  void Done(int t) { con2[t].Done(); }
 
-	private:
-		Datasetslc* slc;
-		Dataslc* curslc;
-		Contour2d* con2, *curcon;
+private:
+  Datasetslc *slc;
+  Dataslc *curslc;
+  Contour2d *con2, *curcon;
 };
 
 #endif

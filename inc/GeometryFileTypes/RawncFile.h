@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,26 +24,20 @@
 
 #include <GeometryFileTypes/GeometryFileType.h>
 
-class RawncFile : public GeometryFileType
-{
-	public:
-		virtual ~RawncFile();
-		virtual Geometry* loadFile(const string& fileName);
-		virtual bool checkType(const string& fileName);
-		virtual bool saveFile(const Geometry* geometry, const string& fileName);
-		virtual string extension()
-		{
-			return "rawnc";
-		};
-		virtual string filter()
-		{
-			return "Rawnc files (*.rawnc)";
-		};
-		static RawncFile ms_RawncFileRepresentative;
-		static GeometryFileType* getRepresentative();
-		bool saveMolCenters(const Geometry* geometry);
-	protected:
-		RawncFile();
+class RawncFile : public GeometryFileType {
+public:
+  virtual ~RawncFile();
+  virtual Geometry *loadFile(const string &fileName);
+  virtual bool checkType(const string &fileName);
+  virtual bool saveFile(const Geometry *geometry, const string &fileName);
+  virtual string extension() { return "rawnc"; };
+  virtual string filter() { return "Rawnc files (*.rawnc)"; };
+  static RawncFile ms_RawncFileRepresentative;
+  static GeometryFileType *getRepresentative();
+  bool saveMolCenters(const Geometry *geometry);
+
+protected:
+  RawncFile();
 };
 
 #endif

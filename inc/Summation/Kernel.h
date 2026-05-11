@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,17 +24,18 @@
 
 #include <Utility/utility.h>
 
-namespace CCVSummationModule
-{
-	class Kernel
-	{
-		public:
-			Kernel();
-			virtual ~Kernel();
-			virtual bool isDecayingKernel() = 0;
-			virtual bool getLength(double* length, double radius) = 0; // return false if it is not a decaying kernel
-			virtual double getFunctionAt(double x, double y, double z, double cx, double cy, double cz, double radius) = 0;
-	};
+namespace CCVSummationModule {
+class Kernel {
+public:
+  Kernel();
+  virtual ~Kernel();
+  virtual bool isDecayingKernel() = 0;
+  virtual bool
+  getLength(double *length,
+            double radius) = 0; // return false if it is not a decaying kernel
+  virtual double getFunctionAt(double x, double y, double z, double cx,
+                               double cy, double cz, double radius) = 0;
 };
+}; // namespace CCVSummationModule
 
 #endif

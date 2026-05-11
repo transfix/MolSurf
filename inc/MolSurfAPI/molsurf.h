@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -64,67 +64,70 @@ using namespace PocketTunnel;
 #include <SimpleVolumeData/SimpleVolumeDataIsocontourer.h>
 #include <VolumeFileTypes/VolumeLoader.h>
 
-
 using namespace GEOMETRY;
-
 
 extern float IsoValueofHLS;
 
-bool area(int argc, char* argv[]);
-double area2(char * rawnFile);
-bool aSplineQuad(int argc, char* argv[]);
-Geometry* aSplineRaw(Geometry* geometry, int resolution);
-Geometry* aSplineRawQuad(Geometry* geometry, int numOfPts, int resolution, string output1, string output2, string type);
-bool aSplineVolume(int argc, char* argv[]);
-bool bornRadius(int argc, char* argv[]);
-bool coarseGrainCharge(int argc, char* argv[]);
-bool coarseGrain(int argc, char* argv[]);
-bool convertToRawnUsingHLS(int argc, char* argv[]);
-bool decimate(int argc, char* argv[]);
-bool decimatePercentage(int argc, char* argv[]);
-bool reOrientate(int argc, char* argv[]);
-bool normals(int argc, char* argv[]);
-bool optimizeCGCharge(int argc, char* argv[]);
-bool optimizeCGGeometry(int argc, char* argv[]);
-bool pocket(int argc, char* argv[]);
-bool pocketTunnel(int argc, char* argv[]);
-bool populateSAS(int argc, char* argv[]);
-bool populateSASUsingMesh(int argc, char* argv[]);
-bool getInterfaceAtoms(int argc, char* argv[]);
-bool getInterfaceSurface(int argc, char* argv[]);
-bool colorByCharge(int argc, char* argv[]);
-bool generateF2d(int argc, char* argv[]);
-bool qualityImprove(int argc, char* argv[]);
-bool rotatePDB(int argc, char* argv[]);
-bool removeInteriorPockets(int argc, char* argv[]);
-bool signedDistanceFunction(int argc, char* argv[]);
-bool signedDistanceFunction2(int argc, char* argv[]);
-bool surfaceAtoms(int argc, char* argv[]);
-bool surfaceFromPDB(int argc, char* argv[]);
-bool volume(int argc, char* argv[]);
-bool volumeUsingHLS(int argc, char* argv[]);
+bool area(int argc, char *argv[]);
+double area2(char *rawnFile);
+bool aSplineQuad(int argc, char *argv[]);
+Geometry *aSplineRaw(Geometry *geometry, int resolution);
+Geometry *aSplineRawQuad(Geometry *geometry, int numOfPts, int resolution,
+                         string output1, string output2, string type);
+bool aSplineVolume(int argc, char *argv[]);
+bool bornRadius(int argc, char *argv[]);
+bool coarseGrainCharge(int argc, char *argv[]);
+bool coarseGrain(int argc, char *argv[]);
+bool convertToRawnUsingHLS(int argc, char *argv[]);
+bool decimate(int argc, char *argv[]);
+bool decimatePercentage(int argc, char *argv[]);
+bool reOrientate(int argc, char *argv[]);
+bool normals(int argc, char *argv[]);
+bool optimizeCGCharge(int argc, char *argv[]);
+bool optimizeCGGeometry(int argc, char *argv[]);
+bool pocket(int argc, char *argv[]);
+bool pocketTunnel(int argc, char *argv[]);
+bool populateSAS(int argc, char *argv[]);
+bool populateSASUsingMesh(int argc, char *argv[]);
+bool getInterfaceAtoms(int argc, char *argv[]);
+bool getInterfaceSurface(int argc, char *argv[]);
+bool colorByCharge(int argc, char *argv[]);
+bool generateF2d(int argc, char *argv[]);
+bool qualityImprove(int argc, char *argv[]);
+bool rotatePDB(int argc, char *argv[]);
+bool removeInteriorPockets(int argc, char *argv[]);
+bool signedDistanceFunction(int argc, char *argv[]);
+bool signedDistanceFunction2(int argc, char *argv[]);
+bool surfaceAtoms(int argc, char *argv[]);
+bool surfaceFromPDB(int argc, char *argv[]);
+bool volume(int argc, char *argv[]);
+bool volumeUsingHLS(int argc, char *argv[]);
 
-bool getVolumeWithHydrophobicity(int argc, char* argv[]);
-bool getVolumeWithElectron(int argc, char* argv[]);
-bool getVolumeWithChargeDensity(int argc, char* argv[]);
+bool getVolumeWithHydrophobicity(int argc, char *argv[]);
+bool getVolumeWithElectron(int argc, char *argv[]);
+bool getVolumeWithChargeDensity(int argc, char *argv[]);
 
-bool surfaceUsingLBIE(int argc, char* argv[]);
-Geometry* surfaceUsingHLS(PDBParser::GroupOfAtoms* molecule, int size, int iterations, double weight);
-Geometry* surfaceUsingAdaptiveGrid(PDBParser::GroupOfAtoms* molecule, int size, double width);
-Geometry* surfaceUsingAdaptiveGrid(PDBParser::GroupOfAtoms* molecule, int size);
-Geometry* surfaceUsingGaussianBlur(PDBParser::GroupOfAtoms* molecule, double isovalue, int size, double blobbiness, int radiusInt, int level, bool optimizeRadii);
-Geometry* surfaceUsingGaussianBlur2(PDBParser::GroupOfAtoms* molecule, double isovalue, double resolution, double blobbiness, int radiusInt, int level);
+bool surfaceUsingLBIE(int argc, char *argv[]);
+Geometry *surfaceUsingHLS(PDBParser::GroupOfAtoms *molecule, int size,
+                          int iterations, double weight);
+Geometry *surfaceUsingAdaptiveGrid(PDBParser::GroupOfAtoms *molecule, int size,
+                                   double width);
+Geometry *surfaceUsingAdaptiveGrid(PDBParser::GroupOfAtoms *molecule, int size);
+Geometry *surfaceUsingGaussianBlur(PDBParser::GroupOfAtoms *molecule,
+                                   double isovalue, int size, double blobbiness,
+                                   int radiusInt, int level,
+                                   bool optimizeRadii);
+Geometry *surfaceUsingGaussianBlur2(PDBParser::GroupOfAtoms *molecule,
+                                    double isovalue, double resolution,
+                                    double blobbiness, int radiusInt,
+                                    int level);
 
-
-PDBParser::GroupOfAtoms* loadGOA(const string& file);
-void saveAndDeleteGeometry(const string& file, Geometry* geometry);
-
-
+PDBParser::GroupOfAtoms *loadGOA(const string &file);
+void saveAndDeleteGeometry(const string &file, Geometry *geometry);
 
 typedef struct {
-	float p[3];
-	float rad;
-}  weiPoint;
-
+  float p[3];
+  float rad;
+} weiPoint;
 
 #endif

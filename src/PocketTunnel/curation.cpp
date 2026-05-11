@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,95 +23,75 @@
 
 using std::endl;
 
-void curate(Triangulation& triang, map<int, cell_cluster> &cluster_set, const vector<int> &sorted_cluster_index_vector, const int output_tunnel_count, const int output_pocket_count)
-{
-	int tun_void_cnt = 0;
-	for(int i = 0; i < (int)sorted_cluster_index_vector.size(); i++)
-	{
-		if(i >= (int)sorted_cluster_index_vector.size())
-		{
-			break;
-		}
-		int cl_id = sorted_cluster_index_vector[i];
-		if(cluster_set[cl_id].mouth_cnt < 1)
-		{
-			tun_void_cnt++;
-		}
-		else if(cluster_set[cl_id].mouth_cnt > 1)
-		{
-			tun_void_cnt++;
-		}
-		else
-		{
-			continue;
-		}
-		if(tun_void_cnt <= output_tunnel_count)
-		{
-			cerr << "Tunnel/Void number " << tun_void_cnt << " is not to be curated." << endl;
-			continue;
-		}
-		// currently we do not curate more than 100 tunnel/void.
-		if(tun_void_cnt > 100)
-		{
-			break;
-		}
-		// curate this tunnel/void.
-		for(FCI cit = triang.finite_cells_begin();
-				cit != triang.finite_cells_end(); cit ++)
-		{
-			if(cluster_set[cit->id].find() != cl_id)
-			{
-				continue;
-			}
-			cit->outside = false;
-		}
-	}
-	int pocket_cnt = 0;
-	for(int i = 0; i < (int)sorted_cluster_index_vector.size(); i++)
-	{
-		if(i >= (int)sorted_cluster_index_vector.size())
-		{
-			break;
-		}
-		int cl_id = sorted_cluster_index_vector[i];
-		if(cluster_set[cl_id].mouth_cnt < 1)
-		{
-			continue;
-		}
-		else if(cluster_set[cl_id].mouth_cnt > 1)
-		{
-			continue;
-		}
-		else
-		{
-			pocket_cnt++;
-		}
-		if(pocket_cnt <= output_pocket_count)
-		{
-			cerr << "Pocket number " << pocket_cnt << " is not to be curated." << endl;
-			continue;
-		}
-		// currently we do not curate more than 100 tunnel/void.
-		if(pocket_cnt > 100)
-		{
-			break;
-		}
-		// curate this pocket.
-		for(FCI cit = triang.finite_cells_begin();
-				cit != triang.finite_cells_end(); cit ++)
-		{
-			if(cluster_set[cit->id].find() != cl_id)
-			{
-				continue;
-			}
-			cit->outside = false;
-		}
-	}
-	// remove bubbles near the surface.
-	for(FCI cit = triang.finite_cells_begin();
-			cit != triang.finite_cells_end(); cit ++)
-		if(! cluster_set[cit->id].outside)
-		{
-			cit->outside = false;
-		}
+void curate(Triangulation &triang, map<int, cell_cluster> &cluster_set,
+            const vector<int> &sorted_cluster_index_vector,
+            const int output_tunnel_count, const int output_pocket_count) {
+  int tun_void_cnt = 0;
+  for (int i = 0; i < (int)sorted_cluster_index_vector.size(); i++) {
+    if (i >= (int)sorted_cluster_index_vector.size()) {
+      break;
+    }
+    int cl_id = sorted_cluster_index_vector[i];
+    if (cluster_set[cl_id].mouth_cnt < 1) {
+      tun_void_cnt++;
+    } else if (cluster_set[cl_id].mouth_cnt > 1) {
+      tun_void_cnt++;
+    } else {
+      continue;
+    }
+    if (tun_void_cnt <= output_tunnel_count) {
+      cerr << "Tunnel/Void number " << tun_void_cnt << " is not to be curated."
+           << endl;
+      continue;
+    }
+    // currently we do not curate more than 100 tunnel/void.
+    if (tun_void_cnt > 100) {
+      break;
+    }
+    // curate this tunnel/void.
+    for (FCI cit = triang.finite_cells_begin();
+         cit != triang.finite_cells_end(); cit++) {
+      if (cluster_set[cit->id].find() != cl_id) {
+        continue;
+      }
+      cit->outside = false;
+    }
+  }
+  int pocket_cnt = 0;
+  for (int i = 0; i < (int)sorted_cluster_index_vector.size(); i++) {
+    if (i >= (int)sorted_cluster_index_vector.size()) {
+      break;
+    }
+    int cl_id = sorted_cluster_index_vector[i];
+    if (cluster_set[cl_id].mouth_cnt < 1) {
+      continue;
+    } else if (cluster_set[cl_id].mouth_cnt > 1) {
+      continue;
+    } else {
+      pocket_cnt++;
+    }
+    if (pocket_cnt <= output_pocket_count) {
+      cerr << "Pocket number " << pocket_cnt << " is not to be curated."
+           << endl;
+      continue;
+    }
+    // currently we do not curate more than 100 tunnel/void.
+    if (pocket_cnt > 100) {
+      break;
+    }
+    // curate this pocket.
+    for (FCI cit = triang.finite_cells_begin();
+         cit != triang.finite_cells_end(); cit++) {
+      if (cluster_set[cit->id].find() != cl_id) {
+        continue;
+      }
+      cit->outside = false;
+    }
+  }
+  // remove bubbles near the surface.
+  for (FCI cit = triang.finite_cells_begin(); cit != triang.finite_cells_end();
+       cit++)
+    if (!cluster_set[cit->id].outside) {
+      cit->outside = false;
+    }
 }

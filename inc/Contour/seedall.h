@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -28,16 +28,16 @@
 #include <Contour/range.h>
 #include <Contour/seedcells.h>
 
-class seedAll
-{
-	public:
-		seedAll(Data& d, SeedCells& s, Conplot& p) : data(d), seeds(s), plot(p) {}
-		~seedAll() {}
-		void compSeeds(void);
-	private:
-		Data& data;
-		SeedCells& seeds;
-		Conplot&   plot;
+class seedAll {
+public:
+  seedAll(Data &d, SeedCells &s, Conplot &p) : data(d), seeds(s), plot(p) {}
+  ~seedAll() {}
+  void compSeeds(void);
+
+private:
+  Data &data;
+  SeedCells &seeds;
+  Conplot &plot;
 };
 
 #endif

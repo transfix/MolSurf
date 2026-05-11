@@ -4,18 +4,16 @@
 
 using namespace std;
 
-int main(int argc, char** argv)
-{
-	if(argc <3)
-	{
-		cout<<"usage: SurfaceHydrophobicityTest <pqr> <quad>"<<endl;
-	}
+int main(int argc, char **argv) {
+  if (argc < 3) {
+    cout << "usage: SurfaceHydrophobicityTest <pqr> <quad>" << endl;
+  }
 
-	SurfaceHydrophobicity* sh = new SurfaceHydrophobicity(argv[1], argv[2]);
+  SurfaceHydrophobicity *sh = new SurfaceHydrophobicity(argv[1], argv[2]);
 
-	cout<<sh->getSurfaceHydrophobicity()<<endl;
+  cout << sh->getSurfaceHydrophobicity() << endl;
 
-	delete sh;
+  delete sh;
 
-	return 0;
-}	
+  return 0;
+}

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -31,19 +31,19 @@
 
 const float ft_PI = 4 * 3 / PI;
 
-typedef struct _vtx
-{
-	float x;
-	float y;
-	float z;
+typedef struct _vtx {
+  float x;
+  float y;
+  float z;
 } Vtx;
 
 // bishoulder.cpp bishoulder computation
-void GetBishoulder(float* val , Vtx& bishoulder , float isovalue) ;
-void Norm2Read_Bishoulder2(Vtx normalized_bishoulder,float* bishoulder, float xyz[3], float cell_size[3]);
-bool is_ambiguous(float* val, float iso_val);
-void copyVect(const float* in, float* out, int size);
-void copyVect(const int* in, int* out, int size);
-void copyVect(const double* in, double* out, int size);
+void GetBishoulder(float *val, Vtx &bishoulder, float isovalue);
+void Norm2Read_Bishoulder2(Vtx normalized_bishoulder, float *bishoulder,
+                           float xyz[3], float cell_size[3]);
+bool is_ambiguous(float *val, float iso_val);
+void copyVect(const float *in, float *out, int size);
+void copyVect(const int *in, int *out, int size);
+void copyVect(const double *in, double *out, int size);
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,24 +24,25 @@
 
 #include <Utility/utility.h>
 
-namespace PDBParser
-{
-	class ResidueHeader
-	{
-		public:
-			ResidueHeader();
-			ResidueHeader(int a_resID, char a_chainID, int a_seqNum, char a_iCode);
-			ResidueHeader(const ResidueHeader& rh);
-			virtual ~ResidueHeader();
-			// These fields are needed to describe a residue
-			int resID;		// An int corresponding to the amino acid that the residue falls under
-			char chainID;	// The parent chain of this residue
-			int seqNum;		// The sequence number that is used, along with the insertion code, in the PDB
-			char iCode;		// The insertion code that is used, along with the sequence number, in the PDB
-			bool compare(ResidueHeader* rh);
-			bool compare(int a_resID, char a_chainID, int a_seqNum, char a_iCode);
-	};
-
+namespace PDBParser {
+class ResidueHeader {
+public:
+  ResidueHeader();
+  ResidueHeader(int a_resID, char a_chainID, int a_seqNum, char a_iCode);
+  ResidueHeader(const ResidueHeader &rh);
+  virtual ~ResidueHeader();
+  // These fields are needed to describe a residue
+  int resID;    // An int corresponding to the amino acid that the residue falls
+                // under
+  char chainID; // The parent chain of this residue
+  int seqNum;   // The sequence number that is used, along with the insertion
+                // code, in the PDB
+  char iCode;   // The insertion code that is used, along with the sequence
+                // number, in the PDB
+  bool compare(ResidueHeader *rh);
+  bool compare(int a_resID, char a_chainID, int a_seqNum, char a_iCode);
 };
+
+}; // namespace PDBParser
 
 #endif

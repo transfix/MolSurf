@@ -2,7 +2,7 @@
   Copyright 2011 The University of Texas at Austin
 
         Author: Muhibur Rasheed <muhib@ices.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -20,34 +20,37 @@
   along with MolSurf; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include<Hausdorff/Hausdorff.h>
+#include <Hausdorff/Hausdorff.h>
 #include <iostream>
 
-bool hausdorff(int argc, char ** argv) 
-{
-	if (argc < 5) 
-	{
-		cout << "Usage: MolSurf -hausdorff <input raw/rawn file 1> <input raw/rawn file 2> <1=raw / 2 = rawn>" << endl;
-		return false;
-	}
+bool hausdorff(int argc, char **argv) {
+  if (argc < 5) {
+    cout << "Usage: MolSurf -hausdorff <input raw/rawn file 1> <input raw/rawn "
+            "file 2> <1=raw / 2 = rawn>"
+         << endl;
+    return false;
+  }
 
-	bool RAWN;
-	int r = atoi(argv[4]);
-	if(r==2) RAWN = true;
-	else if(r==1) RAWN = false;
-	else
-	{
+  bool RAWN;
+  int r = atoi(argv[4]);
+  if (r == 2)
+    RAWN = true;
+  else if (r == 1)
+    RAWN = false;
+  else {
 
-		cout << "Usage: MolSurf -hausdorff <input raw/rawn file 1> <input raw/rawn file 2> <1=raw / 2 = rawn>" << endl;
-		return false;
-	}
+    cout << "Usage: MolSurf -hausdorff <input raw/rawn file 1> <input raw/rawn "
+            "file 2> <1=raw / 2 = rawn>"
+         << endl;
+    return false;
+  }
 
-	HausdorffDistance H(argv[2],argv[3],RAWN);
-  
-//	cout<<"Hausdorff distance = "<< H.getHausdorffDistance() <<endl;
-//	cout<<"Average distance = "<< H.getAverageDistance() <<endl; 
+  HausdorffDistance H(argv[2], argv[3], RAWN);
 
-	cout<<H.getHausdorffDistance()<< " " << H.getAverageDistance() << endl;
+  //      cout<<"Hausdorff distance = "<< H.getHausdorffDistance() <<endl;
+  //      cout<<"Average distance = "<< H.getAverageDistance() <<endl;
 
-	return true; 
+  cout << H.getHausdorffDistance() << " " << H.getAverageDistance() << endl;
+
+  return true;
 }

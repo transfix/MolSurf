@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,7 +27,11 @@
 #include <SmoothingFunction/SmoothingFunction.h>
 #include <MultiresolutionSurface/fastfft.h>
 
-
-bool getBlurMapWithFastInverse(fftw_complex* blurmap, fftw_complex* rbfCenterValues, double* rbfCenterPositions, fftw_complex* rbf1D, int numCenters, int numFreq, int gridSize, double alpha, int interpFuncExtent, int rbfWidth, SmoothingFunction* smoothingFunction);
+bool getBlurMapWithFastInverse(fftw_complex *blurmap,
+                               fftw_complex *rbfCenterValues,
+                               double *rbfCenterPositions, fftw_complex *rbf1D,
+                               int numCenters, int numFreq, int gridSize,
+                               double alpha, int interpFuncExtent, int rbfWidth,
+                               SmoothingFunction *smoothingFunction);
 
 #endif

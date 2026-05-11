@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,21 +24,20 @@
 
 #include <Utility/utility.h>
 
-namespace PDBParser
-{
-	class ResidueData
-	{
-		public:
-			ResidueData();
-			ResidueData(const ResidueData& residueData);
-			virtual ~ResidueData();
-			// Torsion angles for nucleic acids (i.e. RNA)
-			float m_alpha, m_beta, m_gamma, m_delta, m_epsilon, m_zeta, m_nu0, m_nu1, m_nu2, m_nu3, m_nu4, m_chi;
-			// Torsion angles for amino acids
-			float m_Phi, m_Psi;
-			// Reduced torsion angles for nucleic acids
-			float m_Eta, m_Theta;
-	};
+namespace PDBParser {
+class ResidueData {
+public:
+  ResidueData();
+  ResidueData(const ResidueData &residueData);
+  virtual ~ResidueData();
+  // Torsion angles for nucleic acids (i.e. RNA)
+  float m_alpha, m_beta, m_gamma, m_delta, m_epsilon, m_zeta, m_nu0, m_nu1,
+      m_nu2, m_nu3, m_nu4, m_chi;
+  // Torsion angles for amino acids
+  float m_Phi, m_Psi;
+  // Reduced torsion angles for nucleic acids
+  float m_Eta, m_Theta;
 };
+}; // namespace PDBParser
 
 #endif

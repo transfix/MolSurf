@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,43 +23,36 @@
 
 using namespace CCVSummationModule;
 
-GaussianKernel::GaussianKernel(double blobbiness, double error)
-{
-	m_Blobbiness = blobbiness;
-	m_Error = error;
+GaussianKernel::GaussianKernel(double blobbiness, double error) {
+  m_Blobbiness = blobbiness;
+  m_Error = error;
 }
 
-GaussianKernel::~GaussianKernel()
-{
+GaussianKernel::~GaussianKernel() {}
+
+bool GaussianKernel::isDecayingKernel() { return true; }
+
+bool GaussianKernel::getLength(double *length, double radius) {
+  if (!isDecayingKernel()) {
+    return false;
+  }
+  if (!length || (radius <= 0)) {
+    return false;
+  }
+  double l2 =
+      (log(m_Error) / m_Blobbiness + 1) * radius * radius; // in one direction
+  (*length) = sqrt(fabs(l2));
+  if ((*length) < 1) {
+    (*length) =
+        1; // what to do ? otherwise may fail on very narrow kernels! SKVINAY
+  }
+  return true;
 }
 
-bool GaussianKernel::isDecayingKernel()
-{
-	return true;
-}
-
-bool GaussianKernel::getLength(double* length, double radius)
-{
-	if(!isDecayingKernel())
-	{
-		return false;
-	}
-	if(!length || (radius <= 0))
-	{
-		return false;
-	}
-	double l2 = (log(m_Error)/m_Blobbiness + 1)*radius*radius; // in one direction
-	(*length) = sqrt(fabs(l2));
-	if((*length) < 1)
-	{
-		(*length) = 1;  // what to do ? otherwise may fail on very narrow kernels! SKVINAY
-	}
-	return true;
-}
-
-double GaussianKernel::getFunctionAt(double x, double y, double z, double cx, double cy, double cz, double radius)
-{
-	double dist2 = (x-cx)*(x-cx) + (y-cy)*(y-cy) + (z-cz)*(z-cz);
-	double expVal = m_Blobbiness*(dist2/(radius*radius) - 1);
-	return exp(expVal);
+double GaussianKernel::getFunctionAt(double x, double y, double z, double cx,
+                                     double cy, double cz, double radius) {
+  double dist2 =
+      (x - cx) * (x - cx) + (y - cy) * (y - cy) + (z - cz) * (z - cz);
+  double expVal = m_Blobbiness * (dist2 / (radius * radius) - 1);
+  return exp(expVal);
 }

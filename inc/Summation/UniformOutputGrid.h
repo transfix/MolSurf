@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,20 +25,18 @@
 #include <Utility/utility.h>
 #include <Summation/OutputGrid.h>
 
-namespace CCVSummationModule
-{
-	class UniformOutputGrid
-	 : public OutputGrid
-	{
-		public:
-			UniformOutputGrid(float* output, float* origin, float* span, unsigned int* dimensions);
-			virtual ~UniformOutputGrid();
-			virtual bool initialized();
-			float* m_Output;
-			float* m_Origin;
-			float* m_Span;
-			unsigned int* m_Dimensions;
-	};
+namespace CCVSummationModule {
+class UniformOutputGrid : public OutputGrid {
+public:
+  UniformOutputGrid(float *output, float *origin, float *span,
+                    unsigned int *dimensions);
+  virtual ~UniformOutputGrid();
+  virtual bool initialized();
+  float *m_Output;
+  float *m_Origin;
+  float *m_Span;
+  unsigned int *m_Dimensions;
 };
+}; // namespace CCVSummationModule
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -46,7 +46,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if ! defined (__APPLE__)
+#if !defined(__APPLE__)
 #include <malloc.h>
 #else
 #include <stdlib.h>
@@ -67,10 +67,9 @@
 #include <windows.h>
 #endif
 
-
 // Do we need this?
 #ifdef _MSC_VER
-#pragma warning(disable:4786)
+#pragma warning(disable : 4786)
 #endif
 
 // Common symbols from the std namespace
@@ -94,16 +93,16 @@ typedef unsigned int uint;
 
 // Common constants
 const double PI = 3.1415926535897932385;
-const double E  = 2.7182818284590452354;
+const double E = 2.7182818284590452354;
 
 namespace CVCUtility {
 
-bool strcmpCaseInsensitive(const char* str1, const char* str2);
-bool beginsWith(const char* string, const char* substring);
+bool strcmpCaseInsensitive(const char *str1, const char *str2);
+bool beginsWith(const char *string, const char *substring);
 
 // Basic coersion of strings
-int  stringToInt( string, bool optional=false);
-char stringToChar(string, bool optional=false);
+int stringToInt(string, bool optional = false);
+char stringToChar(string, bool optional = false);
 
 // Tests for the prefix relation
 bool beginsWith(string str, string substr);
@@ -117,19 +116,19 @@ bool substring(string str, string substr);
 void error(string message);
 
 // Error-checking fread wrapper function
-size_t freadSafely(void* ptr, size_t size, size_t count, FILE* stream);
+size_t freadSafely(void *ptr, size_t size, size_t count, FILE *stream);
 
 // Error-checking fgets wrapper function
-char* fgetsSafely(char* str, int num, FILE* stream);
+char *fgetsSafely(char *str, int num, FILE *stream);
 
 // Error-checking malloc wrapper function
-void* mallocSafely(size_t size);
+void *mallocSafely(size_t size);
 
 // Error-checking calloc wrapper function
-void* callocSafely(size_t size);
+void *callocSafely(size_t size);
 
 // Error-checking realloc wrapper function
-void* reallocSafely(void* ptr, size_t size);
+void *reallocSafely(void *ptr, size_t size);
 
 // Minimum of two numbers
 int minimum(int a, int b);
@@ -139,14 +138,14 @@ int maximum(int a, int b);
 
 // Functions to cleanly open files
 // Usage:
-//	FILE* fp = fileRead("foo.txt");
-//	. . .
-//	fclose(fp);
+//      FILE* fp = fileRead("foo.txt");
+//      . . .
+//      fclose(fp);
 
-FILE* fileRead(const char* fileName);
-FILE* fileWrite(const char* fileName);
-FILE* fileWrite(const string& fileName);
-FILE* fileRead(const string& fileName);
+FILE *fileRead(const char *fileName);
+FILE *fileWrite(const char *fileName);
+FILE *fileWrite(const string &fileName);
+FILE *fileRead(const string &fileName);
 
-}
+} // namespace CVCUtility
 #endif

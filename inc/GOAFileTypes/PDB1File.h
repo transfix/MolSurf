@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,30 +24,26 @@
 
 #include <GOAFileTypes/GOAFileType.h>
 
-namespace PDB1Parser
-{
-	class GroupOfAtoms;
+namespace PDB1Parser {
+class GroupOfAtoms;
 };
 
-class PDB1File : public GOAFileType
-{
-	public:
-		virtual ~PDB1File();
-		virtual PDBParser::GroupOfAtoms* loadFile(const string& fileName, bool deleteWater = false);
-		virtual bool checkType(const string& fileName);
-		virtual bool saveFile(PDBParser::GroupOfAtoms* groupOfAtoms, const string& fileName, unsigned int level=0, CCVOpenGLMath::Matrix* transformation = 0);
-		virtual string extension()
-		{
-			return "pdb1";
-		};
-		virtual string filter()
-		{
-			return "PDB1 files (*.pdb1)";
-		};
-		static PDB1File ms_PDB1FileRepresentative;
-		static GOAFileType* getRepresentative();
-	protected:
-		PDB1File();
+class PDB1File : public GOAFileType {
+public:
+  virtual ~PDB1File();
+  virtual PDBParser::GroupOfAtoms *loadFile(const string &fileName,
+                                            bool deleteWater = false);
+  virtual bool checkType(const string &fileName);
+  virtual bool saveFile(PDBParser::GroupOfAtoms *groupOfAtoms,
+                        const string &fileName, unsigned int level = 0,
+                        CCVOpenGLMath::Matrix *transformation = 0);
+  virtual string extension() { return "pdb1"; };
+  virtual string filter() { return "PDB1 files (*.pdb1)"; };
+  static PDB1File ms_PDB1FileRepresentative;
+  static GOAFileType *getRepresentative();
+
+protected:
+  PDB1File();
 };
 
 #endif

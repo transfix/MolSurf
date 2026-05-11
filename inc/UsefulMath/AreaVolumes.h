@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,17 +24,15 @@
 
 #include <Utility/utility.h>
 
-namespace CCVOpenGLMath
-{
-	class AreaVolumes
-	{
-		public:
-			AreaVolumes();
-			virtual ~AreaVolumes();
-			static double getTriangleArea(double v1x, double v1y, double v1z,
-						double v2x, double v2y, double v2z,
-						double v3x, double v3y, double v3z);
-	};
+namespace CCVOpenGLMath {
+class AreaVolumes {
+public:
+  AreaVolumes();
+  virtual ~AreaVolumes();
+  static double getTriangleArea(double v1x, double v1y, double v1z, double v2x,
+                                double v2y, double v2z, double v3x, double v3y,
+                                double v3z);
 };
+}; // namespace CCVOpenGLMath
 
 #endif

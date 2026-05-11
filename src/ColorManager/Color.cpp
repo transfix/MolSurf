@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,63 +23,44 @@
 
 using namespace ColorManager;
 
-Color::Color(float r, float g, float b, float a) : Tuple(r,g,b,a)
-{
+Color::Color(float r, float g, float b, float a) : Tuple(r, g, b, a) {}
+
+Color::Color() : Tuple() {}
+
+Color::Color(float *array) { set(array); }
+
+Color::~Color() {}
+
+Color::Color(const Color &copy) : Tuple(copy) {}
+
+Color &Color::operator=(const Color &copy) {
+  if (this != &copy) {
+    set(copy);
+  }
+  return *this;
 }
 
-Color::Color() : Tuple()
-{
+Color &Color::set(float r, float g, float b, float a) {
+  Tuple::set(r, g, b, a);
+  return *this;
 }
 
-Color::Color(float* array)
-{
-	set(array);
+Color &Color::set(float *array) {
+  Tuple::set(array);
+  return *this;
 }
 
-Color::~Color()
-{
+Color &Color::set(const Color &copy) {
+  Tuple::set(copy);
+  return *this;
 }
 
-Color::Color(const Color& copy): Tuple(copy)
-{
-}
-
-Color& Color::operator=(const Color& copy)
-{
-	if(this!=&copy)
-	{
-		set(copy);
-	}
-	return *this;
-}
-
-Color& Color::set(float r, float g, float b, float a)
-{
-	Tuple::set(r,g,b,a);
-	return *this;
-}
-
-Color& Color::set(float* array)
-{
-	Tuple::set(array);
-	return *this;
-}
-
-Color& Color::set(const Color& copy)
-{
-	Tuple::set(copy);
-	return *this;
-}
-
-int Color::getMaxRGBIndex(const Color color)
-{
-	if(color[0] > color[1] && color[0] > color[2])
-	{
-		return 0;
-	}
-	if(color[1] > color[0] && color[1] > color[2])
-	{
-		return 1;
-	}
-	return 2;
+int Color::getMaxRGBIndex(const Color color) {
+  if (color[0] > color[1] && color[0] > color[2]) {
+    return 0;
+  }
+  if (color[1] > color[0] && color[1] > color[2]) {
+    return 1;
+  }
+  return 2;
 }

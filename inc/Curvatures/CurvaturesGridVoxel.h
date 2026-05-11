@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,16 +27,16 @@
 
 using CCVOpenGLMath::Tuple;
 
-class CurvaturesGridVoxel
-{
-	public:
-		CurvaturesGridVoxel();
-		virtual ~CurvaturesGridVoxel();
-		void addKernel(Tuple const tuple);
-		int getNumberOfKernels();
-		Tuple getKernel(int index);
-	protected:
-		std::vector<Tuple> m_Kernels;
+class CurvaturesGridVoxel {
+public:
+  CurvaturesGridVoxel();
+  virtual ~CurvaturesGridVoxel();
+  void addKernel(Tuple const tuple);
+  int getNumberOfKernels();
+  Tuple getKernel(int index);
+
+protected:
+  std::vector<Tuple> m_Kernels;
 };
 
 #endif

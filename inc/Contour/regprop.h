@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -30,16 +30,16 @@
 class Datavol;
 class Dataslc;
 
-class regProp
-{
-	public:
-		regProp(Data& d, SeedCells& s, Conplot& p) : data(d), seeds(s), plot(p) {}
-		~regProp() {}
-		void compSeeds(void);
-	private:
-		Data& data;
-		SeedCells& seeds;
-		Conplot&   plot;
+class regProp {
+public:
+  regProp(Data &d, SeedCells &s, Conplot &p) : data(d), seeds(s), plot(p) {}
+  ~regProp() {}
+  void compSeeds(void);
+
+private:
+  Data &data;
+  SeedCells &seeds;
+  Conplot &plot;
 };
 
 #endif

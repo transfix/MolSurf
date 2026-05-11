@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,90 +22,71 @@
 #include <Geometry/SceneArrayNode.h>
 #include <UsefulMath/Quaternion.h>
 
-SceneArrayNode::SceneArrayNode(GLuint initializationCallList, GLuint finalizationCallList)
-{
-	m_Geometry = new Geometry;
-	m_InitializationCallList = initializationCallList;
-	m_FinalizationCallList = finalizationCallList;
+SceneArrayNode::SceneArrayNode(GLuint initializationCallList,
+                               GLuint finalizationCallList) {
+  m_Geometry = new Geometry;
+  m_InitializationCallList = initializationCallList;
+  m_FinalizationCallList = finalizationCallList;
 }
 
-SceneArrayNode::SceneArrayNode(Geometry* geometry, GLuint initializationCallList, GLuint finalizationCallList)
-{
-	this->m_Geometry = geometry;
-	this->m_InitializationCallList = initializationCallList;
-	this->m_FinalizationCallList = finalizationCallList;
+SceneArrayNode::SceneArrayNode(Geometry *geometry,
+                               GLuint initializationCallList,
+                               GLuint finalizationCallList) {
+  this->m_Geometry = geometry;
+  this->m_InitializationCallList = initializationCallList;
+  this->m_FinalizationCallList = finalizationCallList;
 }
 
-SceneArrayNode::~SceneArrayNode()
-{
-	delete m_Geometry;
+SceneArrayNode::~SceneArrayNode() { delete m_Geometry; }
+
+void SceneArrayNode::translate(float tx, float ty, float tz) {
+  m_Transformation.preMultiplication(
+      CCVOpenGLMath::Matrix::translation(tx, ty, tz));
 }
 
-void SceneArrayNode::translate(float tx, float ty, float tz)
-{
-	m_Transformation.preMultiplication(CCVOpenGLMath::Matrix::translation(tx,ty,tz));
+void SceneArrayNode::rotation(float angle, float x, float y, float z) {
+  m_Transformation.preMultiplication(
+      CCVOpenGLMath::Quaternion::rotation(angle, x, y, z).buildMatrix());
 }
 
-void SceneArrayNode::rotation(float angle, float x, float y, float z)
-{
-	m_Transformation.preMultiplication(CCVOpenGLMath::Quaternion::rotation(angle, x,y,z).buildMatrix());
+void SceneArrayNode::scale(float s) {
+  m_Transformation.preMultiplication(CCVOpenGLMath::Matrix::scale(s, s, s));
 }
 
-void SceneArrayNode::scale(float s)
-{
-	m_Transformation.preMultiplication(CCVOpenGLMath::Matrix::scale(s,s,s));
+void SceneArrayNode::setGeometry(Geometry *geometry) {
+  delete m_Geometry;
+  m_Geometry = geometry;
 }
 
+Geometry *SceneArrayNode::getGeometry() { return m_Geometry; }
 
-void SceneArrayNode::setGeometry(Geometry* geometry)
-{
-	delete m_Geometry;
-	m_Geometry = geometry;
+const Geometry *SceneArrayNode::getGeometry() const { return m_Geometry; }
+
+void SceneArrayNode::setTransformation(
+    const CCVOpenGLMath::Matrix &transformation) {
+  m_Transformation = transformation;
 }
 
-Geometry* SceneArrayNode::getGeometry()
-{
-	return m_Geometry;
+CCVOpenGLMath::Matrix &SceneArrayNode::getTransformation() {
+  return m_Transformation;
 }
 
-const Geometry* SceneArrayNode::getGeometry() const
-{
-	return m_Geometry;
+const CCVOpenGLMath::Matrix &SceneArrayNode::getTransformation() const {
+  return m_Transformation;
 }
 
-
-void SceneArrayNode::setTransformation(const CCVOpenGLMath::Matrix& transformation)
-{
-	m_Transformation = transformation;
+void SceneArrayNode::setInitializationCallList(GLuint initializationCallList) {
+  m_InitializationCallList = initializationCallList;
 }
 
-CCVOpenGLMath::Matrix& SceneArrayNode::getTransformation()
-{
-	return m_Transformation;
+GLuint SceneArrayNode::getInitializationCallList() const {
+  return m_InitializationCallList;
 }
 
-const CCVOpenGLMath::Matrix& SceneArrayNode::getTransformation() const
-{
-	return m_Transformation;
+void SceneArrayNode::setFinalizationCallList(GLuint finalizationCallList) {
+  m_FinalizationCallList = finalizationCallList;
 }
 
-void SceneArrayNode::setInitializationCallList(GLuint initializationCallList)
-{
-	m_InitializationCallList = initializationCallList;
-}
-
-GLuint SceneArrayNode::getInitializationCallList() const
-{
-	return m_InitializationCallList;
-}
-
-
-void SceneArrayNode::setFinalizationCallList(GLuint finalizationCallList)
-{
-	m_FinalizationCallList = finalizationCallList;
-}
-
-GLuint SceneArrayNode::getFinalizationCallList() const
-{
-	return m_FinalizationCallList;
+GLuint SceneArrayNode::getFinalizationCallList() const {
+  return m_FinalizationCallList;
 }

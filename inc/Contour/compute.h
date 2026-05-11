@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,12 +25,24 @@
 #include <Utility/utility.h>
 #include <Contour/basic.h>
 
-void sortVerts(float* &x0, float* &x1, float* &x2, float* &x3, float &v0, float& v1, float& v2, float& v3);
-void triSurfIntegral(double* x1, double* x2, double* x3, float v1, float v2, float v3, float* fx, float* val, int nbucket, float min, float max, float scaling);
-void triVolIntegral(double* x1, double* x2, double* x3, float v1, float v2, float v3, float* fx, float* val, float* cum, u_int nbucket, float min, float max, float scaling);
-void tetSurfIntegral(float* x1, float* x2, float* x3, float* x4, float v1, float v2, float v3, float v4, float* fx, float* val, int nbucket, float min, float max, float scaling);
-void tetVolIntegral(float* x1, float* x2, float* x3, float* x4, float v1, float v2, float v3, float v4, float* fx, float* val, float* cum, u_int nbucket, float min, float max, float scaling);
+void sortVerts(float *&x0, float *&x1, float *&x2, float *&x3, float &v0,
+               float &v1, float &v2, float &v3);
+void triSurfIntegral(double *x1, double *x2, double *x3, float v1, float v2,
+                     float v3, float *fx, float *val, int nbucket, float min,
+                     float max, float scaling);
+void triVolIntegral(double *x1, double *x2, double *x3, float v1, float v2,
+                    float v3, float *fx, float *val, float *cum, u_int nbucket,
+                    float min, float max, float scaling);
+void tetSurfIntegral(float *x1, float *x2, float *x3, float *x4, float v1,
+                     float v2, float v3, float v4, float *fx, float *val,
+                     int nbucket, float min, float max, float scaling);
+void tetVolIntegral(float *x1, float *x2, float *x3, float *x4, float v1,
+                    float v2, float v3, float v4, float *fx, float *val,
+                    float *cum, u_int nbucket, float min, float max,
+                    float scaling);
 
-void intVolIntegral(float** p, float* u, float* v, float fx1[], float** val1,float fx2[], float** val2, int nbucket, float min1, float max1, float min2, float max2, float scaling);
+void intVolIntegral(float **p, float *u, float *v, float fx1[], float **val1,
+                    float fx2[], float **val2, int nbucket, float min1,
+                    float max1, float min2, float max2, float scaling);
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,36 +24,33 @@
 
 #include <GOAFileTypes/GOAFileType.h>
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
+namespace PDBParser {
+class GroupOfAtoms;
 };
 
-class PQRFile : public GOAFileType
-{
-	public:
-		virtual ~PQRFile();
-		virtual PDBParser::GroupOfAtoms* loadFile(const string& fileName, bool deleteWater = false);
-		virtual bool checkType(const string& fileName);
-		virtual bool saveFile(PDBParser::GroupOfAtoms* groupOfAtoms, const string& fileName, unsigned int level=0, CCVOpenGLMath::Matrix* transformation = 0);
-		virtual string extension()
-		{
-			return "pqr";
-		};
-		virtual string filter()
-		{
-			return "PQR files (*.pqr)";
-		};
-		static PQRFile ms_PQRFileRepresentative;
-		static GOAFileType* getRepresentative();
-	protected:
-		PQRFile();
-		void setChainColors(PDBParser::GroupOfAtoms* chain, int n);
-	private:
-		void getString(char* line, char* str, int pos, int len);
-		void getChar(char* line, char* str, int pos);
-		void getInt(char* line, int* i, int pos, int len);
-		void getFloat(char* line, float* d, int pos, int len);
+class PQRFile : public GOAFileType {
+public:
+  virtual ~PQRFile();
+  virtual PDBParser::GroupOfAtoms *loadFile(const string &fileName,
+                                            bool deleteWater = false);
+  virtual bool checkType(const string &fileName);
+  virtual bool saveFile(PDBParser::GroupOfAtoms *groupOfAtoms,
+                        const string &fileName, unsigned int level = 0,
+                        CCVOpenGLMath::Matrix *transformation = 0);
+  virtual string extension() { return "pqr"; };
+  virtual string filter() { return "PQR files (*.pqr)"; };
+  static PQRFile ms_PQRFileRepresentative;
+  static GOAFileType *getRepresentative();
+
+protected:
+  PQRFile();
+  void setChainColors(PDBParser::GroupOfAtoms *chain, int n);
+
+private:
+  void getString(char *line, char *str, int pos, int len);
+  void getChar(char *line, char *str, int pos);
+  void getInt(char *line, int *i, int pos, int len);
+  void getFloat(char *line, float *d, int pos, int len);
 };
 
 #endif

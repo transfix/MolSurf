@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -29,18 +29,17 @@
 
 using CCVOpenGLMath::Tuple;
 
-class CurvaturesGridVoxel
-{
-	public:
-		CurvaturesGridVoxel();
-		virtual ~CurvaturesGridVoxel();
-		void addAtom(Tuple const atom);
+class CurvaturesGridVoxel {
+public:
+  CurvaturesGridVoxel();
+  virtual ~CurvaturesGridVoxel();
+  void addAtom(Tuple const atom);
 
-		int getNumberOfAtoms();
-		Tuple getAtom(int index);
+  int getNumberOfAtoms();
+  Tuple getAtom(int index);
 
-	protected:
-		std::vector<Tuple> m_Atoms;
+protected:
+  std::vector<Tuple> m_Atoms;
 };
 
 #endif

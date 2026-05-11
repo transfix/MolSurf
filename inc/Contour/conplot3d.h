@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -35,45 +35,32 @@
 #include <Contour/seedcells.h>
 #include <Contour/segtree.h>
 
-class Conplot3d : public Conplot
-{
-	public:
-		Conplot3d(Datasetvol* d);
-		~Conplot3d();
+class Conplot3d : public Conplot {
+public:
+  Conplot3d(Datasetvol *d);
+  ~Conplot3d();
 
-	protected:
-		// extract in 3d (from memory) or slice-by-slice (swap from disk)
-		u_int ExtractAll(float isovalue);
+protected:
+  // extract in 3d (from memory) or slice-by-slice (swap from disk)
+  u_int ExtractAll(float isovalue);
 
-		int InterpEdge(int, float*, u_int*, float, int);
+  int InterpEdge(int, float *, u_int *, float, int);
 
-		// track a contour from a seed cell
-		void TrackContour(float, int);
+  // track a contour from a seed cell
+  void TrackContour(float, int);
 
-		// enqueue faces for propagation of surface
-		inline void EnqueueFaces(int, int, CellQueue&);
+  // enqueue faces for propagation of surface
+  inline void EnqueueFaces(int, int, CellQueue &);
 
-		void Reset(int t)
-		{
-			con3[t].Reset();
-		}
-		int  Size(int t)
-		{
-			return(con3[t].getSize());
-		}
-		int  isDone(int t)
-		{
-			return(con3[t].isDone());
-		}
-		void Done(int t)
-		{
-			con3[t].Done();
-		}
+  void Reset(int t) { con3[t].Reset(); }
+  int Size(int t) { return (con3[t].getSize()); }
+  int isDone(int t) { return (con3[t].isDone()); }
+  void Done(int t) { con3[t].Done(); }
 
-	private:
-		Datasetvol* vol;
-		Datavol* curvol;
-		Contour3d* con3, *curcon;
+private:
+  Datasetvol *vol;
+  Datavol *curvol;
+  Contour3d *con3, *curcon;
 };
 
 #endif

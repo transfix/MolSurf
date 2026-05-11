@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,7 +22,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -57,10 +57,17 @@
 #include <C2C/BlockFactory.h>
 #include <C2C/CompCon.h>
 
-ContourGeom* decodeC2CFile(const char* fileName, bool& color);
-ContourGeom* decodeC2CBuffer(void* data, int size, unsigned char type, bool& color);
-void encodeC2CFile(const char* inFile, const char* outFile, unsigned char type, float isoval);
-void writeC2CFile(void* data, unsigned char* red, unsigned char* green, unsigned char* blue, unsigned char type, const char* outFile, float isoval, int dim[3], float orig[3], float span[3]);
-ByteStream* encodeC2CBuffer(void* data, unsigned char* red, unsigned char* green, unsigned char* blue, unsigned char type, float isoval, int dim[3], float orig[3], float span[3]);
+ContourGeom *decodeC2CFile(const char *fileName, bool &color);
+ContourGeom *decodeC2CBuffer(void *data, int size, unsigned char type,
+                             bool &color);
+void encodeC2CFile(const char *inFile, const char *outFile, unsigned char type,
+                   float isoval);
+void writeC2CFile(void *data, unsigned char *red, unsigned char *green,
+                  unsigned char *blue, unsigned char type, const char *outFile,
+                  float isoval, int dim[3], float orig[3], float span[3]);
+ByteStream *encodeC2CBuffer(void *data, unsigned char *red,
+                            unsigned char *green, unsigned char *blue,
+                            unsigned char type, float isoval, int dim[3],
+                            float orig[3], float span[3]);
 
 #endif

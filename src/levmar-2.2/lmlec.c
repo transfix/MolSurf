@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////
-// 
+//
 //  Levenberg - Marquardt non-linear minimization algorithm
 //  Copyright (C) 2004-05  Manolis Lourakis (lourakis@ics.forth.gr)
 //  Institute of Computer Science, Foundation for Research & Technology - Hellas
@@ -30,11 +30,11 @@
 #include "lm.h"
 #include "misc.h"
 
-
 #ifndef HAVE_LAPACK
 
 #ifdef _MSC_VER
-#pragma message("Linearly constrained optimization requires LAPACK and was not compiled!")
+#pragma message(                                                               \
+    "Linearly constrained optimization requires LAPACK and was not compiled!")
 #else
 #warning Linearly constrained optimization requires LAPACK and was not compiled!
 #endif // _MSC_VER
@@ -68,4 +68,3 @@
 #undef CNST
 
 #endif /* HAVE_LAPACK */
-

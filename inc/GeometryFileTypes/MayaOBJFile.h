@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,26 +24,19 @@
 
 #include <GeometryFileTypes/GeometryFileType.h>
 
-class MayaOBJFile : public GeometryFileType
-{
-	public:
-		virtual ~MayaOBJFile();
-		virtual Geometry* loadFile(const string& fileName);
-		virtual bool checkType(const string& fileName);
-		virtual bool saveFile(const Geometry* geometry, const string& fileName);
-		virtual string extension()
-		{
-			return "obj";
-		};
-		virtual string filter()
-		{
-			return "Maya OBJ files (*.obj)";
-		};
-		static MayaOBJFile ms_MayaOBJFileRepresentative;
-		static GeometryFileType* getRepresentative();
+class MayaOBJFile : public GeometryFileType {
+public:
+  virtual ~MayaOBJFile();
+  virtual Geometry *loadFile(const string &fileName);
+  virtual bool checkType(const string &fileName);
+  virtual bool saveFile(const Geometry *geometry, const string &fileName);
+  virtual string extension() { return "obj"; };
+  virtual string filter() { return "Maya OBJ files (*.obj)"; };
+  static MayaOBJFile ms_MayaOBJFileRepresentative;
+  static GeometryFileType *getRepresentative();
 
-	protected:
-		MayaOBJFile();
+protected:
+  MayaOBJFile();
 };
 
 #endif

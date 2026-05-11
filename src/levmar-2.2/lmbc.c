@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////
-// 
+//
 //  Levenberg - Marquardt non-linear minimization algorithm
 //  Copyright (C) 2004-05  Manolis Lourakis (lourakis@ics.forth.gr)
 //  Institute of Computer Science, Foundation for Research & Technology - Hellas
@@ -17,10 +17,10 @@
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-/******************************************************************************** 
- * Box-constrained Levenberg-Marquardt nonlinear minimization. The same core code
- * is used with appropriate #defines to derive single and double precision versions,
- * see also lmbc_core.c
+/********************************************************************************
+ * Box-constrained Levenberg-Marquardt nonlinear minimization. The same core
+ *code is used with appropriate #defines to derive single and double precision
+ *versions, see also lmbc_core.c
  ********************************************************************************/
 
 #include <stdio.h>
@@ -31,8 +31,8 @@
 #include "lm.h"
 #include "misc.h"
 
-#define EPSILON       1E-12
-#define ONE_THIRD     0.3333333334 /* 1.0/3.0 */
+#define EPSILON 1E-12
+#define ONE_THIRD 0.3333333334 /* 1.0/3.0 */
 
 /* single precision (float) definitions */
 #define LM_REAL float

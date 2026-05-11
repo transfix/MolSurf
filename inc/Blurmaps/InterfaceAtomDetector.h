@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,7 +22,7 @@
 #ifndef CCV_INTERFACE_ATOM_DETECTOR_H
 #define CCV_INTERFACE_ATOM_DETECTOR_H
 
-#include<string>
+#include <string>
 #include <Utility/utility.h>
 #include <Blurmaps/BlurMapsDataManager.h>
 #include <Blurmaps/GOABlur.h>
@@ -36,31 +36,32 @@
 
 using namespace std;
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class Atom;
+namespace PDBParser {
+class GroupOfAtoms;
+class Atom;
+}; // namespace PDBParser
+
+class InterfaceAtomDetector {
+public:
+  InterfaceAtomDetector(PDBParser::GroupOfAtoms *molecule1,
+                        PDBParser::GroupOfAtoms *molecule2,
+                        string outputFileName, double interfaceWidth,
+                        string atomTypes,
+                        PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType);
+
+  virtual ~InterfaceAtomDetector();
+
+  bool detect();
+  vector<int> getInterfaceAtoms() { return selectedIds; }
+
+private:
+  vector<PDBParser::Atom *> m_AtomList1;
+  vector<PDBParser::Atom *> m_AtomList2;
+  vector<int> selectedIds;
+
+  string outputFileName;
+  string atomTypes;
+  double interfaceWidth;
 };
-
-class InterfaceAtomDetector
-{
-	public:
-		InterfaceAtomDetector(PDBParser::GroupOfAtoms* molecule1, PDBParser::GroupOfAtoms* molecule2, string outputFileName, double interfaceWidth, string atomTypes, PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType);
-
-		virtual ~InterfaceAtomDetector();
-
-		bool detect();
-		vector<int> getInterfaceAtoms(){return selectedIds;}
-
-	private:
-		vector<PDBParser::Atom*> m_AtomList1;
-		vector<PDBParser::Atom*> m_AtomList2;
-		vector <int> selectedIds;
-
-		string outputFileName;
-		string atomTypes;
-		double interfaceWidth;
-};
-
 
 #endif

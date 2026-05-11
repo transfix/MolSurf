@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -32,26 +32,24 @@
 #include <PDBParser/GroupOfAtoms.h>
 #include <PDBParser/ResidueInformation.h>
 
-
-
 using namespace std;
 
-class ColorSurfaceByCharge
-{
-	public:
-		ColorSurfaceByCharge(string pqrFileName, string SurfaceFileName, string coloredSurfaceFileName, int mode, double blobbyness, double distanceCutoff);
-		virtual ~ColorSurfaceByCharge();
+class ColorSurfaceByCharge {
+public:
+  ColorSurfaceByCharge(string pqrFileName, string SurfaceFileName,
+                       string coloredSurfaceFileName, int mode,
+                       double blobbyness, double distanceCutoff);
+  virtual ~ColorSurfaceByCharge();
 
-		bool colorify();
+  bool colorify();
 
-	private:
-		string pqrFileName;
-		string surfaceFileName;
-		string coloredSurfaceFileName;
-		int mode;			// 0 = Gaussian, 1 = average	
-		double distanceCutoff;	
-		double blobbyness;
+private:
+  string pqrFileName;
+  string surfaceFileName;
+  string coloredSurfaceFileName;
+  int mode; // 0 = Gaussian, 1 = average
+  double distanceCutoff;
+  double blobbyness;
 };
-
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -31,16 +31,16 @@
 class Datavol;
 class Dataslc;
 
-class respProp2
-{
-	public:
-		respProp2(Data& d, SeedCells& s, Conplot& p) : data(d), seeds(s), plot(p) {}
-		~respProp2() {}
-		void compSeeds(void);
-	private:
-		Data& data;
-		SeedCells& seeds;
-		Conplot&   plot;
+class respProp2 {
+public:
+  respProp2(Data &d, SeedCells &s, Conplot &p) : data(d), seeds(s), plot(p) {}
+  ~respProp2() {}
+  void compSeeds(void);
+
+private:
+  Data &data;
+  SeedCells &seeds;
+  Conplot &plot;
 };
 
 #endif

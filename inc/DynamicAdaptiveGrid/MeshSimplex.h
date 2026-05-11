@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,36 +25,36 @@
 #include <DPG/PG.h>
 #include <DynamicAdaptiveGrid/MeshVertex.h>
 
-namespace DynamicAdaptiveGrid
-{
-	class MeshSimplex
-	{
-		private:
-			static int meshSimplexIDGenerator;
-			int meshSimplexID;
-			void generateMeshSimplexID();	
-			void init();	
-			
-		protected:
-			vector<MeshVertex *> vertices;	// must be in counterclockwise order. vertices cannot be removed.
-			int numVertices;		// numVertices = the number of vertices of the simplex
-			bool degenerate;		// degenerate = true when numVertices < 3. Further checks for colinear point will be added later
+namespace DynamicAdaptiveGrid {
+class MeshSimplex {
+private:
+  static int meshSimplexIDGenerator;
+  int meshSimplexID;
+  void generateMeshSimplexID();
+  void init();
 
-		public:
-			MeshSimplex();
-			MeshSimplex(const MeshSimplex& mv);
-			MeshSimplex(vector<MeshVertex *> verts);
-			~MeshSimplex();
+protected:
+  vector<MeshVertex *> vertices; // must be in counterclockwise order. vertices
+                                 // cannot be removed.
+  int numVertices; // numVertices = the number of vertices of the simplex
+  bool degenerate; // degenerate = true when numVertices < 3. Further checks for
+                   // colinear point will be added later
 
-			int getID();
-			int getNumVertices();
-			vector<MeshVertex *> getVertices();
-			bool isDegenerate();
+public:
+  MeshSimplex();
+  MeshSimplex(const MeshSimplex &mv);
+  MeshSimplex(vector<MeshVertex *> verts);
+  ~MeshSimplex();
 
-			void addVertices(vector<MeshVertex *> verts);
-			void addVertex(MeshVertex * v);
-			void removeVertices();
-	};
+  int getID();
+  int getNumVertices();
+  vector<MeshVertex *> getVertices();
+  bool isDegenerate();
+
+  void addVertices(vector<MeshVertex *> verts);
+  void addVertex(MeshVertex *v);
+  void removeVertices();
 };
+}; // namespace DynamicAdaptiveGrid
 
 #endif

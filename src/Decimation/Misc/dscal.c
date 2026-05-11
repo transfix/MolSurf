@@ -1,6 +1,6 @@
 /* dscal.f -- translated by f2c (version of 3 February 1990  3:36:42).
    You must link the resulting object file with the libraries:
-	-lF77 -lI77 -lm -lc   (in that order)
+        -lF77 -lI77 -lm -lc   (in that order)
 */
 
 #include <Decimation/Misc/f2c.h>
@@ -41,56 +41,54 @@
 
 /* ----------------------------------------------------------------------- */
 
-int dscal_(integer *n, doublereal *da, double *dx, integer *incx)
-{
-    /* System generated locals */
-    integer i_1, i_2;
+int dscal_(integer *n, doublereal *da, double *dx, integer *incx) {
+  /* System generated locals */
+  integer i_1, i_2;
 
-    /* Local variables */
-    static integer i, m, ns, mp1;
+  /* Local variables */
+  static integer i, m, ns, mp1;
 
-    /* Parameter adjustments */
-    --dx;
+  /* Parameter adjustments */
+  --dx;
 
-    /* Function Body */
-/*                                  SPECIFICATIONS FOR ARGUMENTS */
-/*                                  SPECIFICATIONS FOR LOCAL VARIABLES */
+  /* Function Body */
+  /*                                  SPECIFICATIONS FOR ARGUMENTS */
+  /*                                  SPECIFICATIONS FOR LOCAL VARIABLES */
 
-    if (*n > 0) {
-	if (*incx != 1) {
-/*                                  CODE FOR INCREMENTS NOT EQUAL 
-TO 1. */
-	    ns = *n * *incx;
-	    i_1 = ns;
-	    i_2 = *incx;
-	    for (i = 1; i_2 < 0 ? i >= i_1 : i <= i_1; i += i_2) {
-		dx[i] = *da * dx[i];
-/* L10: */
-	    }
-	} else {
-/*                                  CODE FOR INCREMENTS EQUAL TO 
-1. */
-/*                                  CLEAN-UP LOOP SO REMAINING 
-VECTOR */
-/*                                  LENGTH IS A MULTIPLE OF 5. */
-	    m = *n - *n / 5 * 5;
-	    i_2 = m;
-	    for (i = 1; i <= i_2; ++i) {
-		dx[i] = *da * dx[i];
-/* L30: */
-	    }
-	    mp1 = m + 1;
-	    i_2 = *n;
-	    for (i = mp1; i <= i_2; i += 5) {
-		dx[i] = *da * dx[i];
-		dx[i + 1] = *da * dx[i + 1];
-		dx[i + 2] = *da * dx[i + 2];
-		dx[i + 3] = *da * dx[i + 3];
-		dx[i + 4] = *da * dx[i + 4];
-/* L40: */
-	    }
-	}
+  if (*n > 0) {
+    if (*incx != 1) {
+      /*                                  CODE FOR INCREMENTS NOT EQUAL
+      TO 1. */
+      ns = *n * *incx;
+      i_1 = ns;
+      i_2 = *incx;
+      for (i = 1; i_2 < 0 ? i >= i_1 : i <= i_1; i += i_2) {
+        dx[i] = *da * dx[i];
+        /* L10: */
+      }
+    } else {
+      /*                                  CODE FOR INCREMENTS EQUAL TO
+      1. */
+      /*                                  CLEAN-UP LOOP SO REMAINING
+      VECTOR */
+      /*                                  LENGTH IS A MULTIPLE OF 5. */
+      m = *n - *n / 5 * 5;
+      i_2 = m;
+      for (i = 1; i <= i_2; ++i) {
+        dx[i] = *da * dx[i];
+        /* L30: */
+      }
+      mp1 = m + 1;
+      i_2 = *n;
+      for (i = mp1; i <= i_2; i += 5) {
+        dx[i] = *da * dx[i];
+        dx[i + 1] = *da * dx[i + 1];
+        dx[i + 2] = *da * dx[i + 2];
+        dx[i + 3] = *da * dx[i + 3];
+        dx[i + 4] = *da * dx[i + 4];
+        /* L40: */
+      }
     }
-    return 0;
+  }
+  return 0;
 } /* dscal_ */
-

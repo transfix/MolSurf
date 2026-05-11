@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,16 +25,14 @@
 #include <Utility/utility.h>
 #include <Summation/SummationModule.h>
 
-namespace CCVSummationModule
-{
+namespace CCVSummationModule {
 
-	class FourierBasedSummationModule
-	 : public SummationModule
-	{
-		public:
-			FourierBasedSummationModule(double* centers, int numberOfCenters, Kernel* kernel, OutputGrid* outputGrid);
-			virtual ~FourierBasedSummationModule();
-	};
+class FourierBasedSummationModule : public SummationModule {
+public:
+  FourierBasedSummationModule(double *centers, int numberOfCenters,
+                              Kernel *kernel, OutputGrid *outputGrid);
+  virtual ~FourierBasedSummationModule();
 };
+}; // namespace CCVSummationModule
 
 #endif

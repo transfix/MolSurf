@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,33 +27,38 @@
 
 class CurvaturesGridVoxel;
 
-class SumOfGaussiansCurvature : public Curvature
-{
-	public:
-		SumOfGaussiansCurvature(int numberOfGaussians, double* gaussianCenters, int numberOfGridDivisions, double maxFunctionError,  double blobbiness,int numberOfPoints, float* points, double* HandK, double* normals, double* k1Vector, double* k2Vector);
-		virtual ~SumOfGaussiansCurvature();
-		bool initialize();
-	protected:
-		void getMinMax();
-		void getIndices(double x, double y, double z, int* gridx, int* gridy, int* gridz);
-		void populateGrid(double overlapExtent);
-		void createGrid();
-		inline void evalCurvature(double* phiX,  double* phiY,  double* phiZ,
-								  double* phiXX, double* phiYY, double* phiZZ,
-								  double* phiXY, double* phiXZ, double* phiYZ,
-								  double x,      double y,      double z);
-		inline int getIndex(double x, double y, double z);
-		inline void evalCurvatureDueToOneAtom(double* phiX, double* phiY, double* phiZ, double* phiXX,
-											  double* phiYY, double* phiZZ,  double* phiXY, double* phiXZ,
-											  double* phiYZ,  double xc, double yc, double zc, double rad,
-											  double x, double y, double z);
-		double m_Min[3], m_Max[3];
-		CurvaturesGridVoxel* m_CurvaturesGridVoxels;
-		int m_NumberOfGaussians;
-		double* m_GaussianCenters;
-		int m_NumberOfGridDivisions;
-		double m_MaxFunctionError;
-		double m_Blobbiness;
+class SumOfGaussiansCurvature : public Curvature {
+public:
+  SumOfGaussiansCurvature(int numberOfGaussians, double *gaussianCenters,
+                          int numberOfGridDivisions, double maxFunctionError,
+                          double blobbiness, int numberOfPoints, float *points,
+                          double *HandK, double *normals, double *k1Vector,
+                          double *k2Vector);
+  virtual ~SumOfGaussiansCurvature();
+  bool initialize();
+
+protected:
+  void getMinMax();
+  void getIndices(double x, double y, double z, int *gridx, int *gridy,
+                  int *gridz);
+  void populateGrid(double overlapExtent);
+  void createGrid();
+  inline void evalCurvature(double *phiX, double *phiY, double *phiZ,
+                            double *phiXX, double *phiYY, double *phiZZ,
+                            double *phiXY, double *phiXZ, double *phiYZ,
+                            double x, double y, double z);
+  inline int getIndex(double x, double y, double z);
+  inline void evalCurvatureDueToOneAtom(
+      double *phiX, double *phiY, double *phiZ, double *phiXX, double *phiYY,
+      double *phiZZ, double *phiXY, double *phiXZ, double *phiYZ, double xc,
+      double yc, double zc, double rad, double x, double y, double z);
+  double m_Min[3], m_Max[3];
+  CurvaturesGridVoxel *m_CurvaturesGridVoxels;
+  int m_NumberOfGaussians;
+  double *m_GaussianCenters;
+  int m_NumberOfGridDivisions;
+  double m_MaxFunctionError;
+  double m_Blobbiness;
 };
 
 #endif

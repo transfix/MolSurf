@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,21 +25,16 @@
 #include <Utility/utility.h>
 #include <SignDistanceFunction_v2/reg3data.h>
 
-class Reg3Parser
-{
-	public:
-		Reg3Parser();
-		virtual ~Reg3Parser();
+class Reg3Parser {
+public:
+  Reg3Parser();
+  virtual ~Reg3Parser();
 
-		virtual bool parse(Reg3Data<float>* data, const char* fname)
-		{
-			return true;
-		}
+  virtual bool parse(Reg3Data<float> *data, const char *fname) { return true; }
 
-		virtual bool write(const Reg3Data<float>& data, const char* fname)
-		{
-			return true;
-		}
+  virtual bool write(const Reg3Data<float> &data, const char *fname) {
+    return true;
+  }
 };
 
 #endif

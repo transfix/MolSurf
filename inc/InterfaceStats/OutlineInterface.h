@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -35,63 +35,61 @@ using namespace std;
 using CCVOpenGLMath::Matrix;
 using CCVOpenGLMath::Vector;
 
-struct triangle
-{
-	int vertex[3];
+struct triangle {
+  int vertex[3];
 };
 
-struct vertexcolor
-{
-	double r;
-	double g;
-	double b;
+struct vertexcolor {
+  double r;
+  double g;
+  double b;
 };
 
-class OutlineInterface
-{
-	public:
-		OutlineInterface(string receptorFName, string ligandFName, double interfaceWidth, bool rawcMode, bool verbose = false);	
-		// Surface File 1 = receptor (on which the footprint is computed)
-		// Surface File 2 = ligand
-		// xforms are applied to ligand
+class OutlineInterface {
+public:
+  OutlineInterface(string receptorFName, string ligandFName,
+                   double interfaceWidth, bool rawcMode, bool verbose = false);
+  // Surface File 1 = receptor (on which the footprint is computed)
+  // Surface File 2 = ligand
+  // xforms are applied to ligand
 
-		virtual ~OutlineInterface();
+  virtual ~OutlineInterface();
 
-		bool computeOutline(Matrix xform, string outputFName, vertexcolor outlineColor);
+  bool computeOutline(Matrix xform, string outputFName,
+                      vertexcolor outlineColor);
 
-	private:
-		bool verbose;
-        bool rawcMode;
+private:
+  bool verbose;
+  bool rawcMode;
 
-		string receptorSurfaceFileName;
-		string ligandSurfaceFileName;
-		string outlineFileName;
+  string receptorSurfaceFileName;
+  string ligandSurfaceFileName;
+  string outlineFileName;
 
-		double interfaceWidth;
-		Matrix xform;
+  double interfaceWidth;
+  Matrix xform;
 
-		int numVertR, numTriangR;
-		int numVertL, numTriangL;
+  int numVertR, numTriangR;
+  int numVertL, numTriangL;
 
-		DPG::PG *pgL;
+  DPG::PG *pgL;
 
-		vector<DPG::WeightedPoint*> receptorPoints;
-		vector<vertexcolor> receptorPointColors;
-		vector<DPG::Point*> ligandPoints;
-		vector<DPG::Point*> ligandPointsXformed;
-		vector<triangle> receptorTriangles;
-		vector<triangle> ligandTriangles;
+  vector<DPG::WeightedPoint *> receptorPoints;
+  vector<vertexcolor> receptorPointColors;
+  vector<DPG::Point *> ligandPoints;
+  vector<DPG::Point *> ligandPointsXformed;
+  vector<triangle> receptorTriangles;
+  vector<triangle> ligandTriangles;
 
-		bool* receptorPointsOnInterface;
-		bool* receptorPointsOnInterfaceBoundary;
+  bool *receptorPointsOnInterface;
+  bool *receptorPointsOnInterfaceBoundary;
 
-		bool filesRead;
+  bool filesRead;
 
-		void cleanup();
-		bool initialize();
-		bool detectInterfacePoints(Matrix xform);
-		bool prepareBindingSiteOutlineSurfaceFile(vertexcolor outlineColor);
+  void cleanup();
+  bool initialize();
+  bool detectInterfacePoints(Matrix xform);
+  bool prepareBindingSiteOutlineSurfaceFile(vertexcolor outlineColor);
 };
-
 
 #endif

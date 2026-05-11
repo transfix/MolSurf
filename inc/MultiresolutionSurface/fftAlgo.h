@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,6 +25,10 @@
 #include <Utility/utility.h>
 #include <fftw3.h>
 
-bool getBlurMapWithFullFFT(fftw_complex* blurmap, fftw_complex* rbfCenterValues, double* rbfCenterPositions, fftw_complex* rbf1D, int numCenters, int numFreq, int gridSizeSmall,int gridSize, double alpha, int interpFuncExtent, int rbfWidth, double* min, double* max);
+bool getBlurMapWithFullFFT(fftw_complex *blurmap, fftw_complex *rbfCenterValues,
+                           double *rbfCenterPositions, fftw_complex *rbf1D,
+                           int numCenters, int numFreq, int gridSizeSmall,
+                           int gridSize, double alpha, int interpFuncExtent,
+                           int rbfWidth, double *min, double *max);
 
 #endif

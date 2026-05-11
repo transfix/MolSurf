@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,25 +26,28 @@
 #include <PDBParser/GroupOfAtoms.h>
 #include <PDBParser/ResidueData.h>
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class MoleculeMorph
-	{
-		public:
-			MoleculeMorph();
-			virtual ~MoleculeMorph();
-			bool morph(PDBParser::GroupOfAtoms* molecule1, PDBParser::GroupOfAtoms* molecule2, const char* outputFileNamePrefix, double resolution, int maxSteps);
-		protected:
-			double getSize();
-			bool torsionAnglesPresent(PDBParser::GroupOfAtoms* molecule);
-			bool getTorsionAngles(PDBParser::GroupOfAtoms* molecule, double* torsionAngles, int* count);
-			bool getResidueSequenceIDs(PDBParser::GroupOfAtoms* molecule, int* residueSequenceNumbers, int* count);
-			PDBParser::GroupOfAtoms* m_Molecule1;
-			PDBParser::GroupOfAtoms* m_Molecule2;
-			const char* m_OutputFileNamePrefix;
-			double m_Resolution;
-	};
+namespace PDBParser {
+class GroupOfAtoms;
+class MoleculeMorph {
+public:
+  MoleculeMorph();
+  virtual ~MoleculeMorph();
+  bool morph(PDBParser::GroupOfAtoms *molecule1,
+             PDBParser::GroupOfAtoms *molecule2,
+             const char *outputFileNamePrefix, double resolution, int maxSteps);
+
+protected:
+  double getSize();
+  bool torsionAnglesPresent(PDBParser::GroupOfAtoms *molecule);
+  bool getTorsionAngles(PDBParser::GroupOfAtoms *molecule,
+                        double *torsionAngles, int *count);
+  bool getResidueSequenceIDs(PDBParser::GroupOfAtoms *molecule,
+                             int *residueSequenceNumbers, int *count);
+  PDBParser::GroupOfAtoms *m_Molecule1;
+  PDBParser::GroupOfAtoms *m_Molecule2;
+  const char *m_OutputFileNamePrefix;
+  double m_Resolution;
 };
+}; // namespace PDBParser
 
 #endif

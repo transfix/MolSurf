@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,12 +27,13 @@
 #include <MolSurfAPI/molsurf.h>
 #include <GOAFileTypes/GOALoader.h>
 
-MOLECULE::GroupOfAtoms* ParsePQR(FILE* fp, MOLECULE::RADIUS_TYPE radiusType);
-MOLECULE::GroupOfAtoms* ParsePDB(FILE* fp, MOLECULE::RADIUS_TYPE radiusType);
-MOLECULE::GroupOfAtoms* ParseOptimalPQR(FILE* fp, MOLECULE::RADIUS_TYPE radiusType);
-void savePQR(MOLECULE::GroupOfAtoms* goa, FILE* fp);
-void savePDB(MOLECULE::GroupOfAtoms* goa, FILE* fp, bool withH, bool withChain);
-void saveCDR(MOLECULE::GroupOfAtoms* goa, FILE* fp);
-void append(MOLECULE::GroupOfAtoms* goaA, MOLECULE::GroupOfAtoms* goaB);
+MOLECULE::GroupOfAtoms *ParsePQR(FILE *fp, MOLECULE::RADIUS_TYPE radiusType);
+MOLECULE::GroupOfAtoms *ParsePDB(FILE *fp, MOLECULE::RADIUS_TYPE radiusType);
+MOLECULE::GroupOfAtoms *ParseOptimalPQR(FILE *fp,
+                                        MOLECULE::RADIUS_TYPE radiusType);
+void savePQR(MOLECULE::GroupOfAtoms *goa, FILE *fp);
+void savePDB(MOLECULE::GroupOfAtoms *goa, FILE *fp, bool withH, bool withChain);
+void saveCDR(MOLECULE::GroupOfAtoms *goa, FILE *fp);
+void append(MOLECULE::GroupOfAtoms *goaA, MOLECULE::GroupOfAtoms *goaB);
 
 #endif

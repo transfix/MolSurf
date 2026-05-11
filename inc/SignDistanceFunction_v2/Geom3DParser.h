@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,13 +25,12 @@
 #include <Utility/utility.h>
 #include <SignDistanceFunction_v2/FaceVertSet3D.h>
 
-class Geom3DParser
-{
-	public:
-		Geom3DParser(void);
-		virtual ~Geom3DParser(void);
-		// Read a simple raw file
-		void ParseRawFile(FaceVertSet3D& fvs, const char* fname);
+class Geom3DParser {
+public:
+  Geom3DParser(void);
+  virtual ~Geom3DParser(void);
+  // Read a simple raw file
+  void ParseRawFile(FaceVertSet3D &fvs, const char *fname);
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -30,26 +30,27 @@
 
 class SimpleVolumeData;
 
-class MergeVolumes
-{
-	public:
-		MergeVolumes();
-		virtual ~MergeVolumes();
+class MergeVolumes {
+public:
+  MergeVolumes();
+  virtual ~MergeVolumes();
 
-		void setTransformation(float c1x, float c1y, float c1z,
-							   float n1x, float n1y, float n1z,
-							   float c2x, float c2y, float c2z,
-							   float n2x, float n2y, float n2z);
-		bool mergeVolumes(SimpleVolumeData* input1, SimpleVolumeData* input2);
+  void setTransformation(float c1x, float c1y, float c1z, float n1x, float n1y,
+                         float n1z, float c2x, float c2y, float c2z, float n2x,
+                         float n2y, float n2z);
+  bool mergeVolumes(SimpleVolumeData *input1, SimpleVolumeData *input2);
 
-	protected:
-		void transformPoint(float* point);
-		void mergePoint(float* point2, float value2, float* data1, float* origin1, float* span1, unsigned int* dim1);
-		float getCombinedSDF(float value1, float value2);
-		float getInterpValue(float* data, float* orig, float* span, unsigned int* dim, float* point);
-		float getValueAt(int i, int j, int k, float* data, unsigned int* dim, bool* ok);
-		CCVOpenGLMath::Matrix m_Transformation;
-		bool m_Transform;
+protected:
+  void transformPoint(float *point);
+  void mergePoint(float *point2, float value2, float *data1, float *origin1,
+                  float *span1, unsigned int *dim1);
+  float getCombinedSDF(float value1, float value2);
+  float getInterpValue(float *data, float *orig, float *span, unsigned int *dim,
+                       float *point);
+  float getValueAt(int i, int j, int k, float *data, unsigned int *dim,
+                   bool *ok);
+  CCVOpenGLMath::Matrix m_Transformation;
+  bool m_Transform;
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,19 +24,19 @@
 
 #include <Utility/utility.h>
 
-class InOutOctree
-{
-	public:
-		InOutOctree(int depth, float* min, float* max, float* orig, float* span);
-		virtual ~InOutOctree();
+class InOutOctree {
+public:
+  InOutOctree(int depth, float *min, float *max, float *orig, float *span);
+  virtual ~InOutOctree();
 
-		void updateOctree(float cx, float cy, float cz, float r, int iIndex, int jIndex, int kIndex);
-		double getClosestDistance(int iIndex, int jIndex, int kIndex);
+  void updateOctree(float cx, float cy, float cz, float r, int iIndex,
+                    int jIndex, int kIndex);
+  double getClosestDistance(int iIndex, int jIndex, int kIndex);
 
-		int depth;
-		float m_Min[3],m_Max[3];
-		float m_Orig[3],m_Span[3];
-		unsigned int m_Dim[3];
+  int depth;
+  float m_Min[3], m_Max[3];
+  float m_Orig[3], m_Span[3];
+  unsigned int m_Dim[3];
 };
 
 #endif

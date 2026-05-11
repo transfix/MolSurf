@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,8 +22,8 @@
 #ifndef __REPAIR_SURFACE_MESH_H_
 #define __REPAIR_SURFACE_MESH_H_
 
-//#include <Geometry/Geometry.h>
+// #include <Geometry/Geometry.h>
 
-bool repairSurface(int argc, char ** argv);
+bool repairSurface(int argc, char **argv);
 
 #endif

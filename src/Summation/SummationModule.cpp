@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,15 +23,14 @@
 
 using namespace CCVSummationModule;
 
-SummationModule::SummationModule(double* centers, double* radii, double* weights, int numberOfCenters, Kernel* kernel)
-{
-	m_Centers = centers;
-	m_Radii = radii;
-	m_Weights = weights;
-	m_NumberOfCenters = numberOfCenters;
-	m_Kernel = kernel;
+SummationModule::SummationModule(double *centers, double *radii,
+                                 double *weights, int numberOfCenters,
+                                 Kernel *kernel) {
+  m_Centers = centers;
+  m_Radii = radii;
+  m_Weights = weights;
+  m_NumberOfCenters = numberOfCenters;
+  m_Kernel = kernel;
 }
 
-SummationModule::~SummationModule()
-{
-}
+SummationModule::~SummationModule() {}

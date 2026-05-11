@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -31,94 +31,75 @@
 #include <Contour/CellQueue.h>
 
 // reset to empty
-void CellQueue::Reset(void)
-{
-	nel = 0;
-}
+void CellQueue::Reset(void) { nel = 0; }
 
 // check if queue is empty
-int CellQueue::Empty(void)
-{
-	return(nel == 0);
-}
-
+int CellQueue::Empty(void) { return (nel == 0); }
 
 // CellQueue() - create a new cell queue with elements of specified size
-CellQueue::CellQueue(int size)
-{
-	nel    = 0;
-	start  = 0;
-	cellsize = size;
-	cells    = (unsigned int*)malloc(sizeof(unsigned int) * cellsize);
+CellQueue::CellQueue(int size) {
+  nel = 0;
+  start = 0;
+  cellsize = size;
+  cells = (unsigned int *)malloc(sizeof(unsigned int) * cellsize);
 }
 
 // ~CellQueue() - free storage
-CellQueue::~CellQueue()
-{
-	if(cells != NULL)
-	{
-		free(cells);
-	}
+CellQueue::~CellQueue() {
+  if (cells != NULL) {
+    free(cells);
+  }
 }
 
 // Add() - add an item to the queue
-void CellQueue::Add(unsigned int c)
-{
-	int n;
-	int oldsize;
-	int atend;
-	n = nel++;
-	// resize the queue if needed
-	if(nel > cellsize)
-	{
-		oldsize = cellsize;
-		cellsize *= 2;
-		cells = (unsigned int*)realloc(cells, sizeof(int) * cellsize);
-		// move everything from 'start' to the end
-		if(start != 0)
-		{
-			atend = oldsize - start;
-			memmove(&cells[cellsize-atend], &cells[start], sizeof(unsigned int)*atend);
-			start = cellsize-atend;
-		}
-	}
-	n += start;
-	if(n >= cellsize)
-	{
-		n-=cellsize;
-	}
-	cells[n] = c;
+void CellQueue::Add(unsigned int c) {
+  int n;
+  int oldsize;
+  int atend;
+  n = nel++;
+  // resize the queue if needed
+  if (nel > cellsize) {
+    oldsize = cellsize;
+    cellsize *= 2;
+    cells = (unsigned int *)realloc(cells, sizeof(int) * cellsize);
+    // move everything from 'start' to the end
+    if (start != 0) {
+      atend = oldsize - start;
+      memmove(&cells[cellsize - atend], &cells[start],
+              sizeof(unsigned int) * atend);
+      start = cellsize - atend;
+    }
+  }
+  n += start;
+  if (n >= cellsize) {
+    n -= cellsize;
+  }
+  cells[n] = c;
 }
 
 // Get() - return the top item from the queue
-int CellQueue::Get(int& c)
-{
-	if(Peek(c) == -1)
-	{
-		return(-1);
-	}
-	Pop();
-	return(1);
+int CellQueue::Get(int &c) {
+  if (Peek(c) == -1) {
+    return (-1);
+  }
+  Pop();
+  return (1);
 }
 
 // Peek() - return the top item, but don't remove it
-int CellQueue::Peek(int& c)
-{
-	if(nel == 0)
-	{
-		return(-1);
-	}
-	c = cells[start];
-	return(1);
+int CellQueue::Peek(int &c) {
+  if (nel == 0) {
+    return (-1);
+  }
+  c = cells[start];
+  return (1);
 }
 
 // Pop() - delete the top item in the queue
-void CellQueue::Pop(void)
-{
-	start++;
-	if(start == cellsize)
-	{
-		start=0;
-	}
-	nel--;
+void CellQueue::Pop(void) {
+  start++;
+  if (start == cellsize) {
+    start = 0;
+  }
+  nel--;
 }

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,14 +23,8 @@
 
 using PDBParser::ProteinData;
 
-ProteinData::ProteinData()
-{
-}
+ProteinData::ProteinData() {}
 
-ProteinData::ProteinData(const ProteinData& proteinData)
-{
-}
+ProteinData::ProteinData(const ProteinData &proteinData) {}
 
-ProteinData::~ProteinData()
-{
-}
+ProteinData::~ProteinData() {}

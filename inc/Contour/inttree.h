@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -28,78 +28,63 @@
 #include <Contour/CellSearch.h>
 
 // Interval Tree Class
-class IntTree : public CellSearch
-{
-	public:
-		IntTree(u_int n = 0, float* v = NULL);
-		~IntTree();
+class IntTree : public CellSearch {
+public:
+  IntTree(u_int n = 0, float *v = NULL);
+  ~IntTree();
 
-		void Init(u_int n, float* v);
-		void InsertSeg(u_int cellid, float min, float max);
-		void Dump(void);
-		void Info(void);
-		void Traverse(float, void (*f)(u_int, void*), void*);
-		u_int getCells(float, u_int*);
-		void Done(void);
+  void Init(u_int n, float *v);
+  void InsertSeg(u_int cellid, float min, float max);
+  void Dump(void);
+  void Info(void);
+  void Traverse(float, void (*f)(u_int, void *), void *);
+  u_int getCells(float, u_int *);
+  void Done(void);
 
-	protected:
-		u_int addSeed(u_int id, float mn, float mx)
-		{
-			u_int n = nseed++;
-			if(n >= seedsize)
-			{
-				if(seedsize == 0)
-				{
-					seedsize=5;
-					cellid = (u_int*)malloc(sizeof(u_int) * seedsize);
-					min = (float*)malloc(sizeof(float) * seedsize);
-					max = (float*)malloc(sizeof(float) * seedsize);
-				}
-				else
-				{
-					seedsize*=2;
-					cellid = (u_int*)realloc(cellid, sizeof(u_int) * seedsize);
-					min = (float*)realloc(min, sizeof(float) * seedsize);
-					max = (float*)realloc(max, sizeof(float) * seedsize);
-				}
-			}
-			cellid[n]=id;
-			min[n]=mn;
-			max[n]=mx;
-			return(n);
-		}
+protected:
+  u_int addSeed(u_int id, float mn, float mx) {
+    u_int n = nseed++;
+    if (n >= seedsize) {
+      if (seedsize == 0) {
+        seedsize = 5;
+        cellid = (u_int *)malloc(sizeof(u_int) * seedsize);
+        min = (float *)malloc(sizeof(float) * seedsize);
+        max = (float *)malloc(sizeof(float) * seedsize);
+      } else {
+        seedsize *= 2;
+        cellid = (u_int *)realloc(cellid, sizeof(u_int) * seedsize);
+        min = (float *)realloc(min, sizeof(float) * seedsize);
+        max = (float *)realloc(max, sizeof(float) * seedsize);
+      }
+    }
+    cellid[n] = id;
+    min[n] = mn;
+    max[n] = mx;
+    return (n);
+  }
 
-		u_int seedID(u_int n)
-		{
-			return(cellid[n]);
-		}
-		float seedMin(u_int n)
-		{
-			return(min[n]);
-		}
-		float seedMax(u_int n)
-		{
-			return(max[n]);
-		}
+  u_int seedID(u_int n) { return (cellid[n]); }
+  float seedMin(u_int n) { return (min[n]); }
+  float seedMax(u_int n) { return (max[n]); }
 
-		static int mincmp(const void*, const void*);
-		static int maxcmp(const void*, const void*);
-		static void travFun(u_int n, void* data);
+  static int mincmp(const void *, const void *);
+  static int maxcmp(const void *, const void *);
+  static void travFun(u_int n, void *data);
 
-	private:
-		u_int nseed;
-		u_int seedsize;
-		u_int* cellid;
-		float* min;
-		float* max;
+private:
+  u_int nseed;
+  u_int seedsize;
+  u_int *cellid;
+  float *min;
+  float *max;
 
-		int nleaf;
-		float* vals;
-		CellBucket* minlist;
-		CellBucket* maxlist;
+  int nleaf;
+  float *vals;
+  CellBucket *minlist;
+  CellBucket *maxlist;
 
-		void (*travCB)(u_int, void*);
-		void* travData;
+  void (*travCB)(u_int, void *);
+  void *travData;
 };
 
 #endif

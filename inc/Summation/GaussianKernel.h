@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,21 +25,20 @@
 #include <Utility/utility.h>
 #include <Summation/Kernel.h>
 
-namespace CCVSummationModule
-{
-	class GaussianKernel
-	 : public Kernel
-	{
-		public:
-			GaussianKernel(double blobbiness, double error);
-			virtual ~GaussianKernel();
-			virtual bool isDecayingKernel();
-			virtual bool getLength(double* length, double radius);
-			virtual double getFunctionAt(double x, double y, double z, double cx, double cy, double cz, double radius);
-		protected:
-			double m_Blobbiness;
-			double m_Error;
-	};
+namespace CCVSummationModule {
+class GaussianKernel : public Kernel {
+public:
+  GaussianKernel(double blobbiness, double error);
+  virtual ~GaussianKernel();
+  virtual bool isDecayingKernel();
+  virtual bool getLength(double *length, double radius);
+  virtual double getFunctionAt(double x, double y, double z, double cx,
+                               double cy, double cz, double radius);
+
+protected:
+  double m_Blobbiness;
+  double m_Error;
 };
+}; // namespace CCVSummationModule
 
 #endif

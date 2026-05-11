@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,7 +22,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -45,131 +45,99 @@
 
 #include <Utility/utility.h>
 
-#define    EPS  0.00001
+#define EPS 0.00001
 
-typedef  int     Triangle[3];
-typedef  float   Position[3];
-typedef struct _Position
-{
-	float cord[3];
-	int idx;
+typedef int Triangle[3];
+typedef float Position[3];
+typedef struct _Position {
+  float cord[3];
+  int idx;
 } VPosition;
 
-typedef struct _EdgeIndex
-{
-	int ix, iy, iz;
-	int dir;
-	int idx;
+typedef struct _EdgeIndex {
+  int ix, iy, iz;
+  int dir;
+  int idx;
 
-	_EdgeIndex(int i, int j, int k, int n)
-	{
-		ix = i;
-		iy = j;
-		iz = k;
-		dir = n;
-	}
+  _EdgeIndex(int i, int j, int k, int n) {
+    ix = i;
+    iy = j;
+    iz = k;
+    dir = n;
+  }
 
 } EdgeIndex;
 
-struct LtEdge
-{
-	bool operator()(const EdgeIndex& e1, const EdgeIndex& e2) const
-	{
-		if(e1.iz < e2.iz)
-		{
-			return true;
-		}
-		else if(e1.iz == e2.iz)
-		{
-			if(e1.iy < e2.iy)
-			{
-				return true;
-			}
-			else if(e1.iy == e2.iy)
-			{
-				if(e1.ix < e2.ix)
-				{
-					return true;
-				}
-				else if(e1.ix == e2.ix)
-				{
-					if(e1.dir < e2.dir)
-					{
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
+struct LtEdge {
+  bool operator()(const EdgeIndex &e1, const EdgeIndex &e2) const {
+    if (e1.iz < e2.iz) {
+      return true;
+    } else if (e1.iz == e2.iz) {
+      if (e1.iy < e2.iy) {
+        return true;
+      } else if (e1.iy == e2.iy) {
+        if (e1.ix < e2.ix) {
+          return true;
+        } else if (e1.ix == e2.ix) {
+          if (e1.dir < e2.dir) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
 };
 
-struct EqPos
-{
-	bool operator()(const VPosition& p1, const VPosition& p2) const
-	{
-		return (fabs(p1.cord[0]-p2.cord[0]) < EPS &&
-				fabs(p1.cord[1]-p2.cord[1]) < EPS &&
-				fabs(p1.cord[2]-p2.cord[2]) < EPS);
-	}
+struct EqPos {
+  bool operator()(const VPosition &p1, const VPosition &p2) const {
+    return (fabs(p1.cord[0] - p2.cord[0]) < EPS &&
+            fabs(p1.cord[1] - p2.cord[1]) < EPS &&
+            fabs(p1.cord[2] - p2.cord[2]) < EPS);
+  }
 
-	bool operator()(const Position& p1, const Position& p2) const
-	{
-		return (fabs(p1[0]-p2[0]) < EPS &&
-				fabs(p1[1]-p2[1]) < EPS &&
-				fabs(p1[2]-p2[2]) < EPS);
-	}
+  bool operator()(const Position &p1, const Position &p2) const {
+    return (fabs(p1[0] - p2[0]) < EPS && fabs(p1[1] - p2[1]) < EPS &&
+            fabs(p1[2] - p2[2]) < EPS);
+  }
 };
 
-struct DiffPos
-{
+struct DiffPos {
 
-	bool operator()(const VPosition& p1, const VPosition& p2) const
-	{
-		return (fabs(p1.cord[0]-p2.cord[0]) >= EPS ||
-				fabs(p1.cord[1]-p2.cord[1]) >= EPS ||
-				fabs(p1.cord[2]-p2.cord[2]) >= EPS);
-	}
+  bool operator()(const VPosition &p1, const VPosition &p2) const {
+    return (fabs(p1.cord[0] - p2.cord[0]) >= EPS ||
+            fabs(p1.cord[1] - p2.cord[1]) >= EPS ||
+            fabs(p1.cord[2] - p2.cord[2]) >= EPS);
+  }
 
-	bool operator()(const Position& p1, const Position& p2) const
-	{
-		return (fabs(p1[0]-p2[0]) >= EPS ||
-				fabs(p1[1]-p2[1]) >= EPS ||
-				fabs(p1[2]-p2[2]) >= EPS);
-	}
+  bool operator()(const Position &p1, const Position &p2) const {
+    return (fabs(p1[0] - p2[0]) >= EPS || fabs(p1[1] - p2[1]) >= EPS ||
+            fabs(p1[2] - p2[2]) >= EPS);
+  }
 };
 
-struct LtPos
-{
-	bool operator()(const VPosition& p1, const VPosition& p2) const
-	{
-		if(p1.cord[2] < p2.cord[2]-EPS)
-		{
-			return true;
-		}
-		else if(fabs(p1.cord[2] - p2.cord[2]) < EPS)
-		{
-			if(p1.cord[1] < p2.cord[1]-EPS)
-			{
-				return true;
-			}
-			else if(fabs(p1.cord[1] - p2.cord[1]) < EPS)
-			{
-				if(p1.cord[0] < p2.cord[0] - EPS)
-				{
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+struct LtPos {
+  bool operator()(const VPosition &p1, const VPosition &p2) const {
+    if (p1.cord[2] < p2.cord[2] - EPS) {
+      return true;
+    } else if (fabs(p1.cord[2] - p2.cord[2]) < EPS) {
+      if (p1.cord[1] < p2.cord[1] - EPS) {
+        return true;
+      } else if (fabs(p1.cord[1] - p2.cord[1]) < EPS) {
+        if (p1.cord[0] < p2.cord[0] - EPS) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
-	bool operator()(const Position& p1, const Position& p2) const
-	{
-		return ((p1[2] < p2[2]) ||
-				((fabs(p1[2] - p2[2]) < EPS) && (p1[1] < p2[1])) ||
-				((fabs(p1[2] - p2[2]) < EPS) && (fabs(p1[1] - p2[1]) < EPS) && (p1[0] < p2[0])));
-	}
+  bool operator()(const Position &p1, const Position &p2) const {
+    return ((p1[2] < p2[2]) ||
+            ((fabs(p1[2] - p2[2]) < EPS) && (p1[1] < p2[1])) ||
+            ((fabs(p1[2] - p2[2]) < EPS) && (fabs(p1[1] - p2[1]) < EPS) &&
+             (p1[0] < p2[0])));
+  }
 };
 
 #endif

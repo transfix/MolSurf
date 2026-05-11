@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -30,14 +30,14 @@
 class SimpleVolumeData;
 class Geometry;
 
-class SimpleVolumeDataIsocontourer
-{
-	public:
-		SimpleVolumeDataIsocontourer();
-		virtual ~SimpleVolumeDataIsocontourer();
-		static Geometry* getIsocontour(SimpleVolumeData* sData, float isovalue);
-		static bool colorIsocontour(Geometry* geometry, SimpleVolumeData* sData);
-		static bool getFunctionValues(SimpleVolumeData* sData, Geometry* geometry, double* funcVals);
+class SimpleVolumeDataIsocontourer {
+public:
+  SimpleVolumeDataIsocontourer();
+  virtual ~SimpleVolumeDataIsocontourer();
+  static Geometry *getIsocontour(SimpleVolumeData *sData, float isovalue);
+  static bool colorIsocontour(Geometry *geometry, SimpleVolumeData *sData);
+  static bool getFunctionValues(SimpleVolumeData *sData, Geometry *geometry,
+                                double *funcVals);
 };
 
 #endif

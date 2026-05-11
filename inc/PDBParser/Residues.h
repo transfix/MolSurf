@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -33,25 +33,31 @@
 #include <UsefulMath/Matrix.h>
 #include <UsefulMath/Quaternion.h>
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class Atom;
-	class Residues
-	{
-		public:
-			Residues();
-			virtual ~Residues();
-			static int mapResidue(char* resName);
-			static char lookupShortResID(char* resName);
-			static const char* lookupLongResID(char resShortID);
-			static bool getAngle(int angleNumber, GroupOfAtoms* residue, double* angle);
-			static Atom* getAtom(GroupOfAtoms* residue, const char* atomName);
-			static bool transform(GroupOfAtoms* residue, int angleType, double newAngle, const char* vecTailAtomName, const char* pivotAtomName);
-			static bool transformFrom(GroupOfAtoms* residue, int angleType, CCVOpenGLMath::Matrix* mat, const char* pivotAtomName);
-			static bool getRotationVector(GroupOfAtoms* residue, const char* vecTailAtomName, const char* pivotAtomName, double* vecx, double* vecy, double* vecz);
-			static bool getRotationOrigin(GroupOfAtoms* residue, const char* pivotAtomName, double* origx, double* origy, double* origz);
-	};
+namespace PDBParser {
+class GroupOfAtoms;
+class Atom;
+class Residues {
+public:
+  Residues();
+  virtual ~Residues();
+  static int mapResidue(char *resName);
+  static char lookupShortResID(char *resName);
+  static const char *lookupLongResID(char resShortID);
+  static bool getAngle(int angleNumber, GroupOfAtoms *residue, double *angle);
+  static Atom *getAtom(GroupOfAtoms *residue, const char *atomName);
+  static bool transform(GroupOfAtoms *residue, int angleType, double newAngle,
+                        const char *vecTailAtomName, const char *pivotAtomName);
+  static bool transformFrom(GroupOfAtoms *residue, int angleType,
+                            CCVOpenGLMath::Matrix *mat,
+                            const char *pivotAtomName);
+  static bool getRotationVector(GroupOfAtoms *residue,
+                                const char *vecTailAtomName,
+                                const char *pivotAtomName, double *vecx,
+                                double *vecy, double *vecz);
+  static bool getRotationOrigin(GroupOfAtoms *residue,
+                                const char *pivotAtomName, double *origx,
+                                double *origy, double *origz);
 };
+}; // namespace PDBParser
 
 #endif

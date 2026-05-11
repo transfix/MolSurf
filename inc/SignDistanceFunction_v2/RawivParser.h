@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,19 +27,18 @@
 #include <SignDistanceFunction_v2/reg3data.h>
 #include <SignDistanceFunction_v2/bio.h>
 
-class RawivParser : public Reg3Parser
-{
-	public:
-		RawivParser();
-		virtual ~RawivParser();
-		virtual bool parse(Reg3Data<float>* data, const char* fname);
-		virtual bool write(const Reg3Data<float>& data, const char* fname);
-	private:
-		bool isRawivFile(const char* fname)
-		{
-			int len = (int)strlen(fname);
-			return (len > 6 && strcmp(fname+len-6, ".rawiv") == 0);
-		}
+class RawivParser : public Reg3Parser {
+public:
+  RawivParser();
+  virtual ~RawivParser();
+  virtual bool parse(Reg3Data<float> *data, const char *fname);
+  virtual bool write(const Reg3Data<float> &data, const char *fname);
+
+private:
+  bool isRawivFile(const char *fname) {
+    int len = (int)strlen(fname);
+    return (len > 6 && strcmp(fname + len - 6, ".rawiv") == 0);
+  }
 };
 
 #endif

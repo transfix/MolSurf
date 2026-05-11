@@ -1,26 +1,25 @@
-//C- -*- C++ -*-
-//C- Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.
-//C-
-//C- This software (the "Original Code") is subject to, and may be
-//C- distributed under, the GNU General Public License, Version 2.
-//C- You may obtain a copy of the license from the Free Software
-//C- Foundation at http://www.fsf.org.
-//C-
-//C- With respect to the Original Code, and subject to any third party
-//C- intellectual property claims, LizardTech grants recipient a worldwide,
-//C- royalty-free, non-exclusive license under patent claims infringed by
-//C- making, using, or selling Original Code which are now or hereafter
-//C- owned or controlled by LizardTech, but solely to the extent that any
-//C- such patent is reasonably necessary to enable you to make, have made,
-//C- practice, sell, or otherwise dispose of Original Code (or portions
-//C- thereof) and not to any greater extent that may be necessary to utilize
-//C- further modifications or combinations.
-//C-
-//C- The Original Code is provided "AS IS" WITHOUT WARRANTY OF ANY KIND,
-//C- EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY
-//C- OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF MERCHANTIBILITY OF
-//C- FITNESS FOR A PARTICULAR PURPOSE.
-
+// C- -*- C++ -*-
+// C- Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.
+// C-
+// C- This software (the "Original Code") is subject to, and may be
+// C- distributed under, the GNU General Public License, Version 2.
+// C- You may obtain a copy of the license from the Free Software
+// C- Foundation at http://www.fsf.org.
+// C-
+// C- With respect to the Original Code, and subject to any third party
+// C- intellectual property claims, LizardTech grants recipient a worldwide,
+// C- royalty-free, non-exclusive license under patent claims infringed by
+// C- making, using, or selling Original Code which are now or hereafter
+// C- owned or controlled by LizardTech, but solely to the extent that any
+// C- such patent is reasonably necessary to enable you to make, have made,
+// C- practice, sell, or otherwise dispose of Original Code (or portions
+// C- thereof) and not to any greater extent that may be necessary to utilize
+// C- further modifications or combinations.
+// C-
+// C- The Original Code is provided "AS IS" WITHOUT WARRANTY OF ANY KIND,
+// C- EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY
+// C- OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF MERCHANTIBILITY OF
+// C- FITNESS FOR A PARTICULAR PURPOSE.
 
 #ifndef _DJVUGLOBAL_H
 #define _DJVUGLOBAL_H
@@ -43,10 +42,6 @@
     Bill Riemers <bcr@sanskrit.lz.att.com> -- real work.  */
 //@{
 
-
-
-
-
 /** @name DjVu Memory
 
     This section is enabled when compilation symbol #NEED_DJVU_MEMORY# is
@@ -62,9 +57,9 @@
 #include <new.h>
 
 // Normally, this is the only functions we should need.
-typedef void djvu_delete_callback(void*);
-typedef void* djvu_new_callback(size_t);
-void _djvu_memory_callback(djvu_delete_callback*, djvu_new_callback*);
+typedef void djvu_delete_callback(void *);
+typedef void *djvu_new_callback(size_t);
+void _djvu_memory_callback(djvu_delete_callback *, djvu_new_callback *);
 
 #ifndef NEED_DJVU_MEMORY_IMPLEMENTATION
 // We need to use this inline function in all modules, but we never want it to
@@ -79,7 +74,7 @@ void _djvu_memory_callback(djvu_delete_callback*, djvu_new_callback*);
 #endif
 // This clause is used when overriding operator new
 // because the standard has slightly changed.
-#if defined( __GNUC__ ) && ( __GNUC__*1000 + __GNUC_MINOR__ >= 2091 )
+#if defined(__GNUC__) && (__GNUC__ * 1000 + __GNUC_MINOR__ >= 2091)
 #ifndef new_throw_spec
 #define new_throw_spec throw(std::bad_alloc)
 #endif
@@ -95,25 +90,22 @@ void _djvu_memory_callback(djvu_delete_callback*, djvu_new_callback*);
 #define delete_throw_spec
 #endif
 // Overrides
-void* _djvu_new(size_t);
-void  _djvu_delete(void*);
-inline_as_macro void *
-operator new(size_t sz) new_throw_spec
-{ return _djvu_new(sz); }
-inline_as_macro void
-operator delete(void* addr) delete_throw_spec
-{ return _djvu_delete(addr); }
-inline_as_macro void *
-operator new [](size_t sz) new_throw_spec
-{ return _djvu_new(sz); }
-inline_as_macro void
-operator delete [](void* addr) delete_throw_spec
-{ return _djvu_delete(addr); }
+void *_djvu_new(size_t);
+void _djvu_delete(void *);
+inline_as_macro void *operator new(size_t sz) new_throw_spec {
+  return _djvu_new(sz);
+}
+inline_as_macro void operator delete(void *addr) delete_throw_spec {
+  return _djvu_delete(addr);
+}
+inline_as_macro void *operator new[](size_t sz) new_throw_spec {
+  return _djvu_new(sz);
+}
+inline_as_macro void operator delete[](void *addr) delete_throw_spec {
+  return _djvu_delete(addr);
+}
 #endif // !NEED_DJVU_MEMORY_IMPLEMENTATION
 #endif // NEED_DJVU_MEMORY
-
-
-
 
 /** @name DjVu Progress
 
@@ -128,28 +120,23 @@ operator delete [](void* addr) delete_throw_spec
 #ifdef NEED_DJVU_PROGRESS
 
 // Normally, these are the only functions we should need.
-struct DjVuProgressScale
-{
-	int         percent;
-	const char* match_filename;
-	const char* match_tag;
-	int         match_index;
+struct DjVuProgressScale {
+  int percent;
+  const char *match_filename;
+  const char *match_tag;
+  int match_index;
 };
 typedef void djvu_progress_callback(int);
-void _djvu_start_progress(DjVuProgressScale*, djvu_progress_callback*);
-void _djvu_start_progress(DjVuProgressScale*, const char*);
+void _djvu_start_progress(DjVuProgressScale *, djvu_progress_callback *);
+void _djvu_start_progress(DjVuProgressScale *, const char *);
 void _djvu_end_progress();
 
 // Implementation
-void _djvu_progress(const char*, const char*, int);
-#define DJVU_PROGRESS(tag,percent) _djvu_progress(__FILE__,tag,percent)
-#else  // ! NEED_DJVU_PROGRESS
-#define DJVU_PROGRESS(tag,percent) /**/
-#endif // NEED_DJVU_PROGRESS
-
-
-
-
+void _djvu_progress(const char *, const char *, int);
+#define DJVU_PROGRESS(tag, percent) _djvu_progress(__FILE__, tag, percent)
+#else                               // ! NEED_DJVU_PROGRESS
+#define DJVU_PROGRESS(tag, percent) /**/
+#endif                              // NEED_DJVU_PROGRESS
 
 /** @name DjVu Names
 
@@ -171,4 +158,3 @@ void _djvu_progress(const char*, const char*, int);
 
 //@}
 #endif // _DJVUGLOBAL_H_
-

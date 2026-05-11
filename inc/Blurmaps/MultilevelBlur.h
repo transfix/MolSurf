@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -33,53 +33,52 @@
 #include <PDBParser/ResidueInformation.h>
 #include <SimpleVolumeData/SimpleVolumeData.h>
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class Atom;
-};
+namespace PDBParser {
+class GroupOfAtoms;
+class Atom;
+}; // namespace PDBParser
 class SimpleVolumeData;
 class RadiusOptimizer;
 
-class MultilevelBlur
-{
-	public:
-		MultilevelBlur();
-		virtual ~MultilevelBlur();
+class MultilevelBlur {
+public:
+  MultilevelBlur();
+  virtual ~MultilevelBlur();
 
-		/**
-		 * Set the blobbyness of the blurring kernel
-		 */
-		void setBlobbyness(double b)
-		{
-			mBlobbyness = b;
-		}
-		double getBlobbyness() const
-		{
-			return mBlobbyness;
-		}
+  /**
+   * Set the blobbyness of the blurring kernel
+   */
+  void setBlobbyness(double b) { mBlobbyness = b; }
+  double getBlobbyness() const { return mBlobbyness; }
 
-		bool generateBlurmap(PDBParser::GroupOfAtoms* molecule,	SimpleVolumeData* volumeData,
-							 PDBParser::GroupOfAtoms::FUNCTIONS densityType, const char* cmapFile, bool withColor,
-							 PDBParser::GroupOfAtoms::GOA_TYPE colorLevel, PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType, unsigned int level);
+  bool generateBlurmap(PDBParser::GroupOfAtoms *molecule,
+                       SimpleVolumeData *volumeData,
+                       PDBParser::GroupOfAtoms::FUNCTIONS densityType,
+                       const char *cmapFile, bool withColor,
+                       PDBParser::GroupOfAtoms::GOA_TYPE colorLevel,
+                       PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType,
+                       unsigned int level);
 
-	protected:
+protected:
+  void blurAtoms(vector<PDBParser::Atom *> &atoms, SimpleVolumeData *vol,
+                 PDBParser::GroupOfAtoms::FUNCTIONS densityType, bool withColor,
+                 PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType,
+                 double *optimizedRadii);
 
-		void blurAtoms(vector<PDBParser::Atom*> & atoms,
-					   SimpleVolumeData* vol, PDBParser::GroupOfAtoms::FUNCTIONS densityType,
-					   bool withColor, PDBParser::GroupOfAtoms::RADIUS_TYPE  radiusType,
-					   double* optimizedRadii);
+  float evalDensity(/*const PDBParser::Atom &atom,*/ double ctr[3],
+                    float radius, float pnt[3],
+                    PDBParser::GroupOfAtoms::FUNCTIONS densityType,
+                    double hydrophobicity, double charge);
 
-		float evalDensity(/*const PDBParser::Atom &atom,*/double ctr[3], float radius, float pnt[3], PDBParser::GroupOfAtoms::FUNCTIONS densityType,
-				double hydrophobicity, double charge);
+  std::vector<int>
+      m_ColorRanges; // each index is an atom index. If an atom lies
+  // between a range, then assign it that ranges color as specified by the next
+  // vector
+  std::vector<float> m_UserDefinedColors;
+  RadiusOptimizer *m_RadiusOptimizer;
 
-		std::vector<int> m_ColorRanges; // each index is an atom index. If an atom lies
-		// between a range, then assign it that ranges color as specified by the next vector
-		std::vector<float> m_UserDefinedColors;
-		RadiusOptimizer* m_RadiusOptimizer;
-
-	private:
-		double mBlobbyness;
+private:
+  double mBlobbyness;
 };
 
 #endif

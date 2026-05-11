@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////
-// 
+//
 //  Levenberg - Marquardt non-linear minimization algorithm
 //  Copyright (C) 2004-06  Manolis Lourakis (lourakis at ics forth gr)
 //  Institute of Computer Science, Foundation for Research & Technology - Hellas
@@ -17,7 +17,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-/******************************************************************************** 
+/********************************************************************************
  * combined box and linear equation constraints Levenberg-Marquardt nonlinear
  * minimization. The same core code is used with appropriate #defines to derive
  * single and double precision versions, see also lmblec_core.c
@@ -34,7 +34,8 @@
 #ifndef HAVE_LAPACK
 
 #ifdef _MSC_VER
-#pragma message("Combined box and linearly constrained optimization requires LAPACK and was not compiled!")
+#pragma message(                                                               \
+    "Combined box and linearly constrained optimization requires LAPACK and was not compiled!")
 #else
 #warning Combined box and linearly constrained optimization requires LAPACK and was not compiled!
 #endif // _MSC_VER
@@ -44,7 +45,6 @@
 #if !defined(LM_DBL_PREC) && !defined(LM_SNGL_PREC)
 #error At least one of LM_DBL_PREC, LM_SNGL_PREC should be defined!
 #endif
-
 
 #ifdef LM_SNGL_PREC
 /* single precision (float) definitions */

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -35,35 +35,35 @@
 
 using CCVOpenGLMath::TrilinearGrid;
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class Atom;
-};
+namespace PDBParser {
+class GroupOfAtoms;
+class Atom;
+}; // namespace PDBParser
 
-class F2DGenerator
-{
-	public:
-		F2DGenerator(PDBParser::GroupOfAtoms* molecule, string xyzFileName, string outputFileName, bool receptor, PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType, double sar);
+class F2DGenerator {
+public:
+  F2DGenerator(PDBParser::GroupOfAtoms *molecule, string xyzFileName,
+               string outputFileName, bool receptor,
+               PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType, double sar);
 
-		virtual ~F2DGenerator();
-		bool generate();
+  virtual ~F2DGenerator();
+  bool generate();
 
-	protected:
-		vector<PDBParser::Atom*> m_AtomList;
-		bool receptor;	
-		string xyzFileName;
-		string outputFileName;
+protected:
+  vector<PDBParser::Atom *> m_AtomList;
+  bool receptor;
+  string xyzFileName;
+  string outputFileName;
 
-	private:
-		double diff(double a, double b);
-		void printAtom(int index, bool internal);
-		void printSkinAtom(double x, double y, double z, int i);
+private:
+  double diff(double a, double b);
+  void printAtom(int index, bool internal);
+  void printSkinAtom(double x, double y, double z, int i);
 
-		double skinAtomRad;
-		int numres;
-		FILE *f2dFile;
-		FILE *newpqrFile;
+  double skinAtomRad;
+  int numres;
+  FILE *f2dFile;
+  FILE *newpqrFile;
 };
 
 #endif

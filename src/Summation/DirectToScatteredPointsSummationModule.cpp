@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,11 +23,10 @@
 
 using namespace CCVSummationModule;
 
-DirectToScatteredPointsSummationModule::DirectToScatteredPointsSummationModule(double* centers, double* radii, double* weights, int numberOfCenters, Kernel* kernel, OutputGrid* outputGrid)
-	:SummationModule(centers, radii, weights, numberOfCenters, kernel)
-{
-}
+DirectToScatteredPointsSummationModule::DirectToScatteredPointsSummationModule(
+    double *centers, double *radii, double *weights, int numberOfCenters,
+    Kernel *kernel, OutputGrid *outputGrid)
+    : SummationModule(centers, radii, weights, numberOfCenters, kernel) {}
 
-DirectToScatteredPointsSummationModule::~DirectToScatteredPointsSummationModule()
-{
-}
+DirectToScatteredPointsSummationModule::
+    ~DirectToScatteredPointsSummationModule() {}

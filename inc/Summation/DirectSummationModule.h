@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -29,15 +29,13 @@
 #include <Summation/Kernel.h>
 #include <UsefulMath/TrilinearGrid.h>
 
-namespace CCVSummationModule
-{
-	class DirectSummationModule
-	 : public SummationModule
-	{
-		public:
-			DirectSummationModule(double* centers, int numberOfCenters, Kernel* kernel, OutputGrid* outputGrid);
-			virtual ~DirectSummationModule();
-	};
+namespace CCVSummationModule {
+class DirectSummationModule : public SummationModule {
+public:
+  DirectSummationModule(double *centers, int numberOfCenters, Kernel *kernel,
+                        OutputGrid *outputGrid);
+  virtual ~DirectSummationModule();
 };
+}; // namespace CCVSummationModule
 
 #endif

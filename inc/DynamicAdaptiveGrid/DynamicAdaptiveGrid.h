@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -30,85 +30,88 @@
 #include <PDBParser/Atom.h>
 #include <DPG/PG.h>
 
-namespace DynamicAdaptiveGrid
-{
-	class DynamicAdaptiveGrids
-	{
-		private:
-			map<string,GridCell*> gridCellMap;
-			map<string,GridPoint*> gridPointMap;
+namespace DynamicAdaptiveGrid {
+class DynamicAdaptiveGrids {
+private:
+  map<string, GridCell *> gridCellMap;
+  map<string, GridPoint *> gridPointMap;
 
-			vector<GridCell*> gridCells;
-			vector<GridPoint*> gridPoints;
+  vector<GridCell *> gridCells;
+  vector<GridPoint *> gridPoints;
 
-			map<string,GridCell*> newlyUpdated;
-			vector<GridCell*> toBeDeleted;
-			vector<GridCell*> toBeUpdated;
-			vector<GridCell*> toBeCreated;
+  map<string, GridCell *> newlyUpdated;
+  vector<GridCell *> toBeDeleted;
+  vector<GridCell *> toBeUpdated;
+  vector<GridCell *> toBeCreated;
 
-			DPG::PG *allAtomPG;
-			DPG::PG *exposedAtomPG;
-			DPG::PG *gridPointPG;
-			DPG::PG *exposedGridPointPG;
-			DPG::PG *gridCellPG;
-			DPG::PG *exposedGridCellPG;
+  DPG::PG *allAtomPG;
+  DPG::PG *exposedAtomPG;
+  DPG::PG *gridPointPG;
+  DPG::PG *exposedGridPointPG;
+  DPG::PG *gridCellPG;
+  DPG::PG *exposedGridCellPG;
 
-//			GridPoint*** gridPointArray;
-//			GridCell*** gridCellArray;
+  //                      GridPoint*** gridPointArray;
+  //                      GridCell*** gridCellArray;
 
-			
-			int mode;
-			double gridSpacing;
-			double solventRadius;
-			double dpgCellSpacing;
-			double dpgxlate;
-			double isovalue;
-			double minx, miny, minz, maxx, maxy, maxz;
-			double xDim, yDim, zDim;
-			int xCells, yCells, zCells;
-			int numExposedAtoms;
-			int numExposedCells;
+  int mode;
+  double gridSpacing;
+  double solventRadius;
+  double dpgCellSpacing;
+  double dpgxlate;
+  double isovalue;
+  double minx, miny, minz, maxx, maxy, maxz;
+  double xDim, yDim, zDim;
+  int xCells, yCells, zCells;
+  int numExposedAtoms;
+  int numExposedCells;
 
-			//void createGrid();
-			//void destroyGrid();
-			void init();
-			void cleanup();
+  // void createGrid();
+  // void destroyGrid();
+  void init();
+  void cleanup();
 
-			// Finds gridpoints inside the bounding sphere. Creates new gridpoints if necessary.
-			void findGridPointsInBall(double x, double y, double z, double d, vector<GridPoint*>& gps);
+  // Finds gridpoints inside the bounding sphere. Creates new gridpoints if
+  // necessary.
+  void findGridPointsInBall(double x, double y, double z, double d,
+                            vector<GridPoint *> &gps);
 
-			void updateMinMax(PDBParser::Atom* a);
-			void addSingleAtom(PDBParser::Atom* a);
-			void removeSingleAtom(PDBParser::Atom* a);
+  void updateMinMax(PDBParser::Atom *a);
+  void addSingleAtom(PDBParser::Atom *a);
+  void removeSingleAtom(PDBParser::Atom *a);
 
-			// recompute the contours inside updated cells
-			bool updateContour();
+  // recompute the contours inside updated cells
+  bool updateContour();
 
-			// marked cells are updated based on new states of its gridpoints. 
-			bool updateCells();
+  // marked cells are updated based on new states of its gridpoints.
+  bool updateCells();
 
-			// If any gridpoint is not already created, then it is created and marked as outside the SAS. Then updates its own state.
-			bool updateCell(GridCell *gc);
+  // If any gridpoint is not already created, then it is created and marked as
+  // outside the SAS. Then updates its own state.
+  bool updateCell(GridCell *gc);
 
-			// marks cells around a newly updated gridpoint for update
-			bool markNeighborCells(GridPoint *gp);
+  // marks cells around a newly updated gridpoint for update
+  bool markNeighborCells(GridPoint *gp);
 
-		protected:
-			VertexContainer vertCon;
+protected:
+  VertexContainer vertCon;
 
-		public:
-			DynamicAdaptiveGrids(double grid_spacing, double pg_spacing, int mode, double solvent_rad, double isovalue, double minx, double miny, double minz, double maxx, double maxy, double maxz);
-			~DynamicAdaptiveGrids();
-			
-			bool addAtom(PDBParser::Atom* a);
-			bool removeAtom(PDBParser::Atom* a);
-			bool moveAtom(PDBParser::Atom* from, PDBParser::Atom* to);
+public:
+  DynamicAdaptiveGrids(double grid_spacing, double pg_spacing, int mode,
+                       double solvent_rad, double isovalue, double minx,
+                       double miny, double minz, double maxx, double maxy,
+                       double maxz);
+  ~DynamicAdaptiveGrids();
 
-			bool addAtoms(vector<PDBParser::Atom*> &atms);
-			bool removeAtoms(vector<PDBParser::Atom*> &atms);
+  bool addAtom(PDBParser::Atom *a);
+  bool removeAtom(PDBParser::Atom *a);
+  bool moveAtom(PDBParser::Atom *from, PDBParser::Atom *to);
 
-			bool printSurface(string surfaceFileName);
-	};
+  bool addAtoms(vector<PDBParser::Atom *> &atms);
+  bool removeAtoms(vector<PDBParser::Atom *> &atms);
+
+  bool printSurface(string surfaceFileName);
 };
+}; // namespace DynamicAdaptiveGrid
 
 #endif

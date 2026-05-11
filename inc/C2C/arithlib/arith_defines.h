@@ -1,9 +1,9 @@
 /*
   Copyright 2000-2003 The University of Texas at Austin
 
-	Authors: Xiaoyu Zhang 2000-2002 <xiaoyu@ices.utexas.edu>
-					 John Wiggins 2003 <prok@cs.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Xiaoyu Zhang 2000-2002 <xiaoyu@ices.utexas.edu>
+                                         John Wiggins 2003 <prok@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of iotree.
 
@@ -24,26 +24,24 @@
 #ifndef ARITH_DEFINES_H
 #define ARITH_DEFINES_H
 
-#define MAX_CONTEXT_BITS	20    	/* max. number of bits for context */
-#define MIN_CONTEXT_BITS	0	/* min. number of bits for context */
-#define DEFAULT_BITS_CONTEXT   16	/* default value for bits_context */
-#define ENCODE          	0
-#define DECODE          	1
-#define MAGICNO         	"123b"  /* Magic Number for files */
-#define MAGICNO_LENGTH		4	/* length of magic number */
-#define BREAK_INTERVAL		10000000	/* every round off to bit boundary */
-#define MEGABYTE		(1<<24)	/* size of one megabyte */
-#define NOMEMLEFT		-1	/* flag set when mem runs out */
-#define DEFAULT_MEM		1	/* default 1 megabyte limit */
-#define MIN_MBYTES        	1	/* minimum allowable memory size */
-#define MAX_MBYTES        	255	/* maximum no for 8 bit int */
+#define MAX_CONTEXT_BITS 20     /* max. number of bits for context */
+#define MIN_CONTEXT_BITS 0      /* min. number of bits for context */
+#define DEFAULT_BITS_CONTEXT 16 /* default value for bits_context */
+#define ENCODE 0
+#define DECODE 1
+#define MAGICNO "123b"          /* Magic Number for files */
+#define MAGICNO_LENGTH 4        /* length of magic number */
+#define BREAK_INTERVAL 10000000 /* every round off to bit boundary */
+#define MEGABYTE (1 << 24)      /* size of one megabyte */
+#define NOMEMLEFT -1            /* flag set when mem runs out */
+#define DEFAULT_MEM 1           /* default 1 megabyte limit */
+#define MIN_MBYTES 1            /* minimum allowable memory size */
+#define MAX_MBYTES 255          /* maximum no for 8 bit int */
 
-
-#define		CODE_BITS		32
-#define		BYTE_SIZE		8
-#define 	MAX_BITS_OUTSTANDING	256
-#define 	HALF			((unsigned) 1 << (CODE_BITS-1))
-#define 	QUARTER			(1 << (CODE_BITS-2))
+#define CODE_BITS 32
+#define BYTE_SIZE 8
+#define MAX_BITS_OUTSTANDING 256
+#define HALF ((unsigned)1 << (CODE_BITS - 1))
+#define QUARTER (1 << (CODE_BITS - 2))
 
 #endif
-

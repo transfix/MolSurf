@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -38,98 +38,76 @@
 
 #define USE_INT_TREE
 
-class Conplot
-{
-	public:
-		Conplot(Dataset* v);
-		virtual ~Conplot();
+class Conplot {
+public:
+  Conplot(Dataset *v);
+  virtual ~Conplot();
 
-		// preprocess the volume to compute the seed set
-		void Preprocess(int t, void (*func)(int, void*) = NULL, void * = NULL);
+  // preprocess the volume to compute the seed set
+  void Preprocess(int t, void (*func)(int, void *) = NULL, void * = NULL);
 
-		// extract an isosurface of the given value
-		u_int Extract(float isovalue)
-		{
-			return(ExtractAll(isovalue));
-		}
+  // extract an isosurface of the given value
+  u_int Extract(float isovalue) { return (ExtractAll(isovalue)); }
 
-		// select a timestep
-		void  setTime(int t);
+  // select a timestep
+  void setTime(int t);
 
-		// mark a cell or test whether a cell is marked
-		void TouchCell(u_int);
-		int CellTouched(u_int);
-		void ClearTouched(void);
+  // mark a cell or test whether a cell is marked
+  void TouchCell(u_int);
+  int CellTouched(u_int);
+  void ClearTouched(void);
 
-		void ResetAll(void)
-		{
-			for(int t=0; t<data->nTime(); t++)
-			{
-				Reset(t);
-			}
-		}
+  void ResetAll(void) {
+    for (int t = 0; t < data->nTime(); t++) {
+      Reset(t);
+    }
+  }
 
-		int getCells(float val)
-		{
-			return(tree[curtime].getCells(val, int_cells));
-		}
+  int getCells(float val) { return (tree[curtime].getCells(val, int_cells)); }
 
-		SeedCells*	getSeeds()
-		{
-			return &seeds[curtime];
-		}
+  SeedCells *getSeeds() { return &seeds[curtime]; }
 
-		Contour2d*	getContour2d()
-		{
-			return &contour2d[curtime];
-		}
+  Contour2d *getContour2d() { return &contour2d[curtime]; }
 
-		Contour3d*	getContour3d()
-		{
-			return &contour3d[curtime];
-		}
+  Contour3d *getContour3d() { return &contour3d[curtime]; }
 
-		// routines to support isocontour component output
-		void BeginWrite(char* fprefix)
-		{
-			ncomponents = 0;
-			filePrefix = fprefix;
-		}
+  // routines to support isocontour component output
+  void BeginWrite(char *fprefix) {
+    ncomponents = 0;
+    filePrefix = fprefix;
+  }
 
-		inline void EndWrite()
-		{
-			filePrefix = NULL;
-		}
+  inline void EndWrite() { filePrefix = NULL; }
 
-	protected:
-		// extract an isosurface
-		u_int ExtractAll(float isovalue);
-		// build the segment tree for the seed set
-		void BuildSegTree(int t);
-		virtual void Reset(int) = 0;
-		virtual int  Size(int)  = 0;
-		virtual int  isDone(int)  = 0;
-		virtual void Done(int)  = 0;
-		// track a contour from a seed cell
-		virtual void TrackContour(float, int)  = 0;
-		Dataset*	data;
-		CellQueue queue;
-		SeedCells* seeds;
-		Contour2d* contour2d;
-		Contour3d* contour3d;
-		int	curtime;
-		int	ncomponents;		// number of isocontour components
-		char*	filePrefix;		// isocontour component file prefix
-	private:
+protected:
+  // extract an isosurface
+  u_int ExtractAll(float isovalue);
+  // build the segment tree for the seed set
+  void BuildSegTree(int t);
+  virtual void Reset(int) = 0;
+  virtual int Size(int) = 0;
+  virtual int isDone(int) = 0;
+  virtual void Done(int) = 0;
+  // track a contour from a seed cell
+  virtual void TrackContour(float, int) = 0;
+  Dataset *data;
+  CellQueue queue;
+  SeedCells *seeds;
+  Contour2d *contour2d;
+  Contour3d *contour3d;
+  int curtime;
+  int ncomponents;  // number of isocontour components
+  char *filePrefix; // isocontour component file prefix
+private:
 #ifdef USE_SEG_TREE
-		SegTree* tree;
+  SegTree *tree;
 #elif defined USE_INT_TREE
-		IntTree* tree;
+  IntTree *tree;
 #elif defined USE_BUCKETS
-		BucketSearch* tree;
+  BucketSearch *tree;
 #endif
-		u_int*	int_cells;
-		u_char*	touched;
+  u_int *int_cells;
+  u_char *touched;
 };
 
 #endif

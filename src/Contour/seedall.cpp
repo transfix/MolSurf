@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,7 +26,7 @@
 #include <Contour/seedall.h>
 #include <Contour/datareg2.h>
 
-#if ! defined (__APPLE__)
+#if !defined(__APPLE__)
 #include <malloc.h>
 #else
 #include <stdlib.h>
@@ -37,14 +37,12 @@
 
 extern int verbose;
 
-void seedAll::compSeeds(void)
-{
-	float min, max;
-	// proceed through the slices computing seeds
-	for(u_int c=0; c<data.getNCells(); c++)
-	{
-		// load the voxel data
-		data.getCellRange(c, min, max);
-		seeds.AddSeed(c, min, max);
-	}
+void seedAll::compSeeds(void) {
+  float min, max;
+  // proceed through the slices computing seeds
+  for (u_int c = 0; c < data.getNCells(); c++) {
+    // load the voxel data
+    data.getCellRange(c, min, max);
+    seeds.AddSeed(c, min, max);
+  }
 }

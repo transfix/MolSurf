@@ -1,9 +1,9 @@
 /*
   Copyright 2000-2003 The University of Texas at Austin
 
-	Authors: Xiaoyu Zhang 2000-2002 <xiaoyu@ices.utexas.edu>
-					 John Wiggins 2003 <prok@cs.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Xiaoyu Zhang 2000-2002 <xiaoyu@ices.utexas.edu>
+                                         John Wiggins 2003 <prok@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of iotree.
 
@@ -25,14 +25,14 @@
 File:		coder.h
 
 Authors: 	John Carpinelli   (johnfc@ecr.mu.oz.au)
-	 	Wayne Salamonsen  (wbs@mundil.cs.mu.oz.au)
+                Wayne Salamonsen  (wbs@mundil.cs.mu.oz.au)
 
 Purpose:	Data compression using a word-based model and revised
-		arithmetic coding method.
+                arithmetic coding method.
 
 Based on: 	A. Moffat, R. Neal, I.H. Witten, "Arithmetic Coding Revisted",
-		Proc. IEEE Data Compression Conference, Snowbird, Utah,
-		March 1995.
+                Proc. IEEE Data Compression Conference, Snowbird, Utah,
+                March 1995.
 
 Copyright 1995 John Carpinelli and Wayne Salamonsen, All Rights Reserved.
 
@@ -56,11 +56,11 @@ class BitBuffer;
 #endif
 
 /* provide external linkage to variables */
-extern int f_bits;			/* link to f_bits in stats.c */
-extern unsigned int bytes_input;	/* make available to other modules */
+extern int f_bits;               /* link to f_bits in stats.c */
+extern unsigned int bytes_input; /* make available to other modules */
 extern unsigned int bytes_output;
 
-extern BitBuffer* bit_buffer;    // output buffer
+extern BitBuffer *bit_buffer; // output buffer
 
 /* function prototypes */
 void arithmetic_encode(unsigned int l, unsigned int h, unsigned int t);
@@ -77,6 +77,4 @@ void doneoutputtingbits(void);
 void startinputtingbits(void);
 void doneinputtingbits(void);
 
-
 #endif
-

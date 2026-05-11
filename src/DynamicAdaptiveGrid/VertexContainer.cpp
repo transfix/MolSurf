@@ -1,8 +1,8 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,79 +26,57 @@
 
 using namespace DynamicAdaptiveGrid;
 
+VertexContainer::VertexContainer() {}
 
-VertexContainer::VertexContainer()
-{
-
+VertexContainer::~VertexContainer() {
+  vertexCont.clear();
+  vertMap.clear();
 }
 
-
-VertexContainer::~VertexContainer()
-{
-	vertexCont.clear();
-	vertMap.clear();
+void VertexContainer::addVertex(string str, MeshVertex *mv) {
+  vertexCont[str] = mv;
 }
 
+void VertexContainer::removeVertex(string str) { vertexCont.erase(str); }
 
-void VertexContainer::addVertex(string str, MeshVertex* mv)
-{
-	vertexCont[str] = mv;
+void VertexContainer::updateVertex(string str, MeshVertex *mv) {
+  vertexCont.erase(str);
+  vertexCont[str] = mv;
 }
 
-void VertexContainer::removeVertex(string str)
-{
-	vertexCont.erase(str);
+MeshVertex *VertexContainer::getVertex(string str) {
+  if (vertexCont.find(str) == vertexCont.end())
+    return NULL;
+  return vertexCont[str];
 }
 
-void VertexContainer::updateVertex(string str, MeshVertex* mv)
-{
-	vertexCont.erase(str);
-	vertexCont[str] = mv;
+void VertexContainer::clearMap() { vertMap.clear(); }
+
+void VertexContainer::clearContainer() { vertexCont.clear(); }
+
+int VertexContainer::getVertexIndex(string str) {
+  if (vertMap.find(str) == vertMap.end())
+    return -1;
+  return vertMap[str];
 }
 
-MeshVertex* VertexContainer::getVertex(string str)
-{
-	if(vertexCont.find(str) == vertexCont.end()) return NULL;
-	return vertexCont[str];
-}
+int VertexContainer::size() { return vertexCont.size(); }
 
-void VertexContainer::clearMap()
-{
-	vertMap.clear();
-}
+void VertexContainer::printVerticesAndUpdateMap(std::ofstream *outputFile) {
+  vertMap.clear();
 
-void VertexContainer::clearContainer()
-{
-	vertexCont.clear();
-}
+  //      cout<<"Found "<<vertexCont.size()<<" vertices"<<endl;
 
-int VertexContainer::getVertexIndex(string str)
-{
-	if(vertMap.find(str) == vertMap.end()) return -1;
-	return vertMap[str];
-}
+  map<string, MeshVertex *>::iterator vertStart = vertexCont.begin();
+  map<string, MeshVertex *>::iterator vertEnd = vertexCont.end();
 
-int VertexContainer::size()
-{
-	return vertexCont.size();
-}
+  map<string, MeshVertex *>::iterator vertIt;
+  int index = 0;
 
-void VertexContainer::printVerticesAndUpdateMap(std::ofstream *outputFile)
-{
-	vertMap.clear();
-
-//	cout<<"Found "<<vertexCont.size()<<" vertices"<<endl;
-
-	map<string,MeshVertex*>::iterator vertStart = vertexCont.begin();
-	map<string,MeshVertex*>::iterator vertEnd = vertexCont.end();
-
-	map<string,MeshVertex*>::iterator vertIt;
-	int index = 0;
-
-	for ( vertIt=vertStart ; vertIt != vertEnd; vertIt++ )
-	{
-		MeshVertex* temp = (*vertIt).second;
-		(*outputFile) << temp->getX() << " "<< temp->getY() << " "<< temp->getZ() << endl; 
-		vertMap[temp->toString()] = index++;
-	}
+  for (vertIt = vertStart; vertIt != vertEnd; vertIt++) {
+    MeshVertex *temp = (*vertIt).second;
+    (*outputFile) << temp->getX() << " " << temp->getY() << " " << temp->getZ()
+                  << endl;
+    vertMap[temp->toString()] = index++;
+  }
 }

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,8 +26,16 @@
 #include <PocketTunnel/datastruct_pt.h>
 #include <Geometry/Geometry.h>
 
-void write_wt(const Triangulation& triang, const char* file_prefix);
-void convert_pocket_tunnel_to_rawc_geometry(Geometry** PTV, const Triangulation& triang, map<int, cell_cluster> &cluster_set, const vector<int> &sorted_cluster_index_vector, const int& opc, const int& otc);
-void convert_curated_surf_to_raw_geometry(Geometry** curated_surf, const Triangulation& triang, map<int, cell_cluster> &cluster_set, const vector<int> &sorted_cluster_index_vector, const int& opc, const int& otc);
+void write_wt(const Triangulation &triang, const char *file_prefix);
+void convert_pocket_tunnel_to_rawc_geometry(
+    Geometry **PTV, const Triangulation &triang,
+    map<int, cell_cluster> &cluster_set,
+    const vector<int> &sorted_cluster_index_vector, const int &opc,
+    const int &otc);
+void convert_curated_surf_to_raw_geometry(
+    Geometry **curated_surf, const Triangulation &triang,
+    map<int, cell_cluster> &cluster_set,
+    const vector<int> &sorted_cluster_index_vector, const int &opc,
+    const int &otc);
 
 #endif

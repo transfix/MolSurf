@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -20,23 +20,26 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
-Given the correct docking configuration and a candidate docking result, this class can
-compute the following evalutaion metric used in CAPRI-
+Given the correct docking configuration and a candidate docking result, this
+class can compute the following evalutaion metric used in CAPRI-
 
 
 1. f_nat = rescont_nat_pred / rescont_nat_correct
 2. f_nonnat = rescont_nonnat_pred / rescont_nat_correct
-	where,
-	rescont_nat_pred = number of correct residue-residue contacts in the candidate soln
-	rescont_nonnat_pred = number of incorrect residue-residue contacts in the candidate soln
-	rescont_nat_correct = number of residue-residue contacts in the correct soln
-	note that, correct contacts are the ones found in the correct solution.
-3. I_RMSD. If IA is a the set of backbone atoms on the ligand which are on the interface of the correct solution, then I_RMSD is the RMSD of the same set of atoms in their predicted positions.
-4. L_RMSD. If LA is a the set of all backbone atoms on the ligand, then L_RMSD is the RMSD of the same set of atoms in their predicted positions.
+        where,
+        rescont_nat_pred = number of correct residue-residue contacts in the
+candidate soln rescont_nonnat_pred = number of incorrect residue-residue
+contacts in the candidate soln rescont_nat_correct = number of residue-residue
+contacts in the correct soln note that, correct contacts are the ones found in
+the correct solution.
+3. I_RMSD. If IA is a the set of backbone atoms on the ligand which are on the
+interface of the correct solution, then I_RMSD is the RMSD of the same set of
+atoms in their predicted positions.
+4. L_RMSD. If LA is a the set of all backbone atoms on the ligand, then L_RMSD
+is the RMSD of the same set of atoms in their predicted positions.
 
 Note that, F2Dock previously reported only I_RMSD.
 */
-
 
 #ifndef CAPRI_CRITERIA_H
 #define CAPRI_CRITERIA_H
@@ -54,72 +57,73 @@ Note that, F2Dock previously reported only I_RMSD.
 using CCVOpenGLMath::Matrix;
 using CCVOpenGLMath::Vector;
 
-class CapriCriteria
-{
-	private:
-		string receptorFileName;
-		string correctLigandFileName;
-		string predictedLigandFileName;
-		
-		bool state;	// false means error occured during earlier stages
-		bool mode;	// true = predicted ligand is pretransformed, false = prediction is given as a xform
-		Matrix mtx;
-		Matrix identity;
+class CapriCriteria {
+private:
+  string receptorFileName;
+  string correctLigandFileName;
+  string predictedLigandFileName;
 
-		int numNat;
-		int numCommon;
-		int numPredMinusNat;
+  bool state; // false means error occured during earlier stages
+  bool mode; // true = predicted ligand is pretransformed, false = prediction is
+             // given as a xform
+  Matrix mtx;
+  Matrix identity;
 
-		double fnat;
-		double fnonnat;
-		double irmsd;
-		double lrmsd;
+  int numNat;
+  int numCommon;
+  int numPredMinusNat;
 
-		int verdict;
+  double fnat;
+  double fnonnat;
+  double irmsd;
+  double lrmsd;
 
-		PDBParser::GroupOfAtoms* receptor;
-		PDBParser::GroupOfAtoms* correctLigand;
-		PDBParser::GroupOfAtoms* predictedLigand;
+  int verdict;
 
-		vector<PDBParser::Atom *> receptorAtoms;
-		vector<PDBParser::Atom *> correctLigandAtoms;
-		vector<PDBParser::Atom *> predictedLigandAtoms;
+  PDBParser::GroupOfAtoms *receptor;
+  PDBParser::GroupOfAtoms *correctLigand;
+  PDBParser::GroupOfAtoms *predictedLigand;
 
-		PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType;
+  vector<PDBParser::Atom *> receptorAtoms;
+  vector<PDBParser::Atom *> correctLigandAtoms;
+  vector<PDBParser::Atom *> predictedLigandAtoms;
 
-		AtomsOnInterface* atomInterfaceCorrect;
-		AtomsOnInterface* atomInterfacePredicted;
+  PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType;
 
-		vector<int> correctResiduePairs;
-		vector<int> predictedResiduePairs;
-		vector<int> interfaceAtoms;
+  AtomsOnInterface *atomInterfaceCorrect;
+  AtomsOnInterface *atomInterfacePredicted;
 
-		void init();
+  vector<int> correctResiduePairs;
+  vector<int> predictedResiduePairs;
+  vector<int> interfaceAtoms;
 
-		bool getCorrectResiduePairs();
-		bool getPredictedResiduePairs();
-		bool computeIRMSD();
-		bool computeLRMSD();
-		bool computeNats();
-		bool readAtomsFromFiles();
+  void init();
 
-		bool isBackBoneAtom(PDBParser::Atom* atom);
+  bool getCorrectResiduePairs();
+  bool getPredictedResiduePairs();
+  bool computeIRMSD();
+  bool computeLRMSD();
+  bool computeNats();
+  bool readAtomsFromFiles();
 
+  bool isBackBoneAtom(PDBParser::Atom *atom);
 
-	public:
-		CapriCriteria(string receptorFileName, string correctLigandFileName, string predictedLigandFileName);
-		CapriCriteria(string receptorFileName, string correctLigandFileName, Matrix xform);
-		CapriCriteria(string receptorFileName, string correctLigandFileName);
-		~CapriCriteria();
+public:
+  CapriCriteria(string receptorFileName, string correctLigandFileName,
+                string predictedLigandFileName);
+  CapriCriteria(string receptorFileName, string correctLigandFileName,
+                Matrix xform);
+  CapriCriteria(string receptorFileName, string correctLigandFileName);
+  ~CapriCriteria();
 
-		bool computeCapriScore();
-		bool computeCapriScore(Matrix xform);
+  bool computeCapriScore();
+  bool computeCapriScore(Matrix xform);
 
-		int getVerdict(){return verdict;}
-		double getFnat(){return fnat;}
-		double getFnonnat(){return fnonnat;}
-		double getIRMSD(){return irmsd;}
-		double getLRMSD(){return lrmsd;}
+  int getVerdict() { return verdict; }
+  double getFnat() { return fnat; }
+  double getFnonnat() { return fnonnat; }
+  double getIRMSD() { return irmsd; }
+  double getLRMSD() { return lrmsd; }
 };
 
 #endif

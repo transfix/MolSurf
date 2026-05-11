@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -30,18 +30,18 @@
 class Datavol;
 class Dataslc;
 
-class dirSeeds
-{
-	public:
-		dirSeeds(Data& d, SeedCells& s, Conplot& p) : data(d), seeds(s), plot(p) {}
-		~dirSeeds() {}
-		void compSeeds(void);
-	private:
-		void dirSweep(Datavol& vol);
-		void dirSweep(Dataslc& slc);
-		Data& data;
-		SeedCells& seeds;
-		Conplot&   plot;
+class dirSeeds {
+public:
+  dirSeeds(Data &d, SeedCells &s, Conplot &p) : data(d), seeds(s), plot(p) {}
+  ~dirSeeds() {}
+  void compSeeds(void);
+
+private:
+  void dirSweep(Datavol &vol);
+  void dirSweep(Dataslc &slc);
+  Data &data;
+  SeedCells &seeds;
+  Conplot &plot;
 };
 
 #endif

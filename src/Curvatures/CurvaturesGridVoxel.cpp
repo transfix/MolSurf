@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -21,25 +21,14 @@
 */
 #include <Curvatures/CurvaturesGridVoxel.h>
 
-CurvaturesGridVoxel::CurvaturesGridVoxel()
-{
+CurvaturesGridVoxel::CurvaturesGridVoxel() {}
+
+CurvaturesGridVoxel::~CurvaturesGridVoxel() {}
+
+void CurvaturesGridVoxel::addKernel(Tuple const tuple) {
+  m_Kernels.push_back(tuple);
 }
 
-CurvaturesGridVoxel::~CurvaturesGridVoxel()
-{
-}
+int CurvaturesGridVoxel::getNumberOfKernels() { return m_Kernels.size(); }
 
-void CurvaturesGridVoxel::addKernel(Tuple const tuple)
-{
-	m_Kernels.push_back(tuple);
-}
-
-int CurvaturesGridVoxel::getNumberOfKernels()
-{
-	return m_Kernels.size();
-}
-
-Tuple CurvaturesGridVoxel::getKernel(int index)
-{
-	return m_Kernels.at(index);
-}
+Tuple CurvaturesGridVoxel::getKernel(int index) { return m_Kernels.at(index); }

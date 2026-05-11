@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,6 +22,6 @@
 #ifndef __PARTITION_MESH_H__
 #define __PARTITION_MESH_H__
 
-bool partitionMesh(int argc, char ** argv);
+bool partitionMesh(int argc, char **argv);
 
 #endif

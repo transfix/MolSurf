@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,21 +25,19 @@
 #include <Utility/utility.h>
 #include <Summation/OutputGrid.h>
 
-namespace CCVSummationModule
-{
-	class NonUniformOutputGrid
-	 : public OutputGrid
-	{
-		public:
-			NonUniformOutputGrid(float* outputPositions, float* output, int numberOfOutputPoints);
-			virtual ~NonUniformOutputGrid();
-			virtual bool initialized();
+namespace CCVSummationModule {
+class NonUniformOutputGrid : public OutputGrid {
+public:
+  NonUniformOutputGrid(float *outputPositions, float *output,
+                       int numberOfOutputPoints);
+  virtual ~NonUniformOutputGrid();
+  virtual bool initialized();
 
-		protected:
-			float* m_OutputPositions;
-			float* m_Output;
-			int m_NumberOfOutputPoints;
-	};
+protected:
+  float *m_OutputPositions;
+  float *m_Output;
+  int m_NumberOfOutputPoints;
 };
+}; // namespace CCVSummationModule
 
 #endif

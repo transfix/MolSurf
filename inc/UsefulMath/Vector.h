@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,37 +25,36 @@
 #include <Utility/utility.h>
 #include <UsefulMath/Tuple.h>
 
-namespace CCVOpenGLMath
-{
-	class Vector : public Tuple
-	{
-		public:
-			Vector(float x, float y, float z, float w);
-			Vector(float* array);
-			Vector();
-			virtual ~Vector();
-			Vector(const Vector& copy);
-			Vector& operator=(const Vector& copy);
-			Vector& set(float x, float y, float z, float w);
-			Vector& set(float* array);
-			Vector& set(const Vector& copy);
-			Vector cross(const Vector& vec) const;
-			Vector& crossEquals(const Vector& vec);
-			float dot(const Vector& vec) const;
-			Vector  operator+(const Vector vec) const;
-			Vector& operator+=(const Vector vec);
-			Vector  operator-(const Vector vec) const;
-			Vector& operator-=(const Vector vec);
-			Vector  operator*(float scalar) const;
-			Vector& operator*=(float scalar);
-			Vector  operator-() const;
-			Vector& normalize();
-			float norm() const;
-			bool isBad();
-			static Vector badVector();
-			static bool getCorners(double* min, double* max, CCVOpenGLMath::Vector* vCorner);
-			virtual Vector* clone() const;
-	};
+namespace CCVOpenGLMath {
+class Vector : public Tuple {
+public:
+  Vector(float x, float y, float z, float w);
+  Vector(float *array);
+  Vector();
+  virtual ~Vector();
+  Vector(const Vector &copy);
+  Vector &operator=(const Vector &copy);
+  Vector &set(float x, float y, float z, float w);
+  Vector &set(float *array);
+  Vector &set(const Vector &copy);
+  Vector cross(const Vector &vec) const;
+  Vector &crossEquals(const Vector &vec);
+  float dot(const Vector &vec) const;
+  Vector operator+(const Vector vec) const;
+  Vector &operator+=(const Vector vec);
+  Vector operator-(const Vector vec) const;
+  Vector &operator-=(const Vector vec);
+  Vector operator*(float scalar) const;
+  Vector &operator*=(float scalar);
+  Vector operator-() const;
+  Vector &normalize();
+  float norm() const;
+  bool isBad();
+  static Vector badVector();
+  static bool getCorners(double *min, double *max,
+                         CCVOpenGLMath::Vector *vCorner);
+  virtual Vector *clone() const;
 };
+}; // namespace CCVOpenGLMath
 
 #endif

@@ -2,7 +2,7 @@
   Copyright 2011 The University of Texas at Austin
 
         Author: Zhang Qin <zqyork@ices.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,6 +23,6 @@
 #include <FastMolSurf/fastMolSurfAPI.h>
 #include <FastMolSurf/fastMolSurf.h>
 
-int constructFastMolSurface(int argc, char* argv[]) {
-  constructFastMoleSurface(argc,argv);
+int constructFastMolSurface(int argc, char *argv[]) {
+  constructFastMoleSurface(argc, argv);
 }

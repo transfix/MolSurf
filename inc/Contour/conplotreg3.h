@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -35,45 +35,34 @@
 #include <Contour/seedcells.h>
 #include <Contour/segtree.h>
 
-class Conplotreg3 : public Conplot
-{
-	public:
-		Conplotreg3(Datasetreg3* d);
-		~Conplotreg3();
-		Contour3d* con3, *curcon;
+class Conplotreg3 : public Conplot {
+public:
+  Conplotreg3(Datasetreg3 *d);
+  ~Conplotreg3();
+  Contour3d *con3, *curcon;
 
-	protected:
-		// extract in 3d (from memory) or slice-by-slice (swap from disk)
-		u_int ExtractAll(float isovalue);
-		void interpRect3Dpts_x(int, int, int, float*, float*, float [3][8], int, int, float, float*, float*, float*);
-		void interpRect3Dpts_y(int, int, int, float*, float*, float [3][8], int, int, float, float*, float*, float*);
-		void interpRect3Dpts_z(int, int, int, float*, float*, float [3][8], int, int, float, float*, float*, float*);
-		int InterpEdge(float*, float*, float [3][8], float, int, int, int, int);
-		// track a contour from a seed cell
-		void TrackContour(float, int);
-		// enqueue faces for propagation of surface
-		inline void EnqueueFaces(int, u_int, u_int, u_int, CellQueue&);
-		void Reset(int t)
-		{
-			con3[t].Reset();
-		}
-		int  Size(int t)
-		{
-			return(con3[t].getSize());
-		}
-		int  isDone(int t)
-		{
-			return(con3[t].isDone());
-		}
-		void Done(int t)
-		{
-			con3[t].Done();
-		}
+protected:
+  // extract in 3d (from memory) or slice-by-slice (swap from disk)
+  u_int ExtractAll(float isovalue);
+  void interpRect3Dpts_x(int, int, int, float *, float *, float[3][8], int, int,
+                         float, float *, float *, float *);
+  void interpRect3Dpts_y(int, int, int, float *, float *, float[3][8], int, int,
+                         float, float *, float *, float *);
+  void interpRect3Dpts_z(int, int, int, float *, float *, float[3][8], int, int,
+                         float, float *, float *, float *);
+  int InterpEdge(float *, float *, float[3][8], float, int, int, int, int);
+  // track a contour from a seed cell
+  void TrackContour(float, int);
+  // enqueue faces for propagation of surface
+  inline void EnqueueFaces(int, u_int, u_int, u_int, CellQueue &);
+  void Reset(int t) { con3[t].Reset(); }
+  int Size(int t) { return (con3[t].getSize()); }
+  int isDone(int t) { return (con3[t].isDone()); }
+  void Done(int t) { con3[t].Done(); }
 
-	private:
-
-		Datasetreg3*	reg3;
-		Datareg3*	curreg3;
+private:
+  Datasetreg3 *reg3;
+  Datareg3 *curreg3;
 };
 
 #endif

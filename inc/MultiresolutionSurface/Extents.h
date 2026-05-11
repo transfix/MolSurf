@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,44 +26,37 @@
 
 using namespace CCVOpenGLMath;
 
-class Extents
-{
-	public:
-		Extents();
-		Extents(
-			double xMin, double xMax,
-			double yMin, double yMax,
-			double zMin, double zMax
-		);
-		virtual ~Extents();
+class Extents {
+public:
+  Extents();
+  Extents(double xMin, double xMax, double yMin, double yMax, double zMin,
+          double zMax);
+  virtual ~Extents();
 
-		void setExtents(
-			double xMin, double xMax,
-			double yMin, double yMax,
-			double zMin, double zMax
-		);
-		Vector getOrigin() const;
-		void setOrigin(Vector vector, const Extents& boundaryExtents);
-		void move(const Vector& vector);
-		bool withinCube(const Vector& vector) const;
-		void clampTo(const Extents& boundaryExtents);
-		double getXMin() const;
-		double getYMin() const;
-		double getZMin() const;
-		double getXMax() const;
-		double getYMax() const;
-		double getZMax() const;
-		void setXMin(double xMin);
-		void setYMin(double yMin);
-		void setZMin(double zMin);
-		void setXMax(double xMax);
-		void setYMax(double yMax);
-		void setZMax(double zMax);
+  void setExtents(double xMin, double xMax, double yMin, double yMax,
+                  double zMin, double zMax);
+  Vector getOrigin() const;
+  void setOrigin(Vector vector, const Extents &boundaryExtents);
+  void move(const Vector &vector);
+  bool withinCube(const Vector &vector) const;
+  void clampTo(const Extents &boundaryExtents);
+  double getXMin() const;
+  double getYMin() const;
+  double getZMin() const;
+  double getXMax() const;
+  double getYMax() const;
+  double getZMax() const;
+  void setXMin(double xMin);
+  void setYMin(double yMin);
+  void setZMin(double zMin);
+  void setXMax(double xMax);
+  void setYMax(double yMax);
+  void setZMax(double zMax);
 
-	protected:
-		double m_XMin, m_XMax;
-		double m_YMin, m_YMax;
-		double m_ZMin, m_ZMax;
+protected:
+  double m_XMin, m_XMax;
+  double m_YMin, m_YMax;
+  double m_ZMin, m_ZMax;
 };
 
 #endif

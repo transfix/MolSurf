@@ -1,25 +1,25 @@
-//C- -*- C++ -*-
-//C- Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.
-//C-
-//C- This software (the "Original Code") is subject to, and may be
-//C- distributed under, the GNU General Public License, Version 2.
-//C- You may obtain a copy of the license from the Free Software
-//C- Foundation at http://www.fsf.org.
-//C-
-//C- With respect to the Original Code, and subject to any third party
-//C- intellectual property claims, LizardTech grants recipient a worldwide,
-//C- royalty-free, non-exclusive license under patent claims infringed by
-//C- making, using, or selling Original Code which are now or hereafter
-//C- owned or controlled by LizardTech, but solely to the extent that any
-//C- such patent is reasonably necessary to enable you to make, have made,
-//C- practice, sell, or otherwise dispose of Original Code (or portions
-//C- thereof) and not to any greater extent that may be necessary to utilize
-//C- further modifications or combinations.
-//C-
-//C- The Original Code is provided "AS IS" WITHOUT WARRANTY OF ANY KIND,
-//C- EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY
-//C- OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF MERCHANTIBILITY OF
-//C- FITNESS FOR A PARTICULAR PURPOSE.
+// C- -*- C++ -*-
+// C- Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.
+// C-
+// C- This software (the "Original Code") is subject to, and may be
+// C- distributed under, the GNU General Public License, Version 2.
+// C- You may obtain a copy of the license from the Free Software
+// C- Foundation at http://www.fsf.org.
+// C-
+// C- With respect to the Original Code, and subject to any third party
+// C- intellectual property claims, LizardTech grants recipient a worldwide,
+// C- royalty-free, non-exclusive license under patent claims infringed by
+// C- making, using, or selling Original Code which are now or hereafter
+// C- owned or controlled by LizardTech, but solely to the extent that any
+// C- such patent is reasonably necessary to enable you to make, have made,
+// C- practice, sell, or otherwise dispose of Original Code (or portions
+// C- thereof) and not to any greater extent that may be necessary to utilize
+// C- further modifications or combinations.
+// C-
+// C- The Original Code is provided "AS IS" WITHOUT WARRANTY OF ANY KIND,
+// C- EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY
+// C- OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF MERCHANTIBILITY OF
+// C- FITNESS FOR A PARTICULAR PURPOSE.
 
 #ifndef _GSMARTPOINTER_H_
 #define _GSMARTPOINTER_H_
@@ -52,39 +52,36 @@
 
 #include <C2C/arithlib/libdjvu++/DjVuGlobal.h>
 
-
-
 /** Base class for reference counted objects.
     This is the base class for all reference counted objects.
     Any instance of a subclass of #GPEnabled# can be used with
     smart-pointers (see \Ref{GP}).
  */
-class GPEnabled
-{
-	public:
-		/// Null constructor.
-		GPEnabled();
-		/// Virtual destructor.
-		virtual ~GPEnabled();
-		/// Copy operator
-		GPEnabled& operator=(const GPEnabled& obj);
-	protected:
-		/// The reference counter
-		volatile int count;
-		/** Called when this object must be destroyed.
-		    The virtual function #destroy# is called when the reference counter is
-		    decremented from one to zero. The default implementation just calls
-		    #operator delete#. This default implementation should be enough for most
-		    purposes.  See the implementation of \Ref{GString} for an example of
-		    overriding #destroy#. */
-		virtual void destroy();
-	private:
-		friend class GPBase;
-		void unref();
-		void ref();
+class GPEnabled {
+public:
+  /// Null constructor.
+  GPEnabled();
+  /// Virtual destructor.
+  virtual ~GPEnabled();
+  /// Copy operator
+  GPEnabled &operator=(const GPEnabled &obj);
+
+protected:
+  /// The reference counter
+  volatile int count;
+  /** Called when this object must be destroyed.
+      The virtual function #destroy# is called when the reference counter is
+      decremented from one to zero. The default implementation just calls
+      #operator delete#. This default implementation should be enough for most
+      purposes.  See the implementation of \Ref{GString} for an example of
+      overriding #destroy#. */
+  virtual void destroy();
+
+private:
+  friend class GPBase;
+  void unref();
+  void ref();
 };
-
-
 
 /** Base class for all smart-pointers.
     This class implements common mechanisms for all
@@ -93,38 +90,37 @@ class GPEnabled
     in reducing the template expansion overhead.
 */
 
-class GPBase
-{
-	public:
-		/** Null Constructor. */
-		GPBase();
-		/** Copy Constructor.
-		    Increments the reference count.
-		    @param sptr reference to a #GPBase# object. */
-		GPBase(const GPBase& sptr);
-		/** Construct a GPBase from a pointer.
-		    Increments the reference count.
-		    @param nptr pointer to a #GPEnabled# object. */
-		GPBase(GPEnabled* nptr);
-		/** Destructor.
-		    Decrements the reference count. */
-		~GPBase();
-		/** Accesses the actual pointer. */
-		GPEnabled* get() const;
-		/** Assignment.
-		    Increments the counter of the new value of the pointer.
-		    Decrements the counter of the previous value of the pointer.
-		    @param nptr new #GPEnabled# pointer assigned to this object. */
-		GPBase& assign(GPEnabled* nptr);
-		/** Assignment operator. */
-		GPBase& operator=(const GPBase& obj);
-		/** Comparison operator. */
-		int operator==(const GPBase& g2) const;
-	protected:
-		/** Actual pointer */
-		GPEnabled* ptr;
-};
+class GPBase {
+public:
+  /** Null Constructor. */
+  GPBase();
+  /** Copy Constructor.
+      Increments the reference count.
+      @param sptr reference to a #GPBase# object. */
+  GPBase(const GPBase &sptr);
+  /** Construct a GPBase from a pointer.
+      Increments the reference count.
+      @param nptr pointer to a #GPEnabled# object. */
+  GPBase(GPEnabled *nptr);
+  /** Destructor.
+      Decrements the reference count. */
+  ~GPBase();
+  /** Accesses the actual pointer. */
+  GPEnabled *get() const;
+  /** Assignment.
+      Increments the counter of the new value of the pointer.
+      Decrements the counter of the previous value of the pointer.
+      @param nptr new #GPEnabled# pointer assigned to this object. */
+  GPBase &assign(GPEnabled *nptr);
+  /** Assignment operator. */
+  GPBase &operator=(const GPBase &obj);
+  /** Comparison operator. */
+  int operator==(const GPBase &g2) const;
 
+protected:
+  /** Actual pointer */
+  GPEnabled *ptr;
+};
 
 /** Reference counting pointer.
     Class #GP<TYPE># represents a smart-pointer to an object of type #TYPE#.
@@ -147,9 +143,9 @@ class GPBase
     The first time you use a smart-pointer to access #GPEnabled# object, the
     reference counter is incremented to one. Object destruction will then
     happen automatically when the reference counter is decremented back to
-    zero (i.e. when the last smart-pointer referencing this object stops doing so).
-    This will happen regardless of how many regular pointers reference this object.
-    In other words, if you start using smart-pointers with a #GPEnabled#
+    zero (i.e. when the last smart-pointer referencing this object stops doing
+   so). This will happen regardless of how many regular pointers reference this
+   object. In other words, if you start using smart-pointers with a #GPEnabled#
     object, you engage automatic mode for this object.  You should only do
     this with objects dynamically allocated with operator #new#.  You should
     never destroy the object yourself, but let the smart-pointers control the
@@ -181,218 +177,156 @@ class GPBase
     this is a small problem in regard to the benefits of the smart-pointer.
     But one has to be aware of its existence.  */
 
-template <class TYPE>
-class GP : protected GPBase
-{
-	public:
-		/** Constructs a null smart-pointer. */
-		GP();
-		/** Constructs a copy of a smart-pointer.
-		    @param sptr smart-pointer to copy. */
-		GP(const GP<TYPE> &sptr);
-		/** Constructs a smart-pointer from a regular pointer.
-		    The pointed object must be dynamically allocated (with operator #new#).
-		    You should no longer explicitly destroy the object referenced by #sptr#
-		    since the object life is now controlled by smart-pointers.
-		    @param nptr regular pointer to a {\em dynamically allocated object}. */
-		GP(TYPE* nptr);
-		/** Converts a smart-pointer into a regular pointer.
-		    This is useful for caching the value of a smart-pointer for performances
-		    purposes.  The cached pointer will remain valid until the smart-pointer
-		    is destroyed or until the smart-pointer value is changed. */
-		operator TYPE*() const;
-		/** Assigns a regular pointer to a smart-pointer lvalue.
-		    The pointed object must be dynamically allocated (with operator #new#).
-		    You should no longer explicitly destroy the object referenced by #sptr#
-		    since the object life is now controlled by smart-pointers.
-		    @param nptr regular pointer to a {\em dynamically allocated object}. */
-		GP<TYPE>& operator= (TYPE* nptr);
-		/** Assigns a smart-pointer to a smart-pointer lvalue.
-		    @param sptr smart-pointer copied into this smart-pointer. */
-		GP<TYPE>& operator= (const GP<TYPE> &sptr);
-		/** Indirection operator.
-		    This operator provides a convenient access to the members
-		    of a smart-pointed object. Operator #-># works with smart-pointers
-		    exactly as with regular pointers. */
-		TYPE* operator->() const;
-		/** Dereferencement operator.
-		    This operator provides a convenient access to the smart-pointed object.
-		    Operator #*# works with smart-pointers exactly as with regular pointers. */
-		TYPE& operator*() const;
-		/** Comparison operator.
-		    Returns true if both this smart-pointer and pointer #nptr# point to the
-		    same object.  The automatic conversion from smart-pointers to regular
-		    pointers allows you to compare two smart-pointers as well.
-		    @param nptr pointer to compare with. */
-		int operator== (TYPE* nptr) const;
-		/** Comparison operator.
-		    Returns true if this smart-pointer and pointer #nptr# point to different
-		    objects. The automatic conversion from smart-pointers to regular
-		    pointers allows you to compare two smart-pointers as well.
-		    @param nptr pointer to compare with. */
-		int operator!= (TYPE* nptr) const;
-		/** Test operator.
-		    Returns true if the smart-pointer is null.  The automatic conversion
-		    from smart-pointers to regular pointers allows you to test whether
-		    a smart-pointer is non-null.  You can use both following constructs:
-		    \begin{verbatim}
-		    if (gp) { ... }
-		    while (! gp) { ... }
-		    \end{verbatim} */
-		int operator!() const;
+template <class TYPE> class GP : protected GPBase {
+public:
+  /** Constructs a null smart-pointer. */
+  GP();
+  /** Constructs a copy of a smart-pointer.
+      @param sptr smart-pointer to copy. */
+  GP(const GP<TYPE> &sptr);
+  /** Constructs a smart-pointer from a regular pointer.
+      The pointed object must be dynamically allocated (with operator #new#).
+      You should no longer explicitly destroy the object referenced by #sptr#
+      since the object life is now controlled by smart-pointers.
+      @param nptr regular pointer to a {\em dynamically allocated object}. */
+  GP(TYPE *nptr);
+  /** Converts a smart-pointer into a regular pointer.
+      This is useful for caching the value of a smart-pointer for performances
+      purposes.  The cached pointer will remain valid until the smart-pointer
+      is destroyed or until the smart-pointer value is changed. */
+  operator TYPE *() const;
+  /** Assigns a regular pointer to a smart-pointer lvalue.
+      The pointed object must be dynamically allocated (with operator #new#).
+      You should no longer explicitly destroy the object referenced by #sptr#
+      since the object life is now controlled by smart-pointers.
+      @param nptr regular pointer to a {\em dynamically allocated object}. */
+  GP<TYPE> &operator=(TYPE *nptr);
+  /** Assigns a smart-pointer to a smart-pointer lvalue.
+      @param sptr smart-pointer copied into this smart-pointer. */
+  GP<TYPE> &operator=(const GP<TYPE> &sptr);
+  /** Indirection operator.
+      This operator provides a convenient access to the members
+      of a smart-pointed object. Operator #-># works with smart-pointers
+      exactly as with regular pointers. */
+  TYPE *operator->() const;
+  /** Dereferencement operator.
+      This operator provides a convenient access to the smart-pointed object.
+      Operator #*# works with smart-pointers exactly as with regular pointers.
+   */
+  TYPE &operator*() const;
+  /** Comparison operator.
+      Returns true if both this smart-pointer and pointer #nptr# point to the
+      same object.  The automatic conversion from smart-pointers to regular
+      pointers allows you to compare two smart-pointers as well.
+      @param nptr pointer to compare with. */
+  int operator==(TYPE *nptr) const;
+  /** Comparison operator.
+      Returns true if this smart-pointer and pointer #nptr# point to different
+      objects. The automatic conversion from smart-pointers to regular
+      pointers allows you to compare two smart-pointers as well.
+      @param nptr pointer to compare with. */
+  int operator!=(TYPE *nptr) const;
+  /** Test operator.
+      Returns true if the smart-pointer is null.  The automatic conversion
+      from smart-pointers to regular pointers allows you to test whether
+      a smart-pointer is non-null.  You can use both following constructs:
+      \begin{verbatim}
+      if (gp) { ... }
+      while (! gp) { ... }
+      \end{verbatim} */
+  int operator!() const;
 };
 
 //@}
 
 // INLINE FOR GPENABLED
 
-inline
-GPEnabled::GPEnabled()
-	: count(0)
-{
-}
+inline GPEnabled::GPEnabled() : count(0) {}
 
-inline GPEnabled &
-GPEnabled::operator=(const GPEnabled& obj)
-{
-	/* The copy operator should do nothing
-	   because the count should not be changed.
-	   Subclasses of GPEnabled will call this version of the
-	   copy operator as part of the default 'memberwise copy'
-	   strategy. Thank you Andrei! */
-	return *this;
+inline GPEnabled &GPEnabled::operator=(const GPEnabled &obj) {
+  /* The copy operator should do nothing
+     because the count should not be changed.
+     Subclasses of GPEnabled will call this version of the
+     copy operator as part of the default 'memberwise copy'
+     strategy. Thank you Andrei! */
+  return *this;
 }
-
 
 // INLINE FOR GPBASE
 
-inline
-GPBase::GPBase()
-	: ptr(0)
-{
+inline GPBase::GPBase() : ptr(0) {}
+
+inline GPBase::GPBase(GPEnabled *nptr) : ptr(0) {
+  if (nptr) {
+    nptr->ref();
+  }
+  ptr = nptr;
 }
 
-inline
-GPBase::GPBase(GPEnabled* nptr)
-	: ptr(0)
-{
-	if(nptr)
-	{
-		nptr->ref();
-	}
-	ptr = nptr;
+inline GPBase::GPBase(const GPBase &sptr) {
+  if (sptr.ptr) {
+    sptr.ptr->ref();
+  }
+  ptr = sptr.ptr;
 }
 
-inline
-GPBase::GPBase(const GPBase& sptr)
-{
-	if(sptr.ptr)
-	{
-		sptr.ptr->ref();
-	}
-	ptr = sptr.ptr;
+inline GPBase::~GPBase() {
+  GPEnabled *old = ptr;
+  ptr = 0;
+  if (old) {
+    old->unref();
+  }
 }
 
-inline
-GPBase::~GPBase()
-{
-	GPEnabled* old = ptr;
-	ptr = 0;
-	if(old)
-	{
-		old->unref();
-	}
+inline GPEnabled *GPBase::get() const { return ptr; }
+
+inline GPBase &GPBase::operator=(const GPBase &obj) {
+  return assign(obj.get());
 }
 
-
-inline GPEnabled*
-GPBase::get() const
-{
-	return ptr;
+inline int GPBase::operator==(const GPBase &g2) const {
+  return get() == g2.get();
 }
-
-inline GPBase &
-GPBase::operator=(const GPBase& obj)
-{
-	return assign(obj.get());
-}
-
-inline int
-GPBase::operator==(const GPBase& g2) const
-{
-	return get() == g2.get();
-}
-
-
-
 
 // INLINE FOR GP<TYPE>
 
-template <class TYPE> inline
-GP<TYPE>::GP()
-{
+template <class TYPE> inline GP<TYPE>::GP() {}
+
+template <class TYPE>
+inline GP<TYPE>::GP(TYPE *nptr) : GPBase((GPEnabled *)nptr) {}
+
+template <class TYPE>
+inline GP<TYPE>::GP(const GP<TYPE> &sptr) : GPBase((GPEnabled *)sptr) {}
+
+template <class TYPE> inline GP<TYPE>::operator TYPE *() const {
+  return (TYPE *)(this->get());
 }
 
-template <class TYPE> inline
-GP<TYPE>::GP(TYPE* nptr)
-	: GPBase((GPEnabled*)nptr)
-{
+template <class TYPE> inline TYPE *GP<TYPE>::operator->() const {
+  return (TYPE *)(this->get());
 }
 
-
-template <class TYPE> inline
-GP<TYPE>::GP(const GP<TYPE> &sptr)
-	: GPBase((GPEnabled*) sptr)
-{
+template <class TYPE> inline TYPE &GP<TYPE>::operator*() const {
+  return *(TYPE *)(this->get());
 }
 
-
-template <class TYPE> inline
-GP<TYPE>::operator TYPE*() const
-{
-	return (TYPE*)(this->get());
+template <class TYPE> inline GP<TYPE> &GP<TYPE>::operator=(TYPE *nptr) {
+  return (GP<TYPE> &)(this->assign(nptr));
 }
 
-template <class TYPE> inline TYPE*
-GP<TYPE>::operator->() const
-{
-	return (TYPE*)(this->get());
+template <class TYPE>
+inline GP<TYPE> &GP<TYPE>::operator=(const GP<TYPE> &sptr) {
+  return (GP<TYPE> &)(this->assign(sptr.get()));
 }
 
-template <class TYPE> inline TYPE&
-GP<TYPE>::operator*() const
-{
-	return *(TYPE*)(this->get());
+template <class TYPE> inline int GP<TYPE>::operator==(TYPE *nptr) const {
+  return ((TYPE *)ptr == nptr);
 }
 
-template <class TYPE> inline GP<TYPE>&
-GP<TYPE>::operator= (TYPE* nptr)
-{
-	return (GP<TYPE>&)(this->assign(nptr));
+template <class TYPE> inline int GP<TYPE>::operator!=(TYPE *nptr) const {
+  return ((TYPE *)ptr != nptr);
 }
 
-template <class TYPE> inline GP<TYPE>&
-GP<TYPE>::operator= (const GP<TYPE> &sptr)
-{
-	return (GP<TYPE>&)(this->assign(sptr.get()));
-}
-
-template <class TYPE> inline int
-GP<TYPE>::operator== (TYPE* nptr) const
-{
-	return ((TYPE*)ptr == nptr);
-}
-
-template <class TYPE> inline int
-GP<TYPE>::operator!= (TYPE* nptr) const
-{
-	return ((TYPE*)ptr != nptr);
-}
-
-template <class TYPE> inline int
-GP<TYPE>::operator!() const
-{
-	return !ptr;
-}
+template <class TYPE> inline int GP<TYPE>::operator!() const { return !ptr; }
 
 #endif

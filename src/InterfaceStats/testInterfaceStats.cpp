@@ -1,8 +1,8 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,55 +23,50 @@
 #include <InterfaceStats/ComputeInterfaceStats.h>
 #include <UsefulMath/Matrix.h>
 
-int main(int argc, char** argv)
-{
-	if(argc<6)
-	{
-		printf("Usage: testInterfaceStats <mol1.pqr> <mol2.pqr> <mol1.quad> <mol2.quad> <xforms.txt>  \n\n (output will be printed to standard out. use redirection if you prefer)\n\n");
-		return -1;
-	}
+int main(int argc, char **argv) {
+  if (argc < 6) {
+    printf("Usage: testInterfaceStats <mol1.pqr> <mol2.pqr> <mol1.quad> "
+           "<mol2.quad> <xforms.txt>  \n\n (output will be printed to standard "
+           "out. use redirection if you prefer)\n\n");
+    return -1;
+  }
 
+  FILE *xformFile = fopen(argv[5], "rt");
+  double score, rmsd;
 
-	FILE *xformFile = fopen(argv[5], "rt");
-	double score, rmsd;
+  if (xformFile != NULL) {
+    int numXForm;
+    fscanf(xformFile, "%d", &numXForm);
 
-	if(xformFile!=NULL)
-	{
-		int numXForm;
-		fscanf(xformFile, "%d", &numXForm);
+    printf("Trying to read %d xfroms\n\n", numXForm);
 
-		printf("Trying to read %d xfroms\n\n", numXForm);
+    for (int i = 0; i < numXForm; i++) {
+      vector<Matrix> transformations;
+      Matrix mtx;
 
-		for(int i=0; i<numXForm; i++)
-		{
-			vector<Matrix> transformations;
-		       	Matrix mtx;
+      printf("Reading matrix %d\n", i);
 
-			printf("Reading matrix %d\n", i);
+      for (int j = 0; j < 4; j++) {
+        for (int k = 0; k < 4; k++) {
+          double mtx_jk;
+          fscanf(xformFile, "%lf", &mtx_jk);
+          printf("%lf ", mtx_jk);
+          mtx.set(j, k, mtx_jk);
+        }
+        printf("\n");
+      }
 
-			for(int j=0; j<4; j++)
-			{
-				for(int k=0; k<4; k++)
-				{
-					double mtx_jk;
-					fscanf(xformFile, "%lf", &mtx_jk);
-					printf("%lf ", mtx_jk);
-					mtx.set(j,k,mtx_jk);
-				}
-				printf("\n");
-			}
+      fscanf(xformFile, "%lf", &score);
+      fscanf(xformFile, "%lf", &rmsd);
 
-			fscanf(xformFile, "%lf", &score);
-			fscanf(xformFile, "%lf", &rmsd);
+      transformations.push_back(mtx);
 
-	
-			transformations.push_back(mtx);
+      ComputeInterfaceStats *compStats = new ComputeInterfaceStats(
+          argv[1], argv[2], argv[3], argv[4], transformations);
+    }
 
-			ComputeInterfaceStats *compStats = new ComputeInterfaceStats( argv[1], argv[2], argv[3], argv[4], transformations );
-		}
-	
-		fclose(xformFile);
-		return 0;
-	}
-	return -2;
+    fclose(xformFile);
+    return 0;
+  }
+  return -2;
 }

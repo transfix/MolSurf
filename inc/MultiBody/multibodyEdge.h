@@ -5,187 +5,199 @@
 #include <set>
 #include <vector>
 #include <UsefulMath/Matrix.h>
-#include<MultiBody/scoreComparator.h>
+#include <MultiBody/scoreComparator.h>
 
+class SimpleEdge {
+private:
+  bool verbose;
+  int simpleEdgeId;
+  int source;
+  int destination;
+  Score *edgeScore;
+  CCVOpenGLMath::Matrix transformation;
 
-class SimpleEdge
-{
-	private:
-		bool verbose;
-		int simpleEdgeId;
-		int source;
-		int destination;
-		Score* edgeScore;
-		CCVOpenGLMath::Matrix transformation;
+public:
+  SimpleEdge(int id, int src, int dest, ScoreWeight *sw, vector<double> &scores,
+             CCVOpenGLMath::Matrix xform, bool v = false) {
+    verbose = v;
+    simpleEdgeId = id;
+    source = src;
+    destination = dest;
+    transformation = xform;
+    edgeScore = new Score(sw);
 
+    int numScores = scores.size();
 
-	public:
-		SimpleEdge(int id, int src, int dest, ScoreWeight* sw, vector<double>& scores, CCVOpenGLMath::Matrix xform, bool v = false)
-		{
-			verbose = v;
-			simpleEdgeId = id;
-			source = src;
-			destination = dest;
-			transformation = xform;
-			edgeScore = new Score(sw);
+    if (sw == NULL || scores.size() == 0)
+      std::cout << "Error here\n";
 
-			int numScores = scores.size();
+    for (int i = 0; i < numScores; i++)
+      edgeScore->addScore(scores[i]);
+  }
 
-			if(sw == NULL || scores.size() == 0) std::cout<<"Error here\n";
+  ~SimpleEdge() { delete edgeScore; }
 
-			for(int i=0; i<numScores; i++) edgeScore->addScore(scores[i]);
-		}
+  int getId() const { return simpleEdgeId; }
 
-		~SimpleEdge() {delete edgeScore;}
+  int getSource() const { return source; }
 
-		int getId() const {return simpleEdgeId;}
-		
-		int getSource() const {return source;}
+  int getDestination() const { return destination; }
 
-		int getDestination() const {return destination;}
+  const Score *getScores() const { return edgeScore; }
 
-		const Score* getScores() const {return edgeScore;}
+  bool getScore(int scoreIndex, double &score) {
+    return edgeScore->getScore(scoreIndex, score);
+  }
 
-		bool getScore(int scoreIndex, double& score) {return edgeScore->getScore(scoreIndex, score); }
+  CCVOpenGLMath::Matrix getTransformation() const { return transformation; }
 
-		CCVOpenGLMath::Matrix getTransformation() const {return transformation;}
-
-		bool updateScore(int scoreIndex, double score) { return edgeScore->updateScore(scoreIndex, score); }
+  bool updateScore(int scoreIndex, double score) {
+    return edgeScore->updateScore(scoreIndex, score);
+  }
 };
 
+class compareSimpleEdges {
+  ScoreComparator *edgeComp;
+  bool verbose;
 
-class compareSimpleEdges
-{
-	ScoreComparator* edgeComp; 
-	bool verbose;
+public:
+  compareSimpleEdges(ScoreComparator *ec, bool v = false) {
+    verbose = v;
+    edgeComp = ec;
+  }
 
-	public:
-		compareSimpleEdges(ScoreComparator* ec, bool v = false)
-		{
-			verbose = v;
-			edgeComp = ec;
-		}
+  int compare(SimpleEdge *lhs, SimpleEdge *rhs) const {
+    return edgeComp->compare(lhs->getScores(), rhs->getScores());
+  }
 
-		int compare (SimpleEdge* lhs, SimpleEdge* rhs) const
-		{
-			return edgeComp->compare(lhs->getScores(), rhs->getScores());
-		}
-
-		bool operator() (const SimpleEdge* lhs, const SimpleEdge* rhs) const
-		{
-			if(verbose) std::cout<<"Comparing edges "<<lhs->getId()<< " and "<<rhs->getId()<<std::endl;
-			return edgeComp->compare(lhs->getScores(), rhs->getScores()) >= 0;
-		}
+  bool operator()(const SimpleEdge *lhs, const SimpleEdge *rhs) const {
+    if (verbose)
+      std::cout << "Comparing edges " << lhs->getId() << " and " << rhs->getId()
+                << std::endl;
+    return edgeComp->compare(lhs->getScores(), rhs->getScores()) >= 0;
+  }
 };
 
+class AssemblyEdge {
+private:
+  int assemblyId;
+  int selectedSimpleEdgeIndex;
 
-class AssemblyEdge
-{
-	private:
-		int assemblyId;
-		int selectedSimpleEdgeIndex;
+public:
+  AssemblyEdge(int aid, int ssei) {
+    assemblyId = aid;
+    selectedSimpleEdgeIndex = ssei;
+  }
+  ~AssemblyEdge() {}
 
-	public:
-		AssemblyEdge(int aid, int ssei){assemblyId = aid; selectedSimpleEdgeIndex = ssei;}
-		~AssemblyEdge(){}
+  int getAssemblyId() const { return assemblyId; }
+  int getSelectedSimpleEdgeIndex() const { return selectedSimpleEdgeIndex; }
 
-		int getAssemblyId() const {return assemblyId;}
-		int getSelectedSimpleEdgeIndex() const {return selectedSimpleEdgeIndex;}
-
-		void setAssemblyId(int ai){assemblyId = ai;}
-		void setSelectedSimpleEdgeIndex(int ssei){selectedSimpleEdgeIndex = ssei;}
+  void setAssemblyId(int ai) { assemblyId = ai; }
+  void setSelectedSimpleEdgeIndex(int ssei) { selectedSimpleEdgeIndex = ssei; }
 };
 
 /*
 class compareSimpleEdge
 {
-	bool reverse;
+        bool reverse;
 
-	public:
-		compareSimpleEdge(const bool& revparam=false)
-		{
-			reverse=revparam;
-		}
+        public:
+                compareSimpleEdge(const bool& revparam=false)
+                {
+                        reverse=revparam;
+                }
 
-		bool operator() (const SimpleEdge& lhs, const SimpleEdge& rhs) const
-		{
-			double l = lhs.getTotalScore();
-			double r = rhs.getTotalScore();
-			if (reverse) return (l>=r);
-			else return (l<r);
-		}
+                bool operator() (const SimpleEdge& lhs, const SimpleEdge& rhs)
+const
+                {
+                        double l = lhs.getTotalScore();
+                        double r = rhs.getTotalScore();
+                        if (reverse) return (l>=r);
+                        else return (l<r);
+                }
 };
 */
 
+class MultiBodyEdge {
+private:
+  bool verbose;
+  int edgeId;
+  int source;
+  int destination;
 
-class MultiBodyEdge
-{
-	private:
-		bool verbose;
-		int edgeId;
-		int source;
-		int destination;
+  ScoreWeight *edgeWeights;
+  ScoreComparator *edgeComp;
 
-		ScoreWeight* edgeWeights;
-		ScoreComparator* edgeComp;
+  int numSimpleEdges;
+  std::vector<SimpleEdge *> simpleEdges;
+  std::vector<int> sortedEdgeIndices;
+  int currentSimpleEdge;
 
-		int numSimpleEdges;
-		std::vector< SimpleEdge* > simpleEdges;
-		std::vector< int > sortedEdgeIndices;
-		int currentSimpleEdge;
+  bool isPartOfAssembly;
+  std::vector<AssemblyEdge> assemblyEdges;
 
-		bool isPartOfAssembly;
-		std::vector<AssemblyEdge> assemblyEdges;
+  bool edgeDataReady;
 
-		bool edgeDataReady;
+  bool readXformFile(string xformFileName);
 
-		bool readXformFile(string xformFileName);
+public:
+  MultiBodyEdge(int nodeIndex1, int nodeIndex2, int id, string xformFileName,
+                ScoreWeight *sw, ScoreComparator *edgeComp,
+                bool verbose = false);
+  ~MultiBodyEdge();
 
+  int getId() const { return edgeId; }
 
-	public:
-		MultiBodyEdge(int nodeIndex1, int nodeIndex2, int id, string xformFileName, ScoreWeight* sw, ScoreComparator* edgeComp, bool verbose = false);
-		~MultiBodyEdge();
+  bool isReady() const { return edgeDataReady; }
 
-		int getId() const {return edgeId;}
-	
-		bool isReady() const {return edgeDataReady;}
+  void sortSimpleEdges();
 
-		void sortSimpleEdges();
+  void addSimpleEdge(CCVOpenGLMath::Matrix mtx, vector<double> &);
 
-		void addSimpleEdge(CCVOpenGLMath::Matrix mtx, vector<double>&);
+  int getSourceNodeIndex() const { return source; }
+  int getDestinationNodeIndex() const { return destination; }
 
-		int getSourceNodeIndex() const {return source;}
-		int getDestinationNodeIndex() const {return destination;}
+  void makePartOfAssembly(int assemblyId, int simpleEdgeIndex);
+  bool isPartOfAnyAssembly() const { return isPartOfAssembly; }
+  int getAssemblyEdgeIndex(int assemblyId) const;
 
-		void makePartOfAssembly(int assemblyId, int simpleEdgeIndex);
-		bool isPartOfAnyAssembly() const {return isPartOfAssembly;}
-		int getAssemblyEdgeIndex(int assemblyId) const;
+  int getNumEdges() const { return simpleEdges.size(); }
+  bool getTransformation(int simpleEdgeIndex, CCVOpenGLMath::Matrix &T) const;
+  bool getScore(int simpleEdgeIndex, int scoreIndex, double &score) const;
 
-		int getNumEdges() const {return simpleEdges.size();}
-		bool getTransformation(int simpleEdgeIndex, CCVOpenGLMath::Matrix& T) const ;
-		bool getScore(int simpleEdgeIndex, int scoreIndex, double& score) const;
+  SimpleEdge *getBestSimpleEdge() const {
+    return simpleEdges[sortedEdgeIndices[0]];
+  }
+  SimpleEdge *getNextBestSimpleEdge() {
+    return simpleEdges[sortedEdgeIndices[currentSimpleEdge++]];
+  } // increments currentSimpleEdge
 
-		SimpleEdge* getBestSimpleEdge() const {return simpleEdges[sortedEdgeIndices[0]];}
-		SimpleEdge* getNextBestSimpleEdge() {return simpleEdges[sortedEdgeIndices[currentSimpleEdge++]];}	//increments currentSimpleEdge
-
-		int getIndexOfNextBestSimpleEdge() const {return sortedEdgeIndices[currentSimpleEdge];}
-		SimpleEdge* getSimpleEdge(int index) const {if(index>=0 && index < numSimpleEdges) return simpleEdges[index]; return NULL;}
-		void moveToNextBestSimpleEdge() {currentSimpleEdge++;}
+  int getIndexOfNextBestSimpleEdge() const {
+    return sortedEdgeIndices[currentSimpleEdge];
+  }
+  SimpleEdge *getSimpleEdge(int index) const {
+    if (index >= 0 && index < numSimpleEdges)
+      return simpleEdges[index];
+    return NULL;
+  }
+  void moveToNextBestSimpleEdge() { currentSimpleEdge++; }
 };
 
+class compareMultiEdges {
+  compareSimpleEdges *compSimpEdges;
+  bool verbose;
 
-class compareMultiEdges
-{
-	compareSimpleEdges* compSimpEdges;
-	bool verbose;
+public:
+  compareMultiEdges(compareSimpleEdges *cse, bool v = false) {
+    compSimpEdges = cse;
+    verbose = v;
+  }
 
-	public:
-		compareMultiEdges(compareSimpleEdges* cse, bool v = false) {compSimpEdges = cse; verbose = v;}
-
-		bool operator() (const MultiBodyEdge* lhs, const MultiBodyEdge* rhs) const
-		{
-			return compSimpEdges->compare(lhs->getBestSimpleEdge(), rhs->getBestSimpleEdge()) >= 0;
-		}
+  bool operator()(const MultiBodyEdge *lhs, const MultiBodyEdge *rhs) const {
+    return compSimpEdges->compare(lhs->getBestSimpleEdge(),
+                                  rhs->getBestSimpleEdge()) >= 0;
+  }
 };
 
 #endif

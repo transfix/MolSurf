@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,10 +24,10 @@
 
 #include <stdio.h>
 
-size_t getFloat(float*, size_t, FILE*);
-size_t getInt(int*, size_t, FILE*);
-size_t getShort(short*, size_t, FILE*);
-size_t getUnChar(unsigned char*, size_t, FILE*);
-size_t putFloat(float*,size_t,FILE*);
+size_t getFloat(float *, size_t, FILE *);
+size_t getInt(int *, size_t, FILE *);
+size_t getShort(short *, size_t, FILE *);
+size_t getUnChar(unsigned char *, size_t, FILE *);
+size_t putFloat(float *, size_t, FILE *);
 
 #endif

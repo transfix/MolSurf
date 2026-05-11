@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,23 +25,23 @@
 #include <Utility/utility.h>
 #include <Summation/Kernel.h>
 
-namespace CCVSummationModule
-{
-	class Kernel;
-	class OutputGrid;
-	class SummationModule
-	{
-		public:
-			SummationModule(double* centers, double* radii, double* weights, int numberOfCenters, Kernel* kernel);
-			virtual ~SummationModule();
-			virtual bool sum() = 0;
-		protected:
-			double* m_Centers;
-			double* m_Radii;
-			double* m_Weights;
-			int m_NumberOfCenters;
-			Kernel* m_Kernel;
-	};
+namespace CCVSummationModule {
+class Kernel;
+class OutputGrid;
+class SummationModule {
+public:
+  SummationModule(double *centers, double *radii, double *weights,
+                  int numberOfCenters, Kernel *kernel);
+  virtual ~SummationModule();
+  virtual bool sum() = 0;
+
+protected:
+  double *m_Centers;
+  double *m_Radii;
+  double *m_Weights;
+  int m_NumberOfCenters;
+  Kernel *m_Kernel;
 };
+}; // namespace CCVSummationModule
 
 #endif

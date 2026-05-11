@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -30,20 +30,22 @@
 #include <PDBParser/ResidueData.h>
 #include <PDBParser/GOAVector.h>
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class Atom;
-	void calculateNucleotideTorsionAngles(Atom* prevO3p, GroupOfAtoms* nuc, Atom* nextP, Atom* nextO5p, Atom* prevC4p, Atom* nextC4p);
-	void calculateNucleicAcidChainTorsionAngles(GroupOfAtoms* currChain);
-	double findTorsion(Atom* nx, Atom* nr, Atom* fr, Atom* fx);
-	int strcmp_ci2(const char* str1, const char* str2);
-	bool isPurine(GroupOfAtoms* nuc);
-	bool isPyrimidine(GroupOfAtoms* nuc);
-	Atom* findAtom(GroupOfAtoms* res, const char* name);
-	GroupOfAtoms* findResidue(GroupOfAtoms* mol, int reqResID);
-	void calculatePhiAndPsi(GroupOfAtoms* previousResidue, GroupOfAtoms* currentResidue);
-	void calculateProteinChainTorsionAngles(GroupOfAtoms* currChain);
-};
+namespace PDBParser {
+class GroupOfAtoms;
+class Atom;
+void calculateNucleotideTorsionAngles(Atom *prevO3p, GroupOfAtoms *nuc,
+                                      Atom *nextP, Atom *nextO5p, Atom *prevC4p,
+                                      Atom *nextC4p);
+void calculateNucleicAcidChainTorsionAngles(GroupOfAtoms *currChain);
+double findTorsion(Atom *nx, Atom *nr, Atom *fr, Atom *fx);
+int strcmp_ci2(const char *str1, const char *str2);
+bool isPurine(GroupOfAtoms *nuc);
+bool isPyrimidine(GroupOfAtoms *nuc);
+Atom *findAtom(GroupOfAtoms *res, const char *name);
+GroupOfAtoms *findResidue(GroupOfAtoms *mol, int reqResID);
+void calculatePhiAndPsi(GroupOfAtoms *previousResidue,
+                        GroupOfAtoms *currentResidue);
+void calculateProteinChainTorsionAngles(GroupOfAtoms *currChain);
+}; // namespace PDBParser
 
 #endif

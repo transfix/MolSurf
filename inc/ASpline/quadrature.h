@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,18 +24,17 @@
 
 #include <Utility/utility.h>
 
-class Quadrature
-{
-	public:
-		Quadrature();
-		Quadrature(const char* type, int numOfPts);
-		int numOfPts_perTri;
-		double* xi1, *xi2, *xi3, *w;
-		void onePtGaussian();
-		void threePtGaussian();
-		void sixPtGaussian();
-		void sevenPtGaussian();
-		void twelvePtGaussian();
+class Quadrature {
+public:
+  Quadrature();
+  Quadrature(const char *type, int numOfPts);
+  int numOfPts_perTri;
+  double *xi1, *xi2, *xi3, *w;
+  void onePtGaussian();
+  void threePtGaussian();
+  void sixPtGaussian();
+  void sevenPtGaussian();
+  void twelvePtGaussian();
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,21 +23,18 @@
 
 using PDBParser::SecondaryStructureData;
 
-SecondaryStructureData::SecondaryStructureData()
-{
+SecondaryStructureData::SecondaryStructureData() {}
+
+SecondaryStructureData::SecondaryStructureData(
+    const SecondaryStructureData &secondaryStructureData) {
+  m_ResSequenceNumberPairList =
+      secondaryStructureData.m_ResSequenceNumberPairList;
+  // The geometry is defined as a 7 tuple, containing
+  // x1, y1, z1, x2, y2, z2, radius
+  m_StrandGeometry = secondaryStructureData.m_StrandGeometry;
+  // end for sheets
+  // Used for Helices
+  m_HelixGeometry = secondaryStructureData.m_HelixGeometry;
 }
 
-SecondaryStructureData::SecondaryStructureData(const SecondaryStructureData& secondaryStructureData)
-{
-	m_ResSequenceNumberPairList = secondaryStructureData.m_ResSequenceNumberPairList;
-	// The geometry is defined as a 7 tuple, containing
-	// x1, y1, z1, x2, y2, z2, radius
-	m_StrandGeometry = secondaryStructureData.m_StrandGeometry;
-	// end for sheets
-	// Used for Helices
-	m_HelixGeometry = secondaryStructureData.m_HelixGeometry;
-}
-
-SecondaryStructureData::~SecondaryStructureData()
-{
-}
+SecondaryStructureData::~SecondaryStructureData() {}

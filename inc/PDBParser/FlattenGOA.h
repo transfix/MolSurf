@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,12 +23,11 @@
 #include <PDBParser/GroupOfAtoms.h>
 #include <PDBParser/Atom.h>
 
+namespace PDBParser {
 
-namespace PDBParser{
-
-bool FlattenGOA(GroupOfAtoms* grp, vector<Atom*> & flatList, 
-		CollectionData* collectionData,
-		int numberOfTransformations, double* rotations, double* translations, 
-		GroupOfAtoms::RADIUS_TYPE radiusType, unsigned int level, 
-		bool colorBySubunits);
+bool FlattenGOA(GroupOfAtoms *grp, vector<Atom *> &flatList,
+                CollectionData *collectionData, int numberOfTransformations,
+                double *rotations, double *translations,
+                GroupOfAtoms::RADIUS_TYPE radiusType, unsigned int level,
+                bool colorBySubunits);
 }

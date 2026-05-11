@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,6 +27,8 @@
 #include <PocketTunnel/util.h>
 #include <PocketTunnel/robust_cc.h>
 
-void robust_cocone(const double bb_ratio, const double theta_ff, const double theta_if, Triangulation& triang, const char* outfile_prefix);
+void robust_cocone(const double bb_ratio, const double theta_ff,
+                   const double theta_if, Triangulation &triang,
+                   const char *outfile_prefix);
 
 #endif

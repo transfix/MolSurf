@@ -1,8 +1,8 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Muhibur Rasheed <muhibur@ices.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,210 +26,201 @@
 
 using namespace DPG;
 
-int main( int argc, char *argv[ ] )
-{
-	if ( argc < 2 )
-	{
-		printf( "Input text file not specified!\n" );
-		return 1;
-	}
-     
-    	char *Molecule;
-    	char *Update;      
-    	char *Range;      
-    	char *Output;
+int main(int argc, char *argv[]) {
+  if (argc < 2) {
+    printf("Input text file not specified!\n");
+    return 1;
+  }
 
-	char s[ 2000 ];
-	char key[ 500 ], val[ 500 ];
-	FILE *fp;
+  char *Molecule;
+  char *Update;
+  char *Range;
+  char *Output;
 
-	fp = fopen( argv[ 1 ], "r" );
+  char s[2000];
+  char key[500], val[500];
+  FILE *fp;
 
-	if ( fp == NULL )
-	{
-		printf( "Failed to open parameter file %s!\n", argv[ 1 ] );
-		return 1;
-	}
+  fp = fopen(argv[1], "r");
 
-	Molecule = NULL;
-	Update = NULL;
-	Range = NULL;
-	Output = NULL;
+  if (fp == NULL) {
+    printf("Failed to open parameter file %s!\n", argv[1]);
+    return 1;
+  }
 
-	while ( fgets( s, 1999, fp ) != NULL )
-	{
-		if ( sscanf( s, "%s %s", key, val ) != 2 ) continue;
-    
-		if ( !strcasecmp( key, "moleculeFile" ) ) Molecule = strdup( val );
-		else if ( !strcasecmp( key, "updateFile" ) ) Update = strdup( val );
-		else if ( !strcasecmp( key, "queryFile" ) ) Range = strdup( val );
-		else if ( !strcasecmp( key, "outFile" ) ) Output = strdup( val );
-	}
+  Molecule = NULL;
+  Update = NULL;
+  Range = NULL;
+  Output = NULL;
 
-	if(fp) fclose(fp);
-    
-	if ( Molecule == NULL )  
-	{ 
-		printf( "Missing molecule file name for the static molecule!\n" );
-		return 1;
-	}
+  while (fgets(s, 1999, fp) != NULL) {
+    if (sscanf(s, "%s %s", key, val) != 2)
+      continue;
 
-/* Creating DPG */
-   
-	PG *pg = new PG(10.0, 1000.0, 3.0); 
-	vector <Point *> pts;
-	int numPoints = 0;
-	double x, y, z, r;
+    if (!strcasecmp(key, "moleculeFile"))
+      Molecule = strdup(val);
+    else if (!strcasecmp(key, "updateFile"))
+      Update = strdup(val);
+    else if (!strcasecmp(key, "queryFile"))
+      Range = strdup(val);
+    else if (!strcasecmp(key, "outFile"))
+      Output = strdup(val);
+  }
 
-/* inserting atoms into DPG */
+  if (fp)
+    fclose(fp);
 
-	fp = fopen(Molecule, "r");
-	if(fp==NULL)
-	{
-		printf("Molecule File not found\n");
-		return false;
-	}
-	while(!feof(fp))
-	{
-		fscanf(fp,"%lf",&x);
-		fscanf(fp,"%lf",&y);
-		fscanf(fp,"%lf",&z);
-		fscanf(fp,"%lf",&r);
+  if (Molecule == NULL) {
+    printf("Missing molecule file name for the static molecule!\n");
+    return 1;
+  }
 
-		Ball *p = new Ball(x, y, z, r);
+  /* Creating DPG */
 
-		pts.push_back(p);
+  PG *pg = new PG(10.0, 1000.0, 3.0);
+  vector<Point *> pts;
+  int numPoints = 0;
+  double x, y, z, r;
 
-		pg->addPoint(p);
-		numPoints++;
-	}
-	if(fp) fclose(fp);
+  /* inserting atoms into DPG */
 
-/* updating atoms */
+  fp = fopen(Molecule, "r");
+  if (fp == NULL) {
+    printf("Molecule File not found\n");
+    return false;
+  }
+  while (!feof(fp)) {
+    fscanf(fp, "%lf", &x);
+    fscanf(fp, "%lf", &y);
+    fscanf(fp, "%lf", &z);
+    fscanf(fp, "%lf", &r);
 
-	if ( Update == NULL )  
-	{ 
-		printf( "No updates specified\n" );
-	}
-	else
-	{
-		fp = fopen(Update, "r");
+    Ball *p = new Ball(x, y, z, r);
 
-		if(fp==NULL)
-		{
-			printf("Update File not found\n");
-			return 1;
-		}
+    pts.push_back(p);
 
-		double x1, y1, z1, r1;
-		int type;
+    pg->addPoint(p);
+    numPoints++;
+  }
+  if (fp)
+    fclose(fp);
 
-		while(!feof(fp))
-		{
-			fscanf(fp,"%d",&type);	
-		
-			if(type == 1)	
-			{
-				fscanf(fp,"%lf",&x);
-				fscanf(fp,"%lf",&y);
-				fscanf(fp,"%lf",&z);
-				fscanf(fp,"%lf",&r);
-	
-				Ball *p = new Ball(x, y, z, r);
+  /* updating atoms */
 
-				pg->removePoint(p);
-			}
-			else if(type == 2)
-			{
-				fscanf(fp,"%lf",&x);
-				fscanf(fp,"%lf",&y);
-				fscanf(fp,"%lf",&z);
-				fscanf(fp,"%lf",&r);
-	
-				Ball *p = new Ball(x, y, z, r);
+  if (Update == NULL) {
+    printf("No updates specified\n");
+  } else {
+    fp = fopen(Update, "r");
 
-				fscanf(fp,"%lf",&x1);
-				fscanf(fp,"%lf",&y1);
-				fscanf(fp,"%lf",&z1);
-				fscanf(fp,"%lf",&r1);
-	
-				Ball *p1 = new Ball(x1, y1, z1, r1);			
+    if (fp == NULL) {
+      printf("Update File not found\n");
+      return 1;
+    }
 
-				pg->move(p, p1);
-			}
-		}
+    double x1, y1, z1, r1;
+    int type;
 
-		if(fp) fclose(fp);
-	}
+    while (!feof(fp)) {
+      fscanf(fp, "%d", &type);
 
-/* Performing queries */
+      if (type == 1) {
+        fscanf(fp, "%lf", &x);
+        fscanf(fp, "%lf", &y);
+        fscanf(fp, "%lf", &z);
+        fscanf(fp, "%lf", &r);
 
-	if ( Range == NULL )
-	{ 
-		printf( "No queries specified\n" );
-	}
-	else
-	{	
-		if ( Output == NULL )
-		{ 
-			printf( "Output file not specified. Using default filename.\n" );
-			Output = strdup( "testOutput.txt" );
-		}
+        Ball *p = new Ball(x, y, z, r);
 
-		fp = fopen(Range, "r");	
-	
-		if(fp==NULL)
-		{
-			fclose(fp);
-			printf("Query File not found\n");
-			return 1;
-		}
+        pg->removePoint(p);
+      } else if (type == 2) {
+        fscanf(fp, "%lf", &x);
+        fscanf(fp, "%lf", &y);
+        fscanf(fp, "%lf", &z);
+        fscanf(fp, "%lf", &r);
 
-		FILE *fp1 = fopen(Output, "w");
-	
-		if(fp1==NULL)
-		{
-			printf("Output File not found\n");
-			if(fp) fclose(fp);
-			return 1;
-		}
+        Ball *p = new Ball(x, y, z, r);
 
-		vector <Point *> results;
+        fscanf(fp, "%lf", &x1);
+        fscanf(fp, "%lf", &y1);
+        fscanf(fp, "%lf", &z1);
+        fscanf(fp, "%lf", &r1);
 
-		while(!feof(fp))
-		{
-			results.clear();
-	
-			fscanf(fp,"%lf",&x);
-			fscanf(fp,"%lf",&y);
-			fscanf(fp,"%lf",&z);
-			fscanf(fp,"%lf",&r);
+        Ball *p1 = new Ball(x1, y1, z1, r1);
 
-			Ball *p = new Ball(x, y, z, r);
+        pg->move(p, p1);
+      }
+    }
 
-			pg->range(p, r, results);
+    if (fp)
+      fclose(fp);
+  }
 
-			int size = results.size();
+  /* Performing queries */
 
-			if(size==0)
-			{
-				fprintf(fp1, "No points found within distance %lf of point %lf, %lf, %lf\n\n", r, x, y, z);
-			}
-			else
-			{
-				fprintf(fp1, "%d points found within distance %lf of point %lf, %lf, %lf\n",size, r, x, y, z);
-				
-				for(int i=0; i<size; i++)
-				{
-					Ball* tempRes = (Ball*)results[i];	
-					fprintf(fp1, "%lf %lf %lf %lf\n", tempRes->getX(), tempRes->getY(), tempRes->getZ(), tempRes->getRadius() );
-				}
-			}
-		}
+  if (Range == NULL) {
+    printf("No queries specified\n");
+  } else {
+    if (Output == NULL) {
+      printf("Output file not specified. Using default filename.\n");
+      Output = strdup("testOutput.txt");
+    }
 
-		if(fp) fclose(fp);
-		if(fp1) fclose(fp1);
-	}
+    fp = fopen(Range, "r");
 
-	return 0;
+    if (fp == NULL) {
+      fclose(fp);
+      printf("Query File not found\n");
+      return 1;
+    }
+
+    FILE *fp1 = fopen(Output, "w");
+
+    if (fp1 == NULL) {
+      printf("Output File not found\n");
+      if (fp)
+        fclose(fp);
+      return 1;
+    }
+
+    vector<Point *> results;
+
+    while (!feof(fp)) {
+      results.clear();
+
+      fscanf(fp, "%lf", &x);
+      fscanf(fp, "%lf", &y);
+      fscanf(fp, "%lf", &z);
+      fscanf(fp, "%lf", &r);
+
+      Ball *p = new Ball(x, y, z, r);
+
+      pg->range(p, r, results);
+
+      int size = results.size();
+
+      if (size == 0) {
+        fprintf(
+            fp1,
+            "No points found within distance %lf of point %lf, %lf, %lf\n\n", r,
+            x, y, z);
+      } else {
+        fprintf(fp1,
+                "%d points found within distance %lf of point %lf, %lf, %lf\n",
+                size, r, x, y, z);
+
+        for (int i = 0; i < size; i++) {
+          Ball *tempRes = (Ball *)results[i];
+          fprintf(fp1, "%lf %lf %lf %lf\n", tempRes->getX(), tempRes->getY(),
+                  tempRes->getZ(), tempRes->getRadius());
+        }
+      }
+    }
+
+    if (fp)
+      fclose(fp);
+    if (fp1)
+      fclose(fp1);
+  }
+
+  return 0;
 }

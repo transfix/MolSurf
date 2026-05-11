@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,21 +24,29 @@
 
 #include <Utility/utility.h>
 
-class SphericalPatch
-{
-	public:
-		SphericalPatch();
-		virtual ~SphericalPatch();
-		double getClosestDist(double r, double c[3], double point[3], double bmin[3], double bmax[3]);
+class SphericalPatch {
+public:
+  SphericalPatch();
+  virtual ~SphericalPatch();
+  double getClosestDist(double r, double c[3], double point[3], double bmin[3],
+                        double bmax[3]);
 
-	protected:
-		double euclideanDist3D(double p1[3], double p2[3]);
-		double intersectCircle(double center[2], double radius, double point[2], double intersection[2]);
-		bool intersectionInCube(double intersection[3], double bmin[3], double bmax[3]);
-		bool intersectionInCube2D(double intersection[2], double minx, double maxx, double miny, double maxy);
-		double pointToCircle(int dim0, int dim1, int dim2, double sphereToCircle, double r, double c[3], double point[3], double bmin[3], double bmax[3], double circleDim0Coordinate);
-		double pointToSphere(double r, double c[3], double point[3], double bmin[3], double bmax[3]);
-		double pointToLineSegment(double r, double c[3], double point[3], double bmin[3], double bmax[3], double vertex[3], int rayD);
+protected:
+  double euclideanDist3D(double p1[3], double p2[3]);
+  double intersectCircle(double center[2], double radius, double point[2],
+                         double intersection[2]);
+  bool intersectionInCube(double intersection[3], double bmin[3],
+                          double bmax[3]);
+  bool intersectionInCube2D(double intersection[2], double minx, double maxx,
+                            double miny, double maxy);
+  double pointToCircle(int dim0, int dim1, int dim2, double sphereToCircle,
+                       double r, double c[3], double point[3], double bmin[3],
+                       double bmax[3], double circleDim0Coordinate);
+  double pointToSphere(double r, double c[3], double point[3], double bmin[3],
+                       double bmax[3]);
+  double pointToLineSegment(double r, double c[3], double point[3],
+                            double bmin[3], double bmax[3], double vertex[3],
+                            int rayD);
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,16 +23,17 @@
 #include <CardinalBSpline/CardinalBSpline.h>
 #include <Blurmaps/GOABlur.h>
 
-Geometry* surfaceUsingCardinalBSpline(PDBParser::GroupOfAtoms* molecule, int size, int order, float isovalue)
-{
-	unsigned int dim[3] = {size, size, size};
-	CardinalBSpline* cardinalBSpline = new CardinalBSpline();
-	double start_time = getTime();
-	SimpleVolumeData* sData = cardinalBSpline->getCardinalBSplineSurface(molecule, dim, order);
-	Geometry* geometry = 0;
-	geometry = SimpleVolumeDataIsocontourer::getIsocontour(sData, isovalue);
-	double end_time = getTime();
-	printf("Time used is %lf seconds \n", end_time-start_time);
-	delete sData;
-	return geometry;
+Geometry *surfaceUsingCardinalBSpline(PDBParser::GroupOfAtoms *molecule,
+                                      int size, int order, float isovalue) {
+  unsigned int dim[3] = {size, size, size};
+  CardinalBSpline *cardinalBSpline = new CardinalBSpline();
+  double start_time = getTime();
+  SimpleVolumeData *sData =
+      cardinalBSpline->getCardinalBSplineSurface(molecule, dim, order);
+  Geometry *geometry = 0;
+  geometry = SimpleVolumeDataIsocontourer::getIsocontour(sData, isovalue);
+  double end_time = getTime();
+  printf("Time used is %lf seconds \n", end_time - start_time);
+  delete sData;
+  return geometry;
 }

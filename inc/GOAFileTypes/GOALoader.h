@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -30,29 +30,32 @@ using std::string;
 
 class GOAFileType;
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
+namespace PDBParser {
+class GroupOfAtoms;
 };
 
-class GOALoader
-{
-	public:
-		GOALoader();
-		virtual ~GOALoader();
-		bool saveFile(const string& fileName, const string& selectedFilter, PDBParser::GroupOfAtoms* groupOfAtoms, unsigned int level, CCVOpenGLMath::Matrix* transformation);
-		PDBParser::GroupOfAtoms* loadFile(const string& fileName, bool deleteWater = false);
-		bool saveFile(const string& fileName, PDBParser::GroupOfAtoms* groupOfAtoms, unsigned int level, CCVOpenGLMath::Matrix* transformation);
-		string getLoadFilterString();
-		string getSaveFilterString();
-		bool isValidExtension(string extension);
-	protected:
-		string getAllExtensions();
-		bool endsWith(string str, string substr);
-		PDBParser::GroupOfAtoms*  tryAll(const string& fileName, bool deleteWater);
-		void addGOAFileType(GOAFileType* type);
-		std::map<string, GOAFileType*> m_ExtensionMap;
-		std::map<string, GOAFileType*> m_FilterMap;
+class GOALoader {
+public:
+  GOALoader();
+  virtual ~GOALoader();
+  bool saveFile(const string &fileName, const string &selectedFilter,
+                PDBParser::GroupOfAtoms *groupOfAtoms, unsigned int level,
+                CCVOpenGLMath::Matrix *transformation);
+  PDBParser::GroupOfAtoms *loadFile(const string &fileName,
+                                    bool deleteWater = false);
+  bool saveFile(const string &fileName, PDBParser::GroupOfAtoms *groupOfAtoms,
+                unsigned int level, CCVOpenGLMath::Matrix *transformation);
+  string getLoadFilterString();
+  string getSaveFilterString();
+  bool isValidExtension(string extension);
+
+protected:
+  string getAllExtensions();
+  bool endsWith(string str, string substr);
+  PDBParser::GroupOfAtoms *tryAll(const string &fileName, bool deleteWater);
+  void addGOAFileType(GOAFileType *type);
+  std::map<string, GOAFileType *> m_ExtensionMap;
+  std::map<string, GOAFileType *> m_FilterMap;
 };
 
 #endif

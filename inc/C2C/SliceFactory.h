@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,7 +22,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -48,33 +48,25 @@
 #include <Utility/utility.h>
 #include <C2C/Slice.h>
 
-template <class T>
-class  SliceFactory
-{
-	public:
-		SliceFactory() {}
+template <class T> class SliceFactory {
+public:
+  SliceFactory() {}
 
-		virtual ~SliceFactory() {}
+  virtual ~SliceFactory() {}
 
-		virtual Slice<T>* getNextSlice() = 0;
+  virtual Slice<T> *getNextSlice() = 0;
 
-		// rewind to the first slices
-		virtual void reset() {}
+  // rewind to the first slices
+  virtual void reset() {}
 
-		// get the total number of slices
-		virtual int  getNumSlices()
-		{
-			return 0;
-		}
+  // get the total number of slices
+  virtual int getNumSlices() { return 0; }
 
-		// get the dimension info of the data
-		virtual void getDimension(int dim[3], float orig[3], float span[3]) {}
+  // get the dimension info of the data
+  virtual void getDimension(int dim[3], float orig[3], float span[3]) {}
 
-		// get the number of current slice
-		virtual int current()
-		{
-			return 0;
-		}
+  // get the number of current slice
+  virtual int current() { return 0; }
 };
 
 #endif

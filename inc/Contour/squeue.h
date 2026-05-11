@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -32,48 +32,35 @@
   allocated, all of the current SQueue is recopied (because it is
   circular you cannot just increase the array size), so use caution
   when picking the block size. */
-template <class T>
-class SQueue : public Queue<T>
-{
-	public:
-		//@ManDoc: Constructor with user define block size.
-		SQueue(int blocksize=0);
+template <class T> class SQueue : public Queue<T> {
+public:
+  //@ManDoc: Constructor with user define block size.
+  SQueue(int blocksize = 0);
 
-		//@ManDoc: Destructor.
-		virtual ~SQueue();
+  //@ManDoc: Destructor.
+  virtual ~SQueue();
 
-		int find(T&);
+  int find(T &);
 
-	private:
+private:
 };
 
-template <class T>
-SQueue< T >::SQueue(int blocksize) : Queue<T>(blocksize)
-{
-}
+template <class T> SQueue<T>::SQueue(int blocksize) : Queue<T>(blocksize) {}
 
-template <class T>
-SQueue< T >::~SQueue()
-{
-}
+template <class T> SQueue<T>::~SQueue() {}
 
-template <class T>
-int SQueue< T >::find(T& e)
-{
-	int i, j;
-	for(j = this->head, i = 0; i < this->length; i++)
-	{
-		if(this->q[j] == e)
-		{
-			return(j);
-		}
-		j++;
-		if(j == this->room)
-		{
-			j = 0;
-		}
-	}
-	return(-1);
+template <class T> int SQueue<T>::find(T &e) {
+  int i, j;
+  for (j = this->head, i = 0; i < this->length; i++) {
+    if (this->q[j] == e) {
+      return (j);
+    }
+    j++;
+    if (j == this->room) {
+      j = 0;
+    }
+  }
+  return (-1);
 }
 
 #endif

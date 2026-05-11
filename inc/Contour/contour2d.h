@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -28,73 +28,51 @@
 #include <Utility/utility.h>
 #include <Contour/basic.h>
 
-class Contour2d
-{
-	public:
-		// arrays of vertices, and edges
-		float(*vert)[2];			// polyline vertex array
-		unsigned int (*edge)[2];		// array of polyline edges
+class Contour2d {
+public:
+  // arrays of vertices, and edges
+  float (*vert)[2];        // polyline vertex array
+  unsigned int (*edge)[2]; // array of polyline edges
 
-		// constructor
-		Contour2d();
+  // constructor
+  Contour2d();
 
-		// destructor
-		~Contour2d();
+  // destructor
+  ~Contour2d();
 
-		// reset (delete all vertices and triangles)
-		void Reset(void);
-		void Done(void);
-		int  isDone(void)
-		{
-			return(done);
-		}
+  // reset (delete all vertices and triangles)
+  void Reset(void);
+  void Done(void);
+  int isDone(void) { return (done); }
 
-		// add a vertex with the given position and normal
-		int AddVert(float p[2])
-		{
-			return(AddVert(p[0], p[1]));
-		}
-		int AddVert(float, float);
+  // add a vertex with the given position and normal
+  int AddVert(float p[2]) { return (AddVert(p[0], p[1])); }
+  int AddVert(float, float);
 
-		// add an edge indexed by the given 2 vertices
-		int AddEdge(u_int v[2])
-		{
-			return(AddEdge(v[0], v[1]));
-		}
-		int AddEdge(u_int, u_int);
+  // add an edge indexed by the given 2 vertices
+  int AddEdge(u_int v[2]) { return (AddEdge(v[0], v[1])); }
+  int AddEdge(u_int, u_int);
 
-		// get the number of vertices or edges
-		int getSize(void)
-		{
-			return(nedge);
-		}
-		int getNVert(void)
-		{
-			return(nvert);
-		}
-		int getNEdge(void)
-		{
-			return(nedge);
-		}
+  // get the number of vertices or edges
+  int getSize(void) { return (nedge); }
+  int getNVert(void) { return (nvert); }
+  int getNEdge(void) { return (nedge); }
 
-		// write vertices and triangles to a file
-		int write(char* filename);
+  // write vertices and triangles to a file
+  int write(char *filename);
 
-		void setExtent(float min[3], float max[3])
-		{
-			memcpy(minext, min, sizeof(float[3]));
-			memcpy(maxext, max, sizeof(float[3]));
-		}
+  void setExtent(float min[3], float max[3]) {
+    memcpy(minext, min, sizeof(float[3]));
+    memcpy(maxext, max, sizeof(float[3]));
+  }
 
-	protected :
-
-		int done; // done with isocontour ?
-		// the size of the vertex and edge arrays
-		int vsize, tsize;
-		// the number of vertices and edges
-		int nvert, nedge;
-		float minext[3], maxext[3];
-
+protected:
+  int done; // done with isocontour ?
+  // the size of the vertex and edge arrays
+  int vsize, tsize;
+  // the number of vertices and edges
+  int nvert, nedge;
+  float minext[3], maxext[3];
 };
 
 #endif

@@ -1,8 +1,8 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Authors: Alex Rand <arand@ices.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Alex Rand <arand@ices.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,42 +26,44 @@
 #include <cstdlib>
 #include <cmath>
 
-Geometry * MakeOffsetSurface(Geometry * surf, double dist) {
+Geometry *MakeOffsetSurface(Geometry *surf, double dist) {
 
   cout << surf->m_NumTris << " " << surf->m_NumTriVerts << endl;
 
-  for (int i=0; i<surf->m_NumTriVerts; i++) {
-    //cout << surf->m_TriVerts[3*i] << " " 
-    // << surf->m_TriVerts[3*i+1] << " "
-    // << surf->m_TriVerts[3*i+2] << endl; 
+  for (int i = 0; i < surf->m_NumTriVerts; i++) {
+    // cout << surf->m_TriVerts[3*i] << " "
+    //  << surf->m_TriVerts[3*i+1] << " "
+    //  << surf->m_TriVerts[3*i+2] << endl;
 
-    double norm = sqrt(surf->m_TriVertNormals[3*i]*surf->m_TriVertNormals[3*i] +
-		surf->m_TriVertNormals[3*i+1]*surf->m_TriVertNormals[3*i+1] +
-		surf->m_TriVertNormals[3*i+2]*surf->m_TriVertNormals[3*i+2]);
-    
-    surf->m_TriVerts[3*i] += surf->m_TriVertNormals[3*i]*dist/norm;
-    surf->m_TriVerts[3*i+1] += surf->m_TriVertNormals[3*i+1]*dist/norm;
-    surf->m_TriVerts[3*i+2] += surf->m_TriVertNormals[3*i+2]*dist/norm;
+    double norm = sqrt(
+        surf->m_TriVertNormals[3 * i] * surf->m_TriVertNormals[3 * i] +
+        surf->m_TriVertNormals[3 * i + 1] * surf->m_TriVertNormals[3 * i + 1] +
+        surf->m_TriVertNormals[3 * i + 2] * surf->m_TriVertNormals[3 * i + 2]);
+
+    surf->m_TriVerts[3 * i] += surf->m_TriVertNormals[3 * i] * dist / norm;
+    surf->m_TriVerts[3 * i + 1] +=
+        surf->m_TriVertNormals[3 * i + 1] * dist / norm;
+    surf->m_TriVerts[3 * i + 2] +=
+        surf->m_TriVertNormals[3 * i + 2] * dist / norm;
   }
-
 
   return surf;
 }
 
-
-void usageOffsetSurface()
-{
-	cout	<< endl << "Usage: MolSurf -offsetSurface <rawn input file> <rawn output file> <offset distance>"
-		<< endl << "    Create an offset mesh."
-		<< endl ;
+void usageOffsetSurface() {
+  cout << endl
+       << "Usage: MolSurf -offsetSurface <rawn input file> <rawn output file> "
+          "<offset distance>"
+       << endl
+       << "    Create an offset mesh." << endl;
 }
-bool offsetSurface(int argc, char ** argv) {
-  if(argc != 5) {
+bool offsetSurface(int argc, char **argv) {
+  if (argc != 5) {
     usageOffsetSurface();
     return false;
   }
 
-  Geometry* geometry = GeometryLoader().loadFile(argv[2]);
+  Geometry *geometry = GeometryLoader().loadFile(argv[2]);
   double distance = atof(argv[4]);
   geometry = MakeOffsetSurface(geometry, distance);
 
@@ -69,4 +71,4 @@ bool offsetSurface(int argc, char ** argv) {
   delete geometry;
 
   return true;
-} 
+}

@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -25,26 +25,19 @@
 #include <Utility/utility.h>
 #include <SmoothingFunction/SmoothingFunction.h>
 
-class Gaussian
- : public SmoothingFunction
-{
-	public:
-		Gaussian(double alpha, int m, int n, int N);
-		virtual ~Gaussian();
-		inline double getPhiAtRealPos(double pos);
-		inline double getPhiHatAtRealPos(double pos);
-	protected:
-		bool precompute();
+class Gaussian : public SmoothingFunction {
+public:
+  Gaussian(double alpha, int m, int n, int N);
+  virtual ~Gaussian();
+  inline double getPhiAtRealPos(double pos);
+  inline double getPhiHatAtRealPos(double pos);
+
+protected:
+  bool precompute();
 };
 
-double Gaussian::getPhiAtRealPos(double pos)
-{
-	return 0;
-}
+double Gaussian::getPhiAtRealPos(double pos) { return 0; }
 
-double Gaussian::getPhiHatAtRealPos(double pos)
-{
-	return 0;
-}
+double Gaussian::getPhiHatAtRealPos(double pos) { return 0; }
 
 #endif

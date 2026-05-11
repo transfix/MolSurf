@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -26,7 +26,7 @@
 #include <Contour/seedchkr3.h>
 #include <Contour/datareg3.h>
 
-#if ! defined (__APPLE__)
+#if !defined(__APPLE__)
 #include <malloc.h>
 #else
 #include <stdlib.h>
@@ -35,39 +35,40 @@
 #include <unistd.h>
 #endif
 
-void seedChkr3::compSeeds(void)
-{
-	Datareg3& reg3 = (Datareg3&)data;
-	int i, j, k;
-	int xdim, ydim, zdim;
-	float val[8];
-	float min8, max8;
-	int nseed = 0;
-	xdim = reg3.dim[0];
-	ydim = reg3.dim[1];
-	zdim = reg3.dim[2];
-	// proceed through the slices computing seeds
-	// process the k'th slab
-	for(i=0; i<xdim-1; i+=2)
-		for(j=0; j<ydim-1; j+=2)
-			for(k=0; k<zdim-1; k+=2)
-			{
-				// load the voxel data
-				reg3.getCellValues(i, j, k, val);
-				MIN8(min8, val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7]);
-				MAX8(max8, val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7]);
-				seeds.AddSeed(reg3.index2cell(i,j,k), min8, max8);
-				nseed++;
-			}
-	for(i=1; i<xdim-1; i+=2)
-		for(j=1; j<ydim-1; j+=2)
-			for(k=1; k<zdim-1; k+=2)
-			{
-				// load the voxel data
-				reg3.getCellValues(i, j, k, val);
-				MIN8(min8, val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7]);
-				MAX8(max8, val[0], val[1], val[2], val[3], val[4], val[5], val[6], val[7]);
-				seeds.AddSeed(reg3.index2cell(i,j,k), min8, max8);
-				nseed++;
-			}
+void seedChkr3::compSeeds(void) {
+  Datareg3 &reg3 = (Datareg3 &)data;
+  int i, j, k;
+  int xdim, ydim, zdim;
+  float val[8];
+  float min8, max8;
+  int nseed = 0;
+  xdim = reg3.dim[0];
+  ydim = reg3.dim[1];
+  zdim = reg3.dim[2];
+  // proceed through the slices computing seeds
+  // process the k'th slab
+  for (i = 0; i < xdim - 1; i += 2)
+    for (j = 0; j < ydim - 1; j += 2)
+      for (k = 0; k < zdim - 1; k += 2) {
+        // load the voxel data
+        reg3.getCellValues(i, j, k, val);
+        MIN8(min8, val[0], val[1], val[2], val[3], val[4], val[5], val[6],
+             val[7]);
+        MAX8(max8, val[0], val[1], val[2], val[3], val[4], val[5], val[6],
+             val[7]);
+        seeds.AddSeed(reg3.index2cell(i, j, k), min8, max8);
+        nseed++;
+      }
+  for (i = 1; i < xdim - 1; i += 2)
+    for (j = 1; j < ydim - 1; j += 2)
+      for (k = 1; k < zdim - 1; k += 2) {
+        // load the voxel data
+        reg3.getCellValues(i, j, k, val);
+        MIN8(min8, val[0], val[1], val[2], val[3], val[4], val[5], val[6],
+             val[7]);
+        MAX8(max8, val[0], val[1], val[2], val[3], val[4], val[5], val[6],
+             val[7]);
+        seeds.AddSeed(reg3.index2cell(i, j, k), min8, max8);
+        nseed++;
+      }
 }

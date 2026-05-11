@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -30,17 +30,18 @@
 
 class Datareg2;
 
-class dirSeedsReg2
-{
-	public:
-		dirSeedsReg2(Data& d, SeedCells& s, Conplot& p) : data(d), seeds(s), plot(p) {}
-		~dirSeedsReg2() {}
-		void compSeeds(void);
-	private:
-		void dirSweep(Datareg2& reg);
-		Data& data;
-		SeedCells& seeds;
-		Conplot&   plot;
+class dirSeedsReg2 {
+public:
+  dirSeedsReg2(Data &d, SeedCells &s, Conplot &p)
+      : data(d), seeds(s), plot(p) {}
+  ~dirSeedsReg2() {}
+  void compSeeds(void);
+
+private:
+  void dirSweep(Datareg2 &reg);
+  Data &data;
+  SeedCells &seeds;
+  Conplot &plot;
 };
 
 #endif

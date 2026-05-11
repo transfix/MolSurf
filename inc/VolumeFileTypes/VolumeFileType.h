@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -37,16 +37,16 @@ using std::string;
 
 class SimpleVolumeData;
 
-class VolumeFileType
-{
-	public:
-		VolumeFileType();
-		virtual ~VolumeFileType();
-		virtual SimpleVolumeData* loadFile(const string& fileName) = 0;
-		virtual bool checkType(const string& fileName) = 0;
-		virtual bool saveFile(SimpleVolumeData* simpleVolumeData, const string& fileName, unsigned int variable=0) = 0;
-		virtual string extension() = 0;
-		virtual string filter() = 0;
+class VolumeFileType {
+public:
+  VolumeFileType();
+  virtual ~VolumeFileType();
+  virtual SimpleVolumeData *loadFile(const string &fileName) = 0;
+  virtual bool checkType(const string &fileName) = 0;
+  virtual bool saveFile(SimpleVolumeData *simpleVolumeData,
+                        const string &fileName, unsigned int variable = 0) = 0;
+  virtual string extension() = 0;
+  virtual string filter() = 0;
 };
 
 #endif

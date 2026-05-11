@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -65,53 +65,55 @@
  *  NFFT >= 3.3; the old nfft3util.h is no longer installed). */
 #include "nfft3.h"
 
-typedef double _Complex (*kernel)(double , int , const double *);
+typedef double _Complex (*kernel)(double, int, const double *);
 
 /**
  * Constant symbols
  */
-#define EXACT_NEARFIELD  (1U<< 0)
+#define EXACT_NEARFIELD (1U << 0)
 
 /** plan for fast summation algorithm */
-typedef struct fastsum_plan_
-{
+typedef struct fastsum_plan_ {
   /** api */
 
-  int d;                                /**< number of dimensions            */
+  int d; /**< number of dimensions            */
 
-  int N_total;                          /**< number of source knots          */
-  int M_total;                          /**< number of target knots          */
+  int N_total; /**< number of source knots          */
+  int M_total; /**< number of target knots          */
 
-  double _Complex *alpha;                       /**< source coefficients             */
-  double _Complex *f;                           /**< target evaluations              */
+  double _Complex *alpha; /**< source coefficients             */
+  double _Complex *f;     /**< target evaluations              */
 
-  double *x;                            /**< source knots in d-ball with radius 1/4-eps_b/2 */
-  double *y;                            /**< target knots in d-ball with radius 1/4-eps_b/2 */
+  double *x; /**< source knots in d-ball with radius 1/4-eps_b/2 */
+  double *y; /**< target knots in d-ball with radius 1/4-eps_b/2 */
 
-  kernel k;  /**< kernel function    */
-  double *kernel_param;                 /**< parameters for kernel function  */
+  kernel k;             /**< kernel function    */
+  double *kernel_param; /**< parameters for kernel function  */
 
-  unsigned flags;                       /**< flags precomp. and approx.type  */
+  unsigned flags; /**< flags precomp. and approx.type  */
 
   /** internal */
 
   /** DS_PRE - direct summation */
-  double _Complex *pre_K;                       /**< precomputed K(x_j-y_l)          */
+  double _Complex *pre_K; /**< precomputed K(x_j-y_l)          */
 
   /** FS__ - fast summation */
-  int n;                                /**< expansion degree                */
-  fftw_complex *b;                      /**< expansion coefficients          */
+  int n;           /**< expansion degree                */
+  fftw_complex *b; /**< expansion coefficients          */
 
-  int p;                                /**< degree of smoothness of regularization */
-  double eps_I;                         /**< inner boundary                  */  /* fixed to p/n so far  */
-  double eps_B;                         /**< outer boundary                  */  /* fixed to 1/16 so far */
+  int p; /**< degree of smoothness of regularization */
+  double eps_I;
+  /**< inner boundary                  */ /* fixed to p/n so far  */
+  double eps_B;
+  /**< outer boundary                  */ /* fixed to 1/16 so far */
 
-  nfft_plan mv1;                        /**< source nfft plan                */
-  nfft_plan mv2;                        /**< target nfft plan                */
+  nfft_plan mv1; /**< source nfft plan                */
+  nfft_plan mv2; /**< target nfft plan                */
 
   /** near field */
-  int Ad;                               /**< number of spline knots for nearfield computation of regularized kernel */
-  double _Complex *Add;                 /**< spline values */
+  int Ad; /**< number of spline knots for nearfield computation of regularized
+             kernel */
+  double _Complex *Add; /**< spline values */
 
   /* things for computing *b - are they used only once?? */
   fftw_plan fft_plan;
@@ -133,7 +135,9 @@ typedef struct fastsum_plan_
  * \param eps_B the outer boundary.
  *
  */
-void fastsum_init_guru(fastsum_plan *ths, int d, int N_total, int M_total, kernel k, double *param, unsigned flags, int nn, int m, int p, double eps_I, double eps_B);
+void fastsum_init_guru(fastsum_plan *ths, int d, int N_total, int M_total,
+                       kernel k, double *param, unsigned flags, int nn, int m,
+                       int p, double eps_I, double eps_B);
 
 /** finalize plan
  *
@@ -160,11 +164,12 @@ void fastsum_precompute(fastsum_plan *ths);
 void fastsum_trafo(fastsum_plan *ths);
 /* \} */
 
-double _Complex regkern(kernel k, double xx, int p, const double *param, double a, double b);
+double _Complex regkern(kernel k, double xx, int p, const double *param,
+                        double a, double b);
 
 /** cubic spline interpolation in near field with even kernels */
 double _Complex kubintkern(const double x, const double _Complex *Add,
-  const int Ad, const double a);
+                           const int Ad, const double a);
 
 #endif
 /* fastsum.h */

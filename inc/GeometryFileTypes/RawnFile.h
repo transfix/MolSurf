@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,25 +24,19 @@
 
 #include <GeometryFileTypes/GeometryFileType.h>
 
-class RawnFile : public GeometryFileType
-{
-	public:
-		virtual ~RawnFile();
-		virtual Geometry* loadFile(const string& fileName);
-		virtual bool checkType(const string& fileName);
-		virtual bool saveFile(const Geometry* geometry, const string& fileName);
-		virtual string extension()
-		{
-			return "rawn";
-		};
-		virtual string filter()
-		{
-			return "Rawn files (*.rawn)";
-		};
-		static RawnFile ms_RawnFileRepresentative;
-		static GeometryFileType* getRepresentative();
-	protected:
-		RawnFile();
+class RawnFile : public GeometryFileType {
+public:
+  virtual ~RawnFile();
+  virtual Geometry *loadFile(const string &fileName);
+  virtual bool checkType(const string &fileName);
+  virtual bool saveFile(const Geometry *geometry, const string &fileName);
+  virtual string extension() { return "rawn"; };
+  virtual string filter() { return "Rawn files (*.rawn)"; };
+  static RawnFile ms_RawnFileRepresentative;
+  static GeometryFileType *getRepresentative();
+
+protected:
+  RawnFile();
 };
 
 #endif

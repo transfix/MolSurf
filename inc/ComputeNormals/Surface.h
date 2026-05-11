@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,34 +27,33 @@
 
 using namespace COMPUTENORMALS;
 
-namespace COMPUTENORMALS
-{
-	class Vertex;
-	class Face;
-	class Surface
-	{
-		public:
-			Surface();
-			void addPoint(Vertex* point);
-			void addFacet(Face* facet);
-			void Produce_Normal(bool item);
-			std::vector<Vertex*> m_Vertices;
-			std::vector<Face*> m_Faces;
-			int numbpts, numbtris;
-			double min[3], max[3];
-			bool normalFlag, colorFlag;
-		private:
-			void TriangleNormal(double* p1, double* p2, double* p3, double* normal);
-			void ProduceFaceNormal();
-			void Valence_Neighbor();
-			void NormalByAveraging();
-			void LoopNormal(double* points, int n, double* normal);
-			void NormalByLoop();
-			double DotProduct(double* v1, double* v2);
-			void CrossProduct(double* v1, double* v2, double* v);
-			void BoundingBox();
-			int computeTriIndex(int i, int j, int resolution);
-	};
-}
+namespace COMPUTENORMALS {
+class Vertex;
+class Face;
+class Surface {
+public:
+  Surface();
+  void addPoint(Vertex *point);
+  void addFacet(Face *facet);
+  void Produce_Normal(bool item);
+  std::vector<Vertex *> m_Vertices;
+  std::vector<Face *> m_Faces;
+  int numbpts, numbtris;
+  double min[3], max[3];
+  bool normalFlag, colorFlag;
+
+private:
+  void TriangleNormal(double *p1, double *p2, double *p3, double *normal);
+  void ProduceFaceNormal();
+  void Valence_Neighbor();
+  void NormalByAveraging();
+  void LoopNormal(double *points, int n, double *normal);
+  void NormalByLoop();
+  double DotProduct(double *v1, double *v2);
+  void CrossProduct(double *v1, double *v2, double *v);
+  void BoundingBox();
+  int computeTriIndex(int i, int j, int resolution);
+};
+} // namespace COMPUTENORMALS
 
 #endif

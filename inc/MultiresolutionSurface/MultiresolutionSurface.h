@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -28,29 +28,31 @@
 
 class Geometry;
 
-class MultiresolutionSurface
-{
-	public:
-		MultiresolutionSurface(PDBParser::GroupOfAtoms* molecule, const Extents* boundary, const Extents* subVolume, double innerB, double outerB, double innerIsovalue, double outerIsovalue);
-		virtual ~MultiresolutionSurface();
-		bool changeInnerB(double innerB);
-		bool changeOuterB(double outerB);
-		bool changeInnerIsovalue(double innerIsovalue);
-		bool changeOuterIsovalue(double outerIsovalue);
-		bool changeInnerExtent(const Extents* subVolume);
-		Geometry* getMultiresSurface();
+class MultiresolutionSurface {
+public:
+  MultiresolutionSurface(PDBParser::GroupOfAtoms *molecule,
+                         const Extents *boundary, const Extents *subVolume,
+                         double innerB, double outerB, double innerIsovalue,
+                         double outerIsovalue);
+  virtual ~MultiresolutionSurface();
+  bool changeInnerB(double innerB);
+  bool changeOuterB(double outerB);
+  bool changeInnerIsovalue(double innerIsovalue);
+  bool changeOuterIsovalue(double outerIsovalue);
+  bool changeInnerExtent(const Extents *subVolume);
+  Geometry *getMultiresSurface();
 
-	protected:
-		bool updateAtomList();
-		PDBParser::GroupOfAtoms* m_Molecule;
-		const Extents* m_Boundary;
-		const Extents* m_SubVolume;
-		double m_InnerB;
-		double m_OuterB;
-		double m_InnerIsovalue;
-		double m_OuterIsovalue;
-		Geometry* m_Geometry;
-		std::vector<double> m_InteriorAtoms, m_ExteriorAtoms;
+protected:
+  bool updateAtomList();
+  PDBParser::GroupOfAtoms *m_Molecule;
+  const Extents *m_Boundary;
+  const Extents *m_SubVolume;
+  double m_InnerB;
+  double m_OuterB;
+  double m_InnerIsovalue;
+  double m_OuterIsovalue;
+  Geometry *m_Geometry;
+  std::vector<double> m_InteriorAtoms, m_ExteriorAtoms;
 };
 
 #endif

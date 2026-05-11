@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,33 +27,34 @@
 
 class Geometry;
 
-namespace CCVContouring
-{
-	class Contour
-	{
-		public:
-			Contour();
-			virtual ~Contour();
-			void renderContour(const ContourExtractor& contourExtractor);
-			void extract(const ContourExtractor& contourExtractor);
-			void addToGeometry(const ContourExtractor& contourExtractor, Geometry* geometry, const CCVOpenGLMath::Matrix& matrix, int& nextVert, int& nextTri);
-			int getNumVerts(const ContourExtractor& contourExtractor);
-			int getNumTris(const ContourExtractor& contourExtractor);
-			void setID(int id);
-			int getID();
-			void setIsovalue(float isovalue);
-			void setSingleColor(float R, float G, float B, bool clobber);
-			void resetContour();
-			void setWireframeMode(bool state);
-			bool useColors();
-		protected:
-			void setDefaults();
-			int m_ID;
-			float m_Isovalue;
-			float m_R,m_G,m_B;
-			bool m_ContourReady;
-			ContourGeometry m_ContourGeometry;
-	};
+namespace CCVContouring {
+class Contour {
+public:
+  Contour();
+  virtual ~Contour();
+  void renderContour(const ContourExtractor &contourExtractor);
+  void extract(const ContourExtractor &contourExtractor);
+  void addToGeometry(const ContourExtractor &contourExtractor,
+                     Geometry *geometry, const CCVOpenGLMath::Matrix &matrix,
+                     int &nextVert, int &nextTri);
+  int getNumVerts(const ContourExtractor &contourExtractor);
+  int getNumTris(const ContourExtractor &contourExtractor);
+  void setID(int id);
+  int getID();
+  void setIsovalue(float isovalue);
+  void setSingleColor(float R, float G, float B, bool clobber);
+  void resetContour();
+  void setWireframeMode(bool state);
+  bool useColors();
+
+protected:
+  void setDefaults();
+  int m_ID;
+  float m_Isovalue;
+  float m_R, m_G, m_B;
+  bool m_ContourReady;
+  ContourGeometry m_ContourGeometry;
 };
+}; // namespace CCVContouring
 
 #endif

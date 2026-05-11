@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,99 +22,75 @@
 #include <Geometry/GeometrySceneArray.h>
 #include <Geometry/GeometryScene.h>
 
-GeometrySceneArray::GeometrySceneArray()
-{
-	initArray();
+GeometrySceneArray::GeometrySceneArray() { initArray(); }
+
+GeometrySceneArray::~GeometrySceneArray() {}
+
+void GeometrySceneArray::initArray() {
+  unsigned int c;
+  m_NumberOfObjects = 0;
+  m_SizeOfObjectsArray = 16;
+  m_GeometriesScene = new GeometryScene *[m_SizeOfObjectsArray];
+  for (c = 0; c < m_SizeOfObjectsArray; c++) {
+    m_GeometriesScene[c] = 0;
+  }
 }
 
-GeometrySceneArray::~GeometrySceneArray()
-{
+void GeometrySceneArray::doubleArray() {
+  unsigned int c;
+  if (m_NumberOfObjects >= m_SizeOfObjectsArray) {
+    GeometryScene **oldGeometryScene = m_GeometriesScene;
+    m_GeometriesScene = new GeometryScene *[m_SizeOfObjectsArray * 2];
+    for (c = 0; c < m_SizeOfObjectsArray; c++) {
+      m_GeometriesScene[c] = oldGeometryScene[c];
+    }
+    m_SizeOfObjectsArray *= 2;
+    delete[] oldGeometryScene;
+  }
 }
 
-void GeometrySceneArray::initArray()
-{
-	unsigned int c;
-	m_NumberOfObjects = 0;
-	m_SizeOfObjectsArray = 16;
-	m_GeometriesScene = new GeometryScene*[m_SizeOfObjectsArray];
-	for(c=0; c<m_SizeOfObjectsArray; c++)
-	{
-		m_GeometriesScene[c] = 0;
-	}
+int GeometrySceneArray::add(GeometryScene *geometryScene) {
+  doubleArray();
+  m_GeometriesScene[m_NumberOfObjects] = geometryScene;
+  m_NumberOfObjects++;
+  return m_NumberOfObjects - 1;
 }
 
-void GeometrySceneArray::doubleArray()
-{
-	unsigned int c;
-	if(m_NumberOfObjects >= m_SizeOfObjectsArray)
-	{
-		GeometryScene** oldGeometryScene = m_GeometriesScene;
-		m_GeometriesScene = new GeometryScene*[m_SizeOfObjectsArray*2];
-		for(c=0; c<m_SizeOfObjectsArray; c++)
-		{
-			m_GeometriesScene[c] = oldGeometryScene[c];
-		}
-		m_SizeOfObjectsArray *= 2;
-		delete [] oldGeometryScene;
-	}
+bool GeometrySceneArray::set(GeometryScene *geometryScene, unsigned int index) {
+  if (index <= m_NumberOfObjects) {
+    m_GeometriesScene[index] = geometryScene;
+    return true;
+  }
+  return false;
 }
 
-int GeometrySceneArray::add(GeometryScene* geometryScene)
-{
-	doubleArray();
-	m_GeometriesScene[m_NumberOfObjects] = geometryScene;
-	m_NumberOfObjects++;
-	return m_NumberOfObjects-1;
+GeometryScene *GeometrySceneArray::remove(unsigned int index) {
+  if (index <= m_NumberOfObjects && m_GeometriesScene[index]) {
+    GeometryScene *temp = m_GeometriesScene[index];
+    m_GeometriesScene[index] = 0;
+    return temp;
+  } else {
+    return 0;
+  }
 }
 
-bool GeometrySceneArray::set(GeometryScene* geometryScene, unsigned int index)
-{
-	if(index <= m_NumberOfObjects)
-	{
-		m_GeometriesScene[index] = geometryScene;
-		return true;
-	}
-	return false;
+GeometryScene *GeometrySceneArray::get(unsigned int index) {
+  if (index <= m_NumberOfObjects && m_GeometriesScene[index]) {
+    return m_GeometriesScene[index];
+  } else {
+    return 0;
+  }
 }
 
-GeometryScene* GeometrySceneArray::remove(unsigned int index)
-{
-	if(index <= m_NumberOfObjects && m_GeometriesScene[index])
-	{
-		GeometryScene* temp = m_GeometriesScene[index];
-		m_GeometriesScene[index] = 0;
-		return temp;
-	}
-	else
-	{
-		return 0;
-	}
+unsigned int GeometrySceneArray::getNumberOfObjects() {
+  return m_NumberOfObjects;
 }
 
-GeometryScene* GeometrySceneArray::get(unsigned int index)
-{
-	if(index <= m_NumberOfObjects && m_GeometriesScene[index])
-	{
-		return m_GeometriesScene[index];
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-unsigned int GeometrySceneArray::getNumberOfObjects()
-{
-	return m_NumberOfObjects;
-}
-
-void GeometrySceneArray::clear()
-{
-	unsigned int c;
-	for(c=0; c<m_NumberOfObjects; c++)
-	{
-		delete m_GeometriesScene[c];
-		m_GeometriesScene[c] = 0;
-	}
-	m_NumberOfObjects=0;
+void GeometrySceneArray::clear() {
+  unsigned int c;
+  for (c = 0; c < m_NumberOfObjects; c++) {
+    delete m_GeometriesScene[c];
+    m_GeometriesScene[c] = 0;
+  }
+  m_NumberOfObjects = 0;
 }

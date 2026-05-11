@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,7 +22,7 @@
 #ifndef CCV_SKIN_GENERATOR_H
 #define CCV_SKIN_GENERATOR_H
 
-#include<string>
+#include <string>
 #include <Utility/utility.h>
 #include <Blurmaps/BlurMapsDataManager.h>
 #include <Blurmaps/GOABlur.h>
@@ -36,32 +36,32 @@
 
 using namespace std;
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class Atom;
+namespace PDBParser {
+class GroupOfAtoms;
+class Atom;
+}; // namespace PDBParser
+
+class SkinGenerator {
+public:
+  SkinGenerator(PDBParser::GroupOfAtoms *molecule, string surfaceFileName,
+                double probeRadius, double floatingBandWidth,
+                double clashDistance,
+                PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType);
+
+  virtual ~SkinGenerator();
+
+  bool populate(string outputFileName);
+  bool populate(string xyzFileName, string xyzrFileName);
+  bool populate(string xyzFileName, string xyzrFileName, string f2dFileName);
+
+private:
+  vector<PDBParser::Atom *> m_AtomList;
+
+  string surfaceFileName;
+
+  double probeRadius;
+  double floatingBandWidth;
+  double clashDistance;
 };
-
-class SkinGenerator
-{
-	public:
-		SkinGenerator(PDBParser::GroupOfAtoms* molecule, string surfaceFileName, double probeRadius, double floatingBandWidth, double clashDistance, PDBParser::GroupOfAtoms::RADIUS_TYPE radiusType);
-
-		virtual ~SkinGenerator();
-
-		bool populate(string outputFileName);
-		bool populate(string xyzFileName, string xyzrFileName);
-		bool populate(string xyzFileName, string xyzrFileName, string f2dFileName);
-
-	private:
-		vector<PDBParser::Atom*> m_AtomList;
-
-		string surfaceFileName;
-
-		double probeRadius;
-		double floatingBandWidth;
-		double clashDistance;
-};
-
 
 #endif

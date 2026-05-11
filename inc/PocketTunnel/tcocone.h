@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -27,8 +27,11 @@
 #include <PocketTunnel/util.h>
 #include <PocketTunnel/robust_cc.h>
 
-void compute_poles(Triangulation& triang);
-void mark_flat_vertices(Triangulation& triang, double ratio, double cocone_phi, double flat_phi);
-void tcocone(const double DEFAULT_ANGLE, const double DEFAULT_SHARP, const double DEFAULT_FLAT, const double DEFAULT_RATIO, Triangulation& triang);
+void compute_poles(Triangulation &triang);
+void mark_flat_vertices(Triangulation &triang, double ratio, double cocone_phi,
+                        double flat_phi);
+void tcocone(const double DEFAULT_ANGLE, const double DEFAULT_SHARP,
+             const double DEFAULT_FLAT, const double DEFAULT_RATIO,
+             Triangulation &triang);
 
 #endif

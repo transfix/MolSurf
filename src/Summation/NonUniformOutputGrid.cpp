@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -23,13 +23,12 @@
 
 using namespace CCVSummationModule;
 
-NonUniformOutputGrid::NonUniformOutputGrid(float* outputPositions, float* output, int numberOfOutputPoints)
-{
-	m_OutputPositions = outputPositions;
-	m_Output = output;
-	m_NumberOfOutputPoints = numberOfOutputPoints;
+NonUniformOutputGrid::NonUniformOutputGrid(float *outputPositions,
+                                           float *output,
+                                           int numberOfOutputPoints) {
+  m_OutputPositions = outputPositions;
+  m_Output = output;
+  m_NumberOfOutputPoints = numberOfOutputPoints;
 }
 
-NonUniformOutputGrid::~NonUniformOutputGrid()
-{
-}
+NonUniformOutputGrid::~NonUniformOutputGrid() {}

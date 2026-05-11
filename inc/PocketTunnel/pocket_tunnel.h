@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -33,9 +33,10 @@
 #include <PocketTunnel/smax.h>
 #include <PocketTunnel/handle.h>
 
-namespace PocketTunnel
-{
-	int pocket_tunnel_fromsurf(Geometry* molsurf, Geometry** PTV, Geometry** curated_surf, const int& opc, const int& otc);
+namespace PocketTunnel {
+int pocket_tunnel_fromsurf(Geometry *molsurf, Geometry **PTV,
+                           Geometry **curated_surf, const int &opc,
+                           const int &otc);
 }
 
 #endif

@@ -9,8 +9,8 @@
 #include <unistd.h>
 #endif
 
-float maximum(float* array, int);
-float minimum(float* array, int);
+float maximum(float *array, int);
+float minimum(float *array, int);
 float MyPower(int exp);
 int Comp_Factor(float f);
 int Comp_Bits(int maxv);

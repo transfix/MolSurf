@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -19,28 +19,27 @@
   along with MolSurf; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#if !defined(AFX_CONTOUREXTRACTOR_H__9E1013AE_AF22_4CD9_81E7_B7D7BE2ECEA5__INCLUDED_)
+#if !defined(                                                                  \
+    AFX_CONTOUREXTRACTOR_H__9E1013AE_AF22_4CD9_81E7_B7D7BE2ECEA5__INCLUDED_)
 #define AFX_CONTOUREXTRACTOR_H__9E1013AE_AF22_4CD9_81E7_B7D7BE2ECEA5__INCLUDED_
 
 #include <Utility/utility.h>
 #include <Contouring/ContourGeometry.h>
 #include <Contouring/cubes.h>
 
-namespace CCVOpenGLMath
-{
-	class Matrix;
+namespace CCVOpenGLMath {
+class Matrix;
 }
 
-namespace CCVContouring
-{
-	class MarchingCubesBuffers;
-	class ContourExtractor
-	{
-		public:
-			ContourExtractor();
-			virtual ~ContourExtractor();
-			virtual void extractContour(ContourGeometry* contourGeometry, float isovalue, float R, float G, float B) const = 0;
-	};
+namespace CCVContouring {
+class MarchingCubesBuffers;
+class ContourExtractor {
+public:
+  ContourExtractor();
+  virtual ~ContourExtractor();
+  virtual void extractContour(ContourGeometry *contourGeometry, float isovalue,
+                              float R, float G, float B) const = 0;
 };
+}; // namespace CCVContouring
 
 #endif

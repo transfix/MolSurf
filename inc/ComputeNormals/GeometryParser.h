@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -28,20 +28,19 @@
 
 using namespace COMPUTENORMALS;
 
-namespace COMPUTENORMALS
-{
-	class Vertex;
-	class Face;
-	class Surface;
-	class GeometryParser
-	{
-		public:
-			GeometryParser();
-			Surface* SurfaceTriangulation(FILE* fp);
-			int ReadHowmanyComponents(FILE* fp);
-		private:
-			int howmany, normalFlag, colorFlag;
-	};
-}
+namespace COMPUTENORMALS {
+class Vertex;
+class Face;
+class Surface;
+class GeometryParser {
+public:
+  GeometryParser();
+  Surface *SurfaceTriangulation(FILE *fp);
+  int ReadHowmanyComponents(FILE *fp);
+
+private:
+  int howmany, normalFlag, colorFlag;
+};
+} // namespace COMPUTENORMALS
 
 #endif

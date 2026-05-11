@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -21,79 +21,60 @@
 */
 #include <PDBParser/IntQueue.h>
 
-QueueNode::QueueNode(QueueNode* next, int index)
-{
-	m_Prev = 0;
-	m_Next = next;
-	if(next)
-	{
-		next->m_Prev = this;
-	}
-	m_Index = index;
+QueueNode::QueueNode(QueueNode *next, int index) {
+  m_Prev = 0;
+  m_Next = next;
+  if (next) {
+    next->m_Prev = this;
+  }
+  m_Index = index;
 }
 
-QueueNode::~QueueNode()
-{
-	delete m_Next;
-	m_Next = 0;
+QueueNode::~QueueNode() {
+  delete m_Next;
+  m_Next = 0;
 }
 
-Queue::Queue()
-{
-	m_Head = 0;
-	m_Tail = 0;
+Queue::Queue() {
+  m_Head = 0;
+  m_Tail = 0;
 }
 
-Queue::~Queue()
-{
-	delete m_Head;
-	m_Head = 0;
-	m_Tail = 0;
+Queue::~Queue() {
+  delete m_Head;
+  m_Head = 0;
+  m_Tail = 0;
 }
 
-
-Queue& Queue::enQueue(int index)
-{
-	m_Head = new QueueNode(m_Head, index);
-	if(m_Tail==0)
-	{
-		m_Tail = m_Head;
-	}
-	return *this;
+Queue &Queue::enQueue(int index) {
+  m_Head = new QueueNode(m_Head, index);
+  if (m_Tail == 0) {
+    m_Tail = m_Head;
+  }
+  return *this;
 }
 
-int Queue::deQueue()
-{
-	if(!isEmpty())
-	{
-		unsigned int index = m_Tail->m_Index;
-		QueueNode* temp = m_Tail;
-		m_Tail = m_Tail->m_Prev;
-		if(m_Tail)
-		{
-			m_Tail->m_Next = 0;
-		}
-		else
-		{
-			m_Head = 0;
-		}
-		delete temp;
-		return index;
-	}
-	else
-	{
-		return -1;
-	}
+int Queue::deQueue() {
+  if (!isEmpty()) {
+    unsigned int index = m_Tail->m_Index;
+    QueueNode *temp = m_Tail;
+    m_Tail = m_Tail->m_Prev;
+    if (m_Tail) {
+      m_Tail->m_Next = 0;
+    } else {
+      m_Head = 0;
+    }
+    delete temp;
+    return index;
+  } else {
+    return -1;
+  }
 }
 
-void Queue::clearQueue()
-{
-	delete m_Head;
-	m_Head = 0;
-	m_Tail = 0;
+void Queue::clearQueue() {
+  delete m_Head;
+  m_Head = 0;
+  m_Tail = 0;
 }
 
-bool Queue::isEmpty() const
-{
-	return (m_Head==0);
-}
+bool Queue::isEmpty() const { return (m_Head == 0); }

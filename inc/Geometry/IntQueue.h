@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,29 +22,27 @@
 #if !defined(AFX_INTQUEUE_H__5BCDDDD5_C74D_413B_A351_382DAF0EA82A__INCLUDED_)
 #define AFX_INTQUEUE_H__5BCDDDD5_C74D_413B_A351_382DAF0EA82A__INCLUDED_
 
-class QueueNode
-{
-	public:
-		QueueNode(QueueNode* next, int index);
-		QueueNode(const QueueNode& copy);
-		QueueNode& operator=(const QueueNode& copy);
-		~QueueNode();
-		QueueNode* m_Prev;
-		QueueNode* m_Next;
-		int m_Index;
+class QueueNode {
+public:
+  QueueNode(QueueNode *next, int index);
+  QueueNode(const QueueNode &copy);
+  QueueNode &operator=(const QueueNode &copy);
+  ~QueueNode();
+  QueueNode *m_Prev;
+  QueueNode *m_Next;
+  int m_Index;
 };
 
-class Queue
-{
-	public:
-		Queue();
-		~Queue();
-		Queue& enQueue(int index);
-		int deQueue();
-		void clearQueue();
-		bool isEmpty() const;
-		QueueNode* m_Head;
-		QueueNode* m_Tail;
+class Queue {
+public:
+  Queue();
+  ~Queue();
+  Queue &enQueue(int index);
+  int deQueue();
+  void clearQueue();
+  bool isEmpty() const;
+  QueueNode *m_Head;
+  QueueNode *m_Tail;
 };
 
 #endif

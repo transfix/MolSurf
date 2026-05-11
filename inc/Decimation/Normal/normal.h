@@ -2,12 +2,8 @@
 
 /* the head file of fatsfs */
 
-void
-NormalByAveraging(),     NormalByLoop(),
-				  NormalByFitting(),       Valence_Neighbor(),
-				  NewOreintationS(),       OreintationNormalS(),
-				  AdjacentTriangles(),     LoopNormal(),
-				  GlobalOreintationS();
+void NormalByAveraging(), NormalByLoop(), NormalByFitting(), Valence_Neighbor(),
+    NewOreintationS(), OreintationNormalS(), AdjacentTriangles(), LoopNormal(),
+    GlobalOreintationS();
 
-int
-LeastSqureFitNormal(),   NunmberCompnents();
+int LeastSqureFitNormal(), NunmberCompnents();

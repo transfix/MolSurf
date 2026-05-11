@@ -1,9 +1,9 @@
 /*
   Copyright 2000-2003 The University of Texas at Austin
 
-	Authors: Xiaoyu Zhang 2000-2002 <xiaoyu@ices.utexas.edu>
-					 John Wiggins 2003 <prok@cs.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Xiaoyu Zhang 2000-2002 <xiaoyu@ices.utexas.edu>
+                                         John Wiggins 2003 <prok@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of iotree.
 
@@ -35,25 +35,23 @@
     can be set as 0
 */
 /// encode a float array of length nv
-BitBuffer* encode_vals(float* vals, int nv, float isoval = 0);
+BitBuffer *encode_vals(float *vals, int nv, float isoval = 0);
 
 /// encode a unsigned short array of length nv
-BitBuffer* encode_vals(u_short* vals, int nv, float isoval = 0);
+BitBuffer *encode_vals(u_short *vals, int nv, float isoval = 0);
 
 /// encode a unsigned char array of length nv
-BitBuffer* encode_vals(u_char* vals, int nv, float isoval = 0);
+BitBuffer *encode_vals(u_char *vals, int nv, float isoval = 0);
 
-void en_second_diff(BitBuffer*, float* vals, int nv);
+void en_second_diff(BitBuffer *, float *vals, int nv);
 
 /// decode a float array of length nv
-bool  decode_vals(BitBuffer*, float* vals, int nv, float isoval = 0);
+bool decode_vals(BitBuffer *, float *vals, int nv, float isoval = 0);
 
 /// decode a unsigned short array of length nv
-bool  decode_vals(BitBuffer*, u_short* vals, int nv, float isoval = 0);
+bool decode_vals(BitBuffer *, u_short *vals, int nv, float isoval = 0);
 
 /// decode a unsigned char array of length nv
-bool  decode_vals(BitBuffer*, u_char* vals, int nv, float isoval = 0);
-
+bool decode_vals(BitBuffer *, u_char *vals, int nv, float isoval = 0);
 
 #endif
-

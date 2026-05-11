@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -29,29 +29,29 @@
 
 #include <Utility/utility.h>
 
-class CellQueue
-{
-	public:
-		// constructor/destructor
-		CellQueue(int size=100);
-		~CellQueue();
-		// add item to the queue
-		void Add(unsigned int cell);
-		// remove and return the first item in queue
-		int  Get(int& cell);
-		// return the first item in queue
-		int  Peek(int& cell);
-		// remove the first item in queue
-		void Pop();
-		// reset to empty
-		void Reset(void);
-		// check if queue is empty
-		int  Empty(void);
-	private:
-		int nel;
-		int cellsize;  // # of elements in cell array
-		int start;
-		unsigned int* cells;
+class CellQueue {
+public:
+  // constructor/destructor
+  CellQueue(int size = 100);
+  ~CellQueue();
+  // add item to the queue
+  void Add(unsigned int cell);
+  // remove and return the first item in queue
+  int Get(int &cell);
+  // return the first item in queue
+  int Peek(int &cell);
+  // remove the first item in queue
+  void Pop();
+  // reset to empty
+  void Reset(void);
+  // check if queue is empty
+  int Empty(void);
+
+private:
+  int nel;
+  int cellsize; // # of elements in cell array
+  int start;
+  unsigned int *cells;
 };
 
 #endif

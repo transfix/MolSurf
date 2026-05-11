@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -24,8 +24,8 @@
 
 #include <Geometry/Geometry.h>
 
-Geometry * MakeOffsetSurface(Geometry * surface, double distance);
+Geometry *MakeOffsetSurface(Geometry *surface, double distance);
 
-bool offsetSurface(int argc, char ** argv);
+bool offsetSurface(int argc, char **argv);
 
 #endif

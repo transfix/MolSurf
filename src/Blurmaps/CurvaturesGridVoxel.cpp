@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -21,26 +21,12 @@
 */
 #include <Blurmaps/CurvaturesGridVoxel.h>
 
-CurvaturesGridVoxel::CurvaturesGridVoxel()
-{
-}
+CurvaturesGridVoxel::CurvaturesGridVoxel() {}
 
-CurvaturesGridVoxel::~CurvaturesGridVoxel()
-{
-}
+CurvaturesGridVoxel::~CurvaturesGridVoxel() {}
 
-void CurvaturesGridVoxel::addAtom(Tuple const atom)
-{
-	m_Atoms.push_back(atom);
-}
+void CurvaturesGridVoxel::addAtom(Tuple const atom) { m_Atoms.push_back(atom); }
 
-int CurvaturesGridVoxel::getNumberOfAtoms()
-{
-	return m_Atoms.size();
-}
+int CurvaturesGridVoxel::getNumberOfAtoms() { return m_Atoms.size(); }
 
-Tuple CurvaturesGridVoxel::getAtom(int index)
-{
-	return m_Atoms.at(index);
-}
-
+Tuple CurvaturesGridVoxel::getAtom(int index) { return m_Atoms.at(index); }

@@ -1,9 +1,9 @@
 /*
   Copyright 2000-2003 The University of Texas at Austin
 
-	Authors: Xiaoyu Zhang 2000-2002 <xiaoyu@ices.utexas.edu>
-					 John Wiggins 2003 <prok@cs.utexas.edu>
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Authors: Xiaoyu Zhang 2000-2002 <xiaoyu@ices.utexas.edu>
+                                         John Wiggins 2003 <prok@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of iotree.
 
@@ -33,4 +33,3 @@ static const int USHORT_POW = 65336;
 static const int UCHAR_POW = 256;
 
 #endif
-

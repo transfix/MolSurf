@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -29,114 +29,94 @@
 #include <SignDistanceFunction_v2/geom.h>
 
 // A 3D triangular mesh represented as face vertex set.
-class FaceVertSet3D
-{
-		friend class Geom3DParser;
-		friend class DistanceTransform;
-	public:
+class FaceVertSet3D {
+  friend class Geom3DParser;
+  friend class DistanceTransform;
 
-		FaceVertSet3D(int nv = 0, int nt = 0, Point3f* verts = 0, TriId3i* tids = 0, Vector3f* norms = 0);
+public:
+  FaceVertSet3D(int nv = 0, int nt = 0, Point3f *verts = 0, TriId3i *tids = 0,
+                Vector3f *norms = 0);
 
-		virtual ~FaceVertSet3D();
+  virtual ~FaceVertSet3D();
 
-		// Get the number of vertices
-		int vertCount() const
-		{
-			return nvert;
-		}
+  // Get the number of vertices
+  int vertCount() const { return nvert; }
 
-		// Get the number of triangles
-		int triCount() const
-		{
-			return ntri;
-		}
+  // Get the number of triangles
+  int triCount() const { return ntri; }
 
-		// Add a vertex with the given position and normal
-		// return The id of the newly added vertex
-		int AddVert(const Point3f& pos, const Vector3f& norm);
+  // Add a vertex with the given position and normal
+  // return The id of the newly added vertex
+  int AddVert(const Point3f &pos, const Vector3f &norm);
 
-		int addVert(float x, float y, float z);
+  int addVert(float x, float y, float z);
 
-		// Add a vertex to the mesh if it doesn't exist now. Otherwise return the id of the vertex
-		// return The id of the vertex
-		int AddVertUnique(const Point3f& pos, const Vector3f& norm);
+  // Add a vertex to the mesh if it doesn't exist now. Otherwise return the id
+  // of the vertex return The id of the vertex
+  int AddVertUnique(const Point3f &pos, const Vector3f &norm);
 
-		// Add a triangle with given vert indices
-		// return The id of the new triangle
-		int AddTri(const TriId3i& id);
+  // Add a triangle with given vert indices
+  // return The id of the new triangle
+  int AddTri(const TriId3i &id);
 
-		// Remove unessential member fields to reduce memory usage.
-		void compact();
+  // Remove unessential member fields to reduce memory usage.
+  void compact();
 
-		// Set up bounding box of the mesh
-		void buildBBox();
+  // Set up bounding box of the mesh
+  void buildBBox();
 
-		// Get the bounding box of the mesh
-		virtual BoundingBox2 getExtent() const
-		{
-			return bbox;
-		}
+  // Get the bounding box of the mesh
+  virtual BoundingBox2 getExtent() const { return bbox; }
 
-		void getTriVerts(int nt, Point3f& v0, Point3f& v1, Point3f& v2) const
-		{
-			v0 = (*pVerts)[(*pTris)[nt][0]];
-			v1 = (*pVerts)[(*pTris)[nt][1]];
-			v2 = (*pVerts)[(*pTris)[nt][2]];
-		}
+  void getTriVerts(int nt, Point3f &v0, Point3f &v1, Point3f &v2) const {
+    v0 = (*pVerts)[(*pTris)[nt][0]];
+    v1 = (*pVerts)[(*pTris)[nt][1]];
+    v2 = (*pVerts)[(*pTris)[nt][2]];
+  }
 
-		void getTriNormal(int nt, Vector3f& norm)
-		{
-			assert(nt < ntri && nt >= 0);
-			norm = (*pTriNorms)[nt];
-		}
+  void getTriNormal(int nt, Vector3f &norm) {
+    assert(nt < ntri && nt >= 0);
+    norm = (*pTriNorms)[nt];
+  }
 
-		TriId3i getTriId(int nt)
-		{
-			return (*pTris)[nt];
-		}
+  TriId3i getTriId(int nt) { return (*pTris)[nt]; }
 
-		// Set the bounding box of the mesh
-		virtual void setExtent(const BoundingBox2& _box)
-		{
-			bbox = _box;
-		}
+  // Set the bounding box of the mesh
+  virtual void setExtent(const BoundingBox2 &_box) { bbox = _box; }
 
-		// from Node3D
-		virtual void render();
+  // from Node3D
+  virtual void render();
 
-		// Compute vertex normals of the mesh
-		// param force: If force is true, force to recompute normals
-		virtual void ComputeNormal(bool force = false);
+  // Compute vertex normals of the mesh
+  // param force: If force is true, force to recompute normals
+  virtual void ComputeNormal(bool force = false);
 
-		void computeTriNormals();
+  void computeTriNormals();
 
-		void flipTriNormals()
-		{
-			for(int i = 0; i < ntri; i++)
-			{
-				(*pTriNorms)[i] = -(*pTriNorms)[i];
-			}
-		}
+  void flipTriNormals() {
+    for (int i = 0; i < ntri; i++) {
+      (*pTriNorms)[i] = -(*pTriNorms)[i];
+    }
+  }
 
-		void invertNormal()
-		{
-			for(int i = 0; i < nvert; i++)
-			{
-				(*pNorms)[i] = -((*pNorms)[i]);
-			}
-		}
-	private:
-		// The number of vertices and triangles
-		int nvert, ntri;
+  void invertNormal() {
+    for (int i = 0; i < nvert; i++) {
+      (*pNorms)[i] = -((*pNorms)[i]);
+    }
+  }
 
-		// Bounding box of the mesh
-		BoundingBox2 bbox;
+private:
+  // The number of vertices and triangles
+  int nvert, ntri;
 
-		// Vertex array, normal arry, and triangle index array
-		dynamic_array<Point3f>		*pVerts;	// vertex array
-		dynamic_array<Vector3f>		*pNorms;	// normal array
-		dynamic_array<TriId3i>		*pTris;		// triangle index array
-		dynamic_array<Vector3f>		*pTriNorms;	// triangle normal
-		std::set<VertIdPair, LTVert>	*pVSet;
+  // Bounding box of the mesh
+  BoundingBox2 bbox;
+
+  // Vertex array, normal arry, and triangle index array
+  dynamic_array<Point3f> *pVerts;     // vertex array
+  dynamic_array<Vector3f> *pNorms;    // normal array
+  dynamic_array<TriId3i> *pTris;      // triangle index array
+  dynamic_array<Vector3f> *pTriNorms; // triangle normal
+  std::set<VertIdPair, LTVert> *pVSet;
 };
 #endif

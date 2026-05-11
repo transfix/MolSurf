@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -22,7 +22,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -53,23 +53,29 @@ using namespace PDBParser;
 
 class SimpleVolumeData;
 
-namespace PDBParser
-{
-	class GroupOfAtoms;
-	class Atom;
-};
+namespace PDBParser {
+class GroupOfAtoms;
+class Atom;
+}; // namespace PDBParser
 
-class CardinalBSpline
-{
-	public:
-		CardinalBSpline();
-		virtual ~CardinalBSpline();
-		SimpleVolumeData* getCardinalBSplineSurface(PDBParser::GroupOfAtoms* molecule, unsigned int* dim, int order);
-		bool getAtomListAndExtent(PDBParser::GroupOfAtoms* molecule, vector<PDBParser::Atom*> &atomList, float* minExtent, float* maxExtent);
-		bool computeFunction(std::vector<PDBParser::Atom*> atomList, float* data, unsigned int* dim,float* minExtent,float* maxExtent,int order);
-		void CardinalBSpline_One_Atom(float* position,float radius,int order, unsigned int* dim, float* minExtent, float* maxExtent, float* data);
-	private:
-		float minExtent[3],maxExtent[3];
+class CardinalBSpline {
+public:
+  CardinalBSpline();
+  virtual ~CardinalBSpline();
+  SimpleVolumeData *getCardinalBSplineSurface(PDBParser::GroupOfAtoms *molecule,
+                                              unsigned int *dim, int order);
+  bool getAtomListAndExtent(PDBParser::GroupOfAtoms *molecule,
+                            vector<PDBParser::Atom *> &atomList,
+                            float *minExtent, float *maxExtent);
+  bool computeFunction(std::vector<PDBParser::Atom *> atomList, float *data,
+                       unsigned int *dim, float *minExtent, float *maxExtent,
+                       int order);
+  void CardinalBSpline_One_Atom(float *position, float radius, int order,
+                                unsigned int *dim, float *minExtent,
+                                float *maxExtent, float *data);
+
+private:
+  float minExtent[3], maxExtent[3];
 };
 
 #endif

@@ -1,29 +1,28 @@
-//C- -*- C++ -*-
-//C- Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.
-//C-
-//C- This software (the "Original Code") is subject to, and may be
-//C- distributed under, the GNU General Public License, Version 2.
-//C- You may obtain a copy of the license from the Free Software
-//C- Foundation at http://www.fsf.org.
-//C-
-//C- With respect to the Original Code, and subject to any third party
-//C- intellectual property claims, LizardTech grants recipient a worldwide,
-//C- royalty-free, non-exclusive license under patent claims infringed by
-//C- making, using, or selling Original Code which are now or hereafter
-//C- owned or controlled by LizardTech, but solely to the extent that any
-//C- such patent is reasonably necessary to enable you to make, have made,
-//C- practice, sell, or otherwise dispose of Original Code (or portions
-//C- thereof) and not to any greater extent that may be necessary to utilize
-//C- further modifications or combinations.
-//C-
-//C- The Original Code is provided "AS IS" WITHOUT WARRANTY OF ANY KIND,
-//C- EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY
-//C- OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF MERCHANTIBILITY OF
-//C- FITNESS FOR A PARTICULAR PURPOSE.
+// C- -*- C++ -*-
+// C- Copyright (c) 1999-2000 LizardTech, Inc. All Rights Reserved.
+// C-
+// C- This software (the "Original Code") is subject to, and may be
+// C- distributed under, the GNU General Public License, Version 2.
+// C- You may obtain a copy of the license from the Free Software
+// C- Foundation at http://www.fsf.org.
+// C-
+// C- With respect to the Original Code, and subject to any third party
+// C- intellectual property claims, LizardTech grants recipient a worldwide,
+// C- royalty-free, non-exclusive license under patent claims infringed by
+// C- making, using, or selling Original Code which are now or hereafter
+// C- owned or controlled by LizardTech, but solely to the extent that any
+// C- such patent is reasonably necessary to enable you to make, have made,
+// C- practice, sell, or otherwise dispose of Original Code (or portions
+// C- thereof) and not to any greater extent that may be necessary to utilize
+// C- further modifications or combinations.
+// C-
+// C- The Original Code is provided "AS IS" WITHOUT WARRANTY OF ANY KIND,
+// C- EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY
+// C- OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF MERCHANTIBILITY OF
+// C- FITNESS FOR A PARTICULAR PURPOSE.
 
 #ifndef _GTHREADS_H_
 #define _GTHREADS_H_
-
 
 /** @name GThreads.h
 
@@ -97,12 +96,12 @@
 #pragma interface
 #endif
 
-#define NOTHREADS     0
-#define COTHREADS     1
-#define JRITHREADS    2
-#define POSIXTHREADS  10
-#define WINTHREADS    11
-#define MACTHREADS    12
+#define NOTHREADS 0
+#define COTHREADS 1
+#define JRITHREADS 2
+#define POSIXTHREADS 10
+#define WINTHREADS 11
+#define MACTHREADS 12
 
 // Known platforms
 #ifndef THREADMODEL
@@ -116,7 +115,7 @@
 // Exception emulation is not thread safe
 #include <C2C/arithlib/libdjvu++/GException.h>
 #ifdef USE_EXCEPTION_EMULATION
-#undef  THREADMODEL
+#undef THREADMODEL
 #define THREADMODEL NOTHREADS
 #endif
 // Default is nothreads
@@ -127,18 +126,18 @@
 // ----------------------------------------
 // INCLUDES
 
-#if THREADMODEL==WINTHREADS
+#if THREADMODEL == WINTHREADS
 #ifndef _WINDOWS_
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 #endif
 
-#if THREADMODEL==MACTHREADS
+#if THREADMODEL == MACTHREADS
 #include <threads.h>
 #endif
 
-#if THREADMODEL==POSIXTHREADS
+#if THREADMODEL == POSIXTHREADS
 #include <sys/types.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -154,20 +153,18 @@
 #endif
 #endif
 
-#if THREADMODEL==JRITHREADS
+#if THREADMODEL == JRITHREADS
 #include <jri.h>
 #endif
 
-#if THREADMODEL==COTHREADS
+#if THREADMODEL == COTHREADS
 #include <sys/types.h>
 #include <sys/time.h>
 #include <unistd.h>
 #endif
 
-
 // ----------------------------------------
 // PORTABLE CLASSES
-
 
 /** Thread class.  A multithreaded process is composed of a main execution
     thread and of several secondary threads.  Each secondary thread is
@@ -186,98 +183,97 @@
     {\bf Note} --- Both the copy constructor and the copy operator are declared
     as private members. It is therefore not possible to make multiple copies
     of instances of this class, as implied by the class semantic. */
-class GThread
-{
-	public:
-		/** Constructs a new thread object.  Memory is allocated for the
-		    thread, but the thread is not started.
-		    Argument #stacksize# is used by the #COTHREADS# model only for
-		    specifying the amount of memory needed for the processor stack. A
-		    negative value will be replaced by a suitable default value (128Kb as of
-		    12/1998). A minimum value of 32Kb is silently enforced. */
-		GThread(int stacksize = -1);
-		/** Destructor. */
-		~GThread();
-		/** Starts the thread. The new thread executes function #entry# with
-		    argument #arg#.  The thread terminates when the function returns.  A
-		    thread cannot be restarted after its termination. You must create a new
-		    #GThread# object. */
-		int  create(void (*entry)(void*), void* arg);
-		/** Terminates a thread with extreme prejudice. The thread is removed from
-		    the scheduling list.  Execution terminates regardless of the execution
-		    status of the thread function. Automatic variables may or may not be
-		    destroyed. This function must be considered as a last resort since
-		    memory may be lost. */
-		void terminate();
-		/** Causes the current thread to relinquish the processor.  The scheduler
-		    selects a thread ready to run and transfers control to that thread. The
-		    effect of #yield# heavily depends on the selected implementation.
-		    Function #yield# returns #-1# when the selected implementation does not
-		    provide an explicit way to relinquish the processor. This is often the
-		    case with preemptive multithreading models like #POSIXTHREADS# or
-		    #WINTHREADS#.  The scheduling code does not need such a feature.
-		    Function #yield# returns #+1# when only the current thread is ready to
-		    run.  Otherwise function #yield# returns #0#. */
-		static int yield();
-		/** Returns a value which uniquely identifies the current thread. */
-		static void* current();
-#if THREADMODEL==WINTHREADS
-	private:
-		HANDLE hthr;
-		DWORD  thrid;
-#elif THREADMODEL==MACTHREADS
-	private:
-		unsigned long thid;
-#elif THREADMODEL==POSIXTHREADS
-	private:
-		pthread_t hthr;
-#elif THREADMODEL==JRITHREADS
-	private:
-		JRIGlobalRef obj;
-#elif THREADMODEL==COTHREADS
-	public:
-		// Should be considered as private
-		struct cotask* task;
-		/** Replaces system call #select# (COTHREADS only).  The #COTHREADS# model
-		    does not redefine system function.  System functions therefore can
-		    potentially block the whole process (instead of blocking the current
-		    thread only) because the system is not aware of the #COTHREADS#
-		    scheduler.  The function #GThread::select# is a #COTHREADS#-aware
-		    replacement for the well known system function #select#.  You can also
-		    use #GThread::select# for making sure that calls to system functions
-		    will not block the entire process, as demonstrated below:
-		    \begin{verbatim}
-		    int
-		    gthread_read(int fd, void *buffer, size_t len)
-		    {
-		      fd_set rdset;
-		      FD_ZERO(&rdset);
-		      FD_SET(fd, &rdset);
-		      GThread::select(fd+1, &rdset, 0, 0, 0);
-		      return read(fd, buffer, len);
-		    }
-		    \end{verbatim} */
-		static int select(int, fd_set*, fd_set*, fd_set*, struct timeval*);
-		/** Install hooks in the scheduler (COTHREADS only).  The hook function
+class GThread {
+public:
+  /** Constructs a new thread object.  Memory is allocated for the
+      thread, but the thread is not started.
+      Argument #stacksize# is used by the #COTHREADS# model only for
+      specifying the amount of memory needed for the processor stack. A
+      negative value will be replaced by a suitable default value (128Kb as of
+      12/1998). A minimum value of 32Kb is silently enforced. */
+  GThread(int stacksize = -1);
+  /** Destructor. */
+  ~GThread();
+  /** Starts the thread. The new thread executes function #entry# with
+      argument #arg#.  The thread terminates when the function returns.  A
+      thread cannot be restarted after its termination. You must create a new
+      #GThread# object. */
+  int create(void (*entry)(void *), void *arg);
+  /** Terminates a thread with extreme prejudice. The thread is removed from
+      the scheduling list.  Execution terminates regardless of the execution
+      status of the thread function. Automatic variables may or may not be
+      destroyed. This function must be considered as a last resort since
+      memory may be lost. */
+  void terminate();
+  /** Causes the current thread to relinquish the processor.  The scheduler
+      selects a thread ready to run and transfers control to that thread. The
+      effect of #yield# heavily depends on the selected implementation.
+      Function #yield# returns #-1# when the selected implementation does not
+      provide an explicit way to relinquish the processor. This is often the
+      case with preemptive multithreading models like #POSIXTHREADS# or
+      #WINTHREADS#.  The scheduling code does not need such a feature.
+      Function #yield# returns #+1# when only the current thread is ready to
+      run.  Otherwise function #yield# returns #0#. */
+  static int yield();
+  /** Returns a value which uniquely identifies the current thread. */
+  static void *current();
+#if THREADMODEL == WINTHREADS
+private:
+  HANDLE hthr;
+  DWORD thrid;
+#elif THREADMODEL == MACTHREADS
+private:
+  unsigned long thid;
+#elif THREADMODEL == POSIXTHREADS
+private:
+  pthread_t hthr;
+#elif THREADMODEL == JRITHREADS
+private:
+  JRIGlobalRef obj;
+#elif THREADMODEL == COTHREADS
+public:
+  // Should be considered as private
+  struct cotask *task;
+  /** Replaces system call #select# (COTHREADS only).  The #COTHREADS# model
+      does not redefine system function.  System functions therefore can
+      potentially block the whole process (instead of blocking the current
+      thread only) because the system is not aware of the #COTHREADS#
+      scheduler.  The function #GThread::select# is a #COTHREADS#-aware
+      replacement for the well known system function #select#.  You can also
+      use #GThread::select# for making sure that calls to system functions
+      will not block the entire process, as demonstrated below:
+      \begin{verbatim}
+      int
+      gthread_read(int fd, void *buffer, size_t len)
+      {
+        fd_set rdset;
+        FD_ZERO(&rdset);
+        FD_SET(fd, &rdset);
+        GThread::select(fd+1, &rdset, 0, 0, 0);
+        return read(fd, buffer, len);
+      }
+      \end{verbatim} */
+  static int select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
+  /** Install hooks in the scheduler (COTHREADS only).  The hook function
 #call# is called when a new thread is created (argument is
 #GThread::CallbackCreate#), when a thread terminates (argument is
 #GThread::CallbackTerminate#), or when thread is unblocked (argument is
 #GThread::CallbackUnblock#).  This callback can be useful in certain GUI
-		    toolkits where the most convenient method for scheduling the threads
-		    consists in setting a timer event that calls \Ref{GThread::yield}.  */
-		static void set_scheduling_callback(void (*call)(int));
-		enum { CallbackCreate, CallbackTerminate, CallbackUnblock };
+      toolkits where the most convenient method for scheduling the threads
+      consists in setting a timer event that calls \Ref{GThread::yield}.  */
+  static void set_scheduling_callback(void (*call)(int));
+  enum { CallbackCreate, CallbackTerminate, CallbackUnblock };
 #endif
-	public:
-		// Should be considered as private
-		void (*xentry)(void*);
-		void*  xarg;
-	private:
-		// Disable default members
-		GThread(const GThread&);
-		GThread& operator=(const GThread&);
-};
+public:
+  // Should be considered as private
+  void (*xentry)(void *);
+  void *xarg;
 
+private:
+  // Disable default members
+  GThread(const GThread &);
+  GThread &operator=(const GThread &);
+};
 
 /** Mutual exclusion class.  Class #GCriticalSection# provides an efficient
     way to protect segment of codes ({\em critical sections}) which should
@@ -295,41 +291,41 @@ class GThread
     as private members. It is therefore not possible to make multiple copies of
     instances of this class, as implied by the class semantic. */
 
-class GCriticalSection
-{
-#if THREADMODEL==WINTHREADS
-		BOOL ok;
-		CRITICAL_SECTION cs;
-#elif THREADMODEL==POSIXTHREADS
-		int ok;
-		int count;
-		pthread_t locker;
-		pthread_mutex_t mutex;
-#elif THREADMODEL==JRITHREADS
-	private:
-		JRIGlobalRef obj;
-#elif THREADMODEL==COTHREADS
-		int ok;
-		int count;
-		struct cotask* locker;
+class GCriticalSection {
+#if THREADMODEL == WINTHREADS
+  BOOL ok;
+  CRITICAL_SECTION cs;
+#elif THREADMODEL == POSIXTHREADS
+  int ok;
+  int count;
+  pthread_t locker;
+  pthread_mutex_t mutex;
+#elif THREADMODEL == JRITHREADS
+private:
+  JRIGlobalRef obj;
+#elif THREADMODEL == COTHREADS
+  int ok;
+  int count;
+  struct cotask *locker;
 #endif
-	public:
-		GCriticalSection();
-		~GCriticalSection();
-		/** Locks a critical section. Only one thread can own a critical section at
-		    a given time. If the critical section is already owned by another
-		    thread, the thread waits until the critical section is released.
-		    Otherwise the locking counter is incremented and the current thread is
-		    given ownership of the critical section object. */
-		void lock();
-		/** Unlocks a critical section object. If the critical section is owned by
-		    the current thread, the locking counter is decremented. The critical
-		    section is released when the counter reaches zero. */
-		void unlock();
-	private:
-		// Disable default members
-		GCriticalSection(const GCriticalSection&);
-		GCriticalSection& operator=(const GCriticalSection&);
+public:
+  GCriticalSection();
+  ~GCriticalSection();
+  /** Locks a critical section. Only one thread can own a critical section at
+      a given time. If the critical section is already owned by another
+      thread, the thread waits until the critical section is released.
+      Otherwise the locking counter is incremented and the current thread is
+      given ownership of the critical section object. */
+  void lock();
+  /** Unlocks a critical section object. If the critical section is owned by
+      the current thread, the locking counter is decremented. The critical
+      section is released when the counter reaches zero. */
+  void unlock();
+
+private:
+  // Disable default members
+  GCriticalSection(const GCriticalSection &);
+  GCriticalSection &operator=(const GCriticalSection &);
 };
 
 /** Thread synchronization class. Class #GEvent# provides a simple way to
@@ -343,130 +339,91 @@ class GCriticalSection
     as private members. It is therefore not possible to make multiple copies
     of instances of this class, as implied by the class semantic. */
 
-class GEvent
-{
-#if THREADMODEL==WINTHREADS
-		HANDLE hev;
-#elif THREADMODEL==POSIXTHREADS
-		pthread_mutex_t mutex;
-		pthread_cond_t cond;
-		char status;
-#elif THREADMODEL==JRITHREADS
-	private:
-		JRIGlobalRef obj;
-#elif THREADMODEL==COTHREADS
-		int ok;
-		int status;
+class GEvent {
+#if THREADMODEL == WINTHREADS
+  HANDLE hev;
+#elif THREADMODEL == POSIXTHREADS
+  pthread_mutex_t mutex;
+  pthread_cond_t cond;
+  char status;
+#elif THREADMODEL == JRITHREADS
+private:
+  JRIGlobalRef obj;
+#elif THREADMODEL == COTHREADS
+  int ok;
+  int status;
 #endif
-	public:
-		GEvent();
-		~GEvent();
-		/** Sets the event object to {\em signaled}. */
-		void set();
-		/** Waits until the event object is {\em signaled}.  If the event object was
-		    {\em signaled} before, the event object is turned to {\em non signaled}
-		    and this function returns immediately. If the event object was {\em not
-		    signaled}, this function waits until another thread calls function
-		    \Ref{set}, then turns the object to the {\em non-signaled} state and
-		    returns. */
-		void wait();
-		/** Waits until the event object is {\em signaled} with a timeout.  This
-		    function is similar to \Ref{GEvent::wait} but will return after
-		    #timeout# milliseconds, regardless of the status of the event object.  */
-		void wait(int timeout);
-	private:
-		// Disable default members
-		GEvent(const GEvent&);
-		GEvent& operator=(const GEvent&);
-};
+public:
+  GEvent();
+  ~GEvent();
+  /** Sets the event object to {\em signaled}. */
+  void set();
+  /** Waits until the event object is {\em signaled}.  If the event object was
+      {\em signaled} before, the event object is turned to {\em non signaled}
+      and this function returns immediately. If the event object was {\em not
+      signaled}, this function waits until another thread calls function
+      \Ref{set}, then turns the object to the {\em non-signaled} state and
+      returns. */
+  void wait();
+  /** Waits until the event object is {\em signaled} with a timeout.  This
+      function is similar to \Ref{GEvent::wait} but will return after
+      #timeout# milliseconds, regardless of the status of the event object.  */
+  void wait(int timeout);
 
+private:
+  // Disable default members
+  GEvent(const GEvent &);
+  GEvent &operator=(const GEvent &);
+};
 
 // ----------------------------------------
 // WIN32 INLINES
 
-#if THREADMODEL==WINTHREADS
+#if THREADMODEL == WINTHREADS
 
-inline
-GCriticalSection::GCriticalSection()
-	: ok(FALSE)
-{
-	InitializeCriticalSection(&cs);
-	ok=TRUE;
+inline GCriticalSection::GCriticalSection() : ok(FALSE) {
+  InitializeCriticalSection(&cs);
+  ok = TRUE;
 }
 
-inline
-GCriticalSection::~GCriticalSection()
-{
-	ok=FALSE;
-	DeleteCriticalSection(&cs);
+inline GCriticalSection::~GCriticalSection() {
+  ok = FALSE;
+  DeleteCriticalSection(&cs);
 }
 
-inline void
-GCriticalSection::lock()
-{
-	if(ok)
-	{
-		EnterCriticalSection(&cs);
-	}
+inline void GCriticalSection::lock() {
+  if (ok) {
+    EnterCriticalSection(&cs);
+  }
 }
 
-inline void
-GCriticalSection::unlock()
-{
-	if(ok)
-	{
-		LeaveCriticalSection(&cs);
-	}
+inline void GCriticalSection::unlock() {
+  if (ok) {
+    LeaveCriticalSection(&cs);
+  }
 }
 
-inline
-GEvent::GEvent()
-{
-	hev = CreateEvent(NULL,FALSE,FALSE,NULL);
-}
+inline GEvent::GEvent() { hev = CreateEvent(NULL, FALSE, FALSE, NULL); }
 
-inline
-GEvent::~GEvent()
-{
-	CloseHandle(hev);
-}
+inline GEvent::~GEvent() { CloseHandle(hev); }
 
-inline void
-GEvent::set()
-{
-	SetEvent(hev);
-}
+inline void GEvent::set() { SetEvent(hev); }
 
-inline void
-GEvent::wait()
-{
-	WaitForSingleObject(hev,INFINITE);
-}
+inline void GEvent::wait() { WaitForSingleObject(hev, INFINITE); }
 
-inline void
-GEvent::wait(int timeout)
-{
-	WaitForSingleObject(hev, timeout);
-}
+inline void GEvent::wait(int timeout) { WaitForSingleObject(hev, timeout); }
 
-#endif  //WINTHREADS
-
+#endif // WINTHREADS
 
 // ----------------------------------------
 // NOTHREADS INLINES
 
-#if THREADMODEL==NOTHREADS
+#if THREADMODEL == NOTHREADS
 inline GThread::GThread(int stacksize) {}
 inline GThread::~GThread(void) {}
 inline void GThread::terminate() {}
-inline int GThread::yield()
-{
-	return -1;
-}
-inline void* GThread::current()
-{
-	return 0;
-}
+inline int GThread::yield() { return -1; }
+inline void *GThread::current() { return 0; }
 inline GCriticalSection::GCriticalSection() {}
 inline GCriticalSection::~GCriticalSection() {}
 inline void GCriticalSection::lock() {}
@@ -478,10 +435,8 @@ inline void GEvent::wait() {}
 inline void GEvent::wait(int timeout) {}
 #endif // NOTHREADS
 
-
 // ----------------------------------------
 // SCOPE LOCK
-
 
 /** Wrapper for mutually exclusive code.
     This class locks a specified critical section (see \Ref{GCriticalSection})
@@ -500,33 +455,25 @@ inline void GEvent::wait(int timeout) {}
       }
     \end{verbatim}
 */
-class GCriticalSectionLock
-{
-	private:
-		GCriticalSection* gsec;
-	public:
-		/** Constructor. Locks the critical section object #gsec#. */
-		GCriticalSectionLock(GCriticalSection* gsec);
-		/** Destructor. Releases the associated critical section. */
-		~GCriticalSectionLock();
+class GCriticalSectionLock {
+private:
+  GCriticalSection *gsec;
+
+public:
+  /** Constructor. Locks the critical section object #gsec#. */
+  GCriticalSectionLock(GCriticalSection *gsec);
+  /** Destructor. Releases the associated critical section. */
+  ~GCriticalSectionLock();
 };
 
-inline
-GCriticalSectionLock::GCriticalSectionLock(GCriticalSection* gsec)
-	: gsec(gsec)
-{
-	gsec->lock();
+inline GCriticalSectionLock::GCriticalSectionLock(GCriticalSection *gsec)
+    : gsec(gsec) {
+  gsec->lock();
 }
 
-inline
-GCriticalSectionLock::~GCriticalSectionLock()
-{
-	gsec->unlock();
-}
-
+inline GCriticalSectionLock::~GCriticalSectionLock() { gsec->unlock(); }
 
 //@}
 
 // ----------------------------------------
 #endif //_GTHREADS_H_
-

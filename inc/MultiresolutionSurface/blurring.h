@@ -1,7 +1,7 @@
 /*
   Copyright 2011 The University of Texas at Austin
 
-	Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
+        Advisor: Chandrajit Bajaj <bajaj@cs.utexas.edu>
 
   This file is part of MolSurf.
 
@@ -31,12 +31,26 @@
 #include <fftw3.h>
 #include <SmoothingFunction/CardinalBSpline.h>
 
-bool getBlurMap(fftw_complex* blurmap, fftw_complex* rbfCenterValues, double* rbfCenterPositions, fftw_complex* rbf1D, int numCenters, int numFreq, int gridSize, int gridSizeBig, double alpha, int interpFuncExtent, int rbfWidth, float min[3], float max[3], SmoothingFunction* smoothingFunction, double* min2, double* max2);
+bool getBlurMap(fftw_complex *blurmap, fftw_complex *rbfCenterValues,
+                double *rbfCenterPositions, fftw_complex *rbf1D, int numCenters,
+                int numFreq, int gridSize, int gridSizeBig, double alpha,
+                int interpFuncExtent, int rbfWidth, float min[3], float max[3],
+                SmoothingFunction *smoothingFunction, double *min2,
+                double *max2);
 
-// here we're breaking getBlurmap into four parts.  In order of call: getCenterFreq, getRBFFreq, multiplyWithTensor, inverseFFT
-bool getCenterFreq(fftw_complex* centerFrequencies, fftw_complex* rbfCenterValues, double* rbfCenterPositions, int numCenters, int numFreq, int gridSize, double alpha, int interpFuncExtent, int rbfWidth, float min[3], float max[3], SmoothingFunction* smoothingFunctionm);
-bool getRBFFreq(fftw_complex* rbf1D, int gridSize, fftw_complex* RBFFrequencies);
-bool multiplyWithTensor(fftw_complex* centerFrequencies, fftw_complex* RBFFrequencies, int gridSize, int numFreq);
-bool inverseFFT(fftw_complex* blurmap, fftw_complex* centerFrequencies, int numFreq, int gridSize);
+// here we're breaking getBlurmap into four parts.  In order of call:
+// getCenterFreq, getRBFFreq, multiplyWithTensor, inverseFFT
+bool getCenterFreq(fftw_complex *centerFrequencies,
+                   fftw_complex *rbfCenterValues, double *rbfCenterPositions,
+                   int numCenters, int numFreq, int gridSize, double alpha,
+                   int interpFuncExtent, int rbfWidth, float min[3],
+                   float max[3], SmoothingFunction *smoothingFunctionm);
+bool getRBFFreq(fftw_complex *rbf1D, int gridSize,
+                fftw_complex *RBFFrequencies);
+bool multiplyWithTensor(fftw_complex *centerFrequencies,
+                        fftw_complex *RBFFrequencies, int gridSize,
+                        int numFreq);
+bool inverseFFT(fftw_complex *blurmap, fftw_complex *centerFrequencies,
+                int numFreq, int gridSize);
 bool initializeFFTW(int size);
 #endif
