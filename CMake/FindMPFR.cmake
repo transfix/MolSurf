@@ -1,46 +1,34 @@
+# FindMPFR.cmake
+#
+# Locate a system MPFR installation. Depends on GMP being found first.
 
-  SET(MPFR_INC_SEARCHPATH
-    ${MPFR_INC_SEARCHPATH}
-    ${PROJECT_BINARY_DIR}/include
-    /sw/include
-    /usr/include
-    /usr/local/include
-    /usr/include/mpfr
-    /usr/local/include/mpfr
-    $ENV{_NMI_PREREQ_mpfr_ROOT}/include
-    C:/MinGW/msys/1.0/local
-    $ENV{TACC_MPFR_INC}
-  )
+include(FindPackageHandleStandardArgs)
 
-  message(MPFR_INC_SEARCHPATH: ${MPFR_INC_SEARCHPATH})
+find_path(MPFR_INCLUDE_DIR
+  NAMES mpfr.h
+  PATH_SUFFIXES mpfr
+  DOC "MPFR include directory")
 
-  FIND_PATH(MPFR_INCLUDE_PATH mpfr.h ${MPFR_INC_SEARCHPATH})
+find_library(MPFR_LIBRARY
+  NAMES mpfr libmpfr
+  DOC "MPFR library")
 
-  IF(MPFR_INCLUDE_PATH)
-    SET(MPFR_INCLUDE ${MPFR_INCLUDE_PATH})
-  ENDIF (MPFR_INCLUDE_PATH)
+find_package_handle_standard_args(MPFR
+  REQUIRED_VARS MPFR_INCLUDE_DIR MPFR_LIBRARY)
 
-  #IF(MPFR_INCLUDE)
-  #  INCLUDE_DIRECTORIES( ${MPFR_INCLUDE})
-  #ENDIF(MPFR_INCLUDE)
+mark_as_advanced(MPFR_INCLUDE_DIR MPFR_LIBRARY)
 
-  GET_FILENAME_COMPONENT(MPFR_INSTALL_BASE_PATH ${MPFR_INCLUDE_PATH} PATH)
+if(MPFR_FOUND AND NOT TARGET MPFR::mpfr)
+  add_library(MPFR::mpfr UNKNOWN IMPORTED)
+  set_target_properties(MPFR::mpfr PROPERTIES
+    IMPORTED_LOCATION "${MPFR_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${MPFR_INCLUDE_DIR}")
+  if(TARGET GMP::gmp)
+    set_property(TARGET MPFR::mpfr APPEND PROPERTY
+      INTERFACE_LINK_LIBRARIES GMP::gmp)
+  endif()
 
-  SET(MPFR_LIB_SEARCHPATH
-    ${MPFR_LIB_SEARCHPATH}
-    ${PROJECT_BINARY_DIR}/lib
-    ${MPFR_INSTALL_BASE_PATH}/lib
-    /usr/lib/mpfr
-    /usr/local/lib/mpfr
-    C:/MinGW/msys/1.0/local
-    $ENV{TACC_MPFR_LIB}
-  )
-
-  FIND_LIBRARY(MPFR_LIB libmpfr.a ${MPFR_LIB_SEARCHPATH})
-
-  IF(MPFR_LIB)
-    SET(MPFR_FOUND 1)
-  ENDIF(MPFR_LIB)
-
-  MESSAGE(MPFR_INCLUDE: ${MPFR_INCLUDE})
-  MESSAGE(MPFR_LIB: ${MPFR_LIB})
+  # Legacy aliases.
+  set(MPFR_INCLUDE "${MPFR_INCLUDE_DIR}")
+  set(MPFR_LIB     "${MPFR_LIBRARY}")
+endif()

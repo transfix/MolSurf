@@ -1,77 +1,64 @@
-## FFTW can be compiled and subsequently linked against
-## various data types.
-## There is a single set of include files, and then muttiple libraries,
-## One for each type.  I.e. libfftw.a-->double, libfftwf.a-->float
+# FindFFTW.cmake
+#
+# Locate a system FFTW3 installation (double + threads) and define imported
+# targets compatible with the package-manager layouts on Linux, macOS, and
+# Windows (apt's libfftw3-dev, Homebrew's `fftw`, vcpkg's `fftw3`).
+#
+# Provides:
+#   - Imported target FFTW3::fftw3        (double precision)
+#   - Imported target FFTW3::fftw3_threads (double-precision threaded; optional)
+#   - Imported target FFTW3::fftw3f       (single precision; optional)
+#   - Variables FFTW_INCLUDE, FFTW_LIB    (legacy aliases for existing call sites)
 
-## The following logic belongs in the individual package
-## MARK_AS_ADVANCED(USE_FFTWD)
-## OPTION(USE_FFTWD "Use double precision FFTW if found" ON)
-## MARK_AS_ADVANCED(USE_FFTWF)
-## OPTION(USE_FFTWF "Use single precision FFTW if found" ON)
+include(FindPackageHandleStandardArgs)
 
-  SET(FFTW_INC_SEARCHPATH
-    ${PROJECT_BINARY_DIR}/include
-    /sw/include
-    /usr/include
-    /usr/local/include
-    /usr/include/fftw
-    /usr/local/include/fftw
-    $ENV{_NMI_PREREQ_fftw_ROOT}/include
-    C:/MinGW/msys/1.0/local
-    $ENV{TACC_FFTW3_INC}
-  )
+find_path(FFTW_INCLUDE_DIR
+  NAMES fftw3.h
+  PATH_SUFFIXES fftw
+  DOC "FFTW3 include directory")
 
-  FIND_PATH(FFTW_INCLUDE_PATH fftw3.h ${FFTW_INC_SEARCHPATH})
+find_library(FFTW_DOUBLE_LIB
+  NAMES fftw3 libfftw3-3 libfftw3
+  DOC "FFTW3 double-precision library")
 
-  IF(FFTW_INCLUDE_PATH)
-    SET(FFTW_INCLUDE ${FFTW_INCLUDE_PATH})
-  ENDIF (FFTW_INCLUDE_PATH)
+find_library(FFTW_DOUBLE_THREADS_LIB
+  NAMES fftw3_threads libfftw3_threads
+  DOC "FFTW3 double-precision threaded library")
 
- #message(FFTW_INCLUDE: ${FFTW_INCLUDE})
+find_library(FFTW_SINGLE_LIB
+  NAMES fftw3f libfftw3f-3 libfftw3f
+  DOC "FFTW3 single-precision library")
 
-  #message(FFTW_INCLUDE_PATH: ${FFTW_INCLUDE_PATH})
-  #IF(FFTW_INCLUDE)
-  #  INCLUDE_DIRECTORIES( ${FFTW_INCLUDE})
-  #ENDIF(FFTW_INCLUDE)
+find_package_handle_standard_args(FFTW
+  REQUIRED_VARS FFTW_INCLUDE_DIR FFTW_DOUBLE_LIB)
 
-  GET_FILENAME_COMPONENT(FFTW_INSTALL_BASE_PATH ${FFTW_INCLUDE_PATH} PATH)
+mark_as_advanced(FFTW_INCLUDE_DIR FFTW_DOUBLE_LIB FFTW_DOUBLE_THREADS_LIB FFTW_SINGLE_LIB)
 
-  SET(FFTW_LIB_SEARCHPATH
-    ${FFTW_INSTALL_BASE_PATH}/lib
-    ${PROJECT_BINARY_DIR}/lib
-    /usr/lib/fftw
-    /usr/local/lib/fftw
-    C:/MinGW/msys/1.0/local
-    $ENV{TACC_FFTW3_INC}
-  )
- 
-  MARK_AS_ADVANCED(FFTW_LIB)
-  FIND_LIBRARY(FFTW_LIB libfftw3.a ${FFTW_LIB_SEARCHPATH})
-  if(FFTW_LIB)
-     set(FFTW_FOUND FOUND)
-  endif(FFTW_LIB)
+if(FFTW_FOUND)
+  if(NOT TARGET FFTW3::fftw3)
+    add_library(FFTW3::fftw3 UNKNOWN IMPORTED)
+    set_target_properties(FFTW3::fftw3 PROPERTIES
+      IMPORTED_LOCATION "${FFTW_DOUBLE_LIB}"
+      INTERFACE_INCLUDE_DIRECTORIES "${FFTW_INCLUDE_DIR}")
+  endif()
+  if(FFTW_DOUBLE_THREADS_LIB AND NOT TARGET FFTW3::fftw3_threads)
+    add_library(FFTW3::fftw3_threads UNKNOWN IMPORTED)
+    set_target_properties(FFTW3::fftw3_threads PROPERTIES
+      IMPORTED_LOCATION "${FFTW_DOUBLE_THREADS_LIB}"
+      INTERFACE_INCLUDE_DIRECTORIES "${FFTW_INCLUDE_DIR}"
+      INTERFACE_LINK_LIBRARIES FFTW3::fftw3)
+  endif()
+  if(FFTW_SINGLE_LIB AND NOT TARGET FFTW3::fftw3f)
+    add_library(FFTW3::fftw3f UNKNOWN IMPORTED)
+    set_target_properties(FFTW3::fftw3f PROPERTIES
+      IMPORTED_LOCATION "${FFTW_SINGLE_LIB}"
+      INTERFACE_INCLUDE_DIRECTORIES "${FFTW_INCLUDE_DIR}")
+  endif()
 
-  MARK_AS_ADVANCED(FFTWD_LIB FFTWD_THREADS_LIB)
-  FIND_LIBRARY(FFTWD_LIB libfftw3d.a ${FFTW_LIB_SEARCHPATH}) #Double Precision Lib
-  FIND_LIBRARY(FFTWD_THREADS_LIB fftw3d_threads.a ${FFTW_LIB_SEARCHPATH}) #Double Precision Lib only if compiled with threads support
-
-  IF(FFTWD_LIB)
-     SET(FFTW_LIB ${FFTWD_LIB} ${FFTW_LIB})
-  ENDIF(FFTWD_LIB)
-  IF(FFTWD_THREADS_LIB)
-     SET(FFTW_LIB ${FFTWD_THREADS_LIB} ${FFTW_LIB})
-  ENDIF(FFTWD_THREADS_LIB)
-
-  MARK_AS_ADVANCED(FFTWF_LIB FFTWF_THREADS_LIB)
-  FIND_LIBRARY(FFTWF_LIB libfftw3f.a ${FFTW_LIB_SEARCHPATH}) #Single Precision Lib
-  FIND_LIBRARY(FFTWF_THREADS_LIB libfftw3f_threads.a ${FFTW_LIB_SEARCHPATH}) #Single Precision Lib only if compiled with threads support
-
-  IF(FFTWF_LIB)
-     SET(FFTW_LIB ${FFTWF_LIB} ${FFTW_LIB})
-  ENDIF(FFTWF_LIB)
-  IF(FFTWF_THREADS_LIB)
-     SET(FFTW_LIB ${FFTWF_THREADS_LIB} ${FFTW_LIB})
-  ENDIF(FFTWF_THREADS_LIB)
-
-  #message(FFTW_LIB: ${FFTW_LIB})
-  #message(FFTW_INCLUDE: ${FFTW_INCLUDE})
+  # Legacy aliases for call sites that still reference FFTW_INCLUDE / FFTW_LIB.
+  set(FFTW_INCLUDE "${FFTW_INCLUDE_DIR}")
+  set(FFTW_LIB     "${FFTW_DOUBLE_LIB}")
+  if(FFTW_DOUBLE_THREADS_LIB)
+    list(APPEND FFTW_LIB "${FFTW_DOUBLE_THREADS_LIB}")
+  endif()
+endif()

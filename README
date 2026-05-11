@@ -1,13 +1,17 @@
 ------------------------------------------------
-|            MolSurf 1.0 - Usage               |
+|            MolSurf 2.0 - Usage               |
 ------------------------------------------------
-Alex R. -- arand@ices.utexas.edu -- 10/20/2010
+Computational Visualization Center
 
-MolSurf is a package with different functions for 
+MolSurf is a package with different functions for
 generating and accessing molecular surfaces.
 
+For build and installation instructions, see the INSTALL file in the
+project root. MolSurf 2.x uses system-provided dependencies (apt, brew,
+vcpkg) instead of a vendored third-party/ tree.
+
 More information is available via the Computational
-Visualization Center's website: 
+Visualization Center's website:
 
 http://cvcweb.ices.utexas.edu/cvc
 

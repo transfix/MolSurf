@@ -1,27 +1,81 @@
 ------------------------------------------------
-|       MolSurf 1.0 - Build/Installation       |
+|       MolSurf 2.0 - Build/Installation       |
 ------------------------------------------------
-Alex R. -- arand@ices.utexas.edu -- 10/20/2010
 
-To build:
-$ cd $BUILD_DIR
-$ cmake $SOURCE_DIR
-$ make
+MolSurf is built with CMake (>= 3.16). All native dependencies are now
+provided by the host system / package manager instead of being vendored
+under third-party/. Install them once for your OS, then run a normal
+CMake build.
 
-BUILD_DIR - a location to place files generated during the build.
-            It can be the same as the SOURCE_DIR
-SOURCE_DIR - The location of the project's root CMakeLists.txt file.
+------------------------------------------------------------------
+Dependencies
+------------------------------------------------------------------
+Required:
+    Boost  (>= 1.66; components: thread, date_time, regex,
+            filesystem, system, program_options)
+    FFTW3  (double precision; threads recommended)
+    CGAL   (with Core component; requires GMP and MPFR)
+    LAPACK + BLAS
 
-The build process with produce the executable:
+Optional / module-specific:
+    NFFT3  (enables the FastSummation / CoarseGrain code path; if no
+            system package is available the build will fall back to
+            fetching and compiling NFFT 3.x from source -- this
+            requires a POSIX shell and autotools at configure time)
 
-bin/MolSurf
+------------------------------------------------------------------
+Installing dependencies
+------------------------------------------------------------------
 
+Debian / Ubuntu:
 
-Configuration options:
+    sudo apt-get install -y \
+        build-essential cmake ninja-build pkg-config \
+        libboost-all-dev \
+        libfftw3-dev \
+        libnfft3-dev \
+        libcgal-dev libgmp-dev libmpfr-dev \
+        liblapack-dev libblas-dev
 
-To build without CGAL or NFFT, use the cmake configuration
-options which can be set with the ccmake command.
+macOS (Homebrew):
 
-Note: Disabling CGAL will remove PocketTunnel functionality.
-      Disabling NFFT will remove CoarseGrain functionality.  
+    brew install cmake ninja pkg-config \
+        boost fftw cgal gmp mpfr lapack
 
+    # NFFT is not in core Homebrew; MolSurf will build it from source
+    # automatically (autotools is provided by Xcode's command-line tools).
+
+Windows (vcpkg):
+
+    vcpkg install \
+        boost-thread boost-date-time boost-regex boost-filesystem \
+        boost-system boost-program-options \
+        fftw3 cgal gmp mpfr lapack
+
+    # NFFT has no vcpkg port. Either disable NFFT-dependent modules or
+    # use MSYS2 + `pacman -S mingw-w64-x86_64-nfft` and point CMake at it
+    # with -DNFFT_INCLUDE_DIR / -DNFFT_LIBRARY.
+
+------------------------------------------------------------------
+Building
+------------------------------------------------------------------
+
+    cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+    cmake --build build --parallel
+
+On Windows, pass the vcpkg toolchain file:
+
+    cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release ^
+          -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake
+
+The MolSurf executable is produced under build/bin/.
+
+------------------------------------------------------------------
+Configuration options
+------------------------------------------------------------------
+
+    DISABLE_CGAL                    -- skip CGAL-dependent components
+                                       (removes PocketTunnel).
+    MOLSURF_NFFT_FORCE_FETCHCONTENT -- always build NFFT from source
+                                       even if a system copy exists.
+    MOLSURF_NFFT_VERSION            -- NFFT version to fetch (default 3.5.3).

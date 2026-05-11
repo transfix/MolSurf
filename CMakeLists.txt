@@ -1,57 +1,51 @@
-cmake_minimum_required (VERSION 2.6)
-project (MolSurf)
+cmake_minimum_required(VERSION 3.16)
+project(MolSurf
+  VERSION 2.0.0
+  DESCRIPTION "Volumetric image visualization and processing"
+  LANGUAGES C CXX)
 
-# arand: either of the lines below eliminate an annoying
-#        CGAL problem, 7-20-2010
-#ADD_DEFINITIONS(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
-ADD_DEFINITIONS(-frounding-math)
+# C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-#set (DISABLE_BUILD_COARSEGRAIN TRUE)
+# Make CGAL's exact constructions stable with GCC. Other compilers do not
+# require this and would warn or fail on the flag.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  add_compile_options(-frounding-math)
+endif()
 
-# Global Variables
-if(CMAKE_HOST_UNIX)
-  # standard setup
-  set (CMAKE_CXX_FLAGS "$ENV{CPPFLAGS} -O3")
-  set (CMAKE_LD_FLAGS "$ENV{LDFLAGS}")
+# Honor environment-provided flags (CPPFLAGS/LDFLAGS) without trampling
+# anything the user passed on the command line.
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    Debug Release RelWithDebInfo MinSizeRel)
+endif()
 
-  # Debugging and profiling friendly flags:
-  #set (CMAKE_CXX_FLAGS "$ENV{CPPFLAGS} -pg")
-  #set (CMAKE_LD_FLAGS "$ENV{LDFLAGS} -pg")
-
-  #set (CMAKE_CXX_FLAGS "-I/usr/include -O2")
-  #set (CMAKE_LD_FLAGS "-L/usr/lib")
-endif(CMAKE_HOST_UNIX)
-
-SET(CGAL_DIR
-  ${PROJECT_BINARY_DIR}/lib/CGAL)
-
-
-option(USING_MAKE_ENV_VARS_FOR_INSTALL "If this is enabled, use the LDFLAGS environment variable as a directory to look up libs for a bundle" ON)
+option(USING_MAKE_ENV_VARS_FOR_INSTALL
+  "Use the LDFLAGS environment variable as a directory to look up libs for a bundle" ON)
 mark_as_advanced(USING_MAKE_ENV_VARS_FOR_INSTALL)
 if(USING_MAKE_ENV_VARS_FOR_INSTALL)
   set(ENV_LIB_DIR "$ENV{ENV}/lib")
-endif(USING_MAKE_ENV_VARS_FOR_INSTALL)
-
+endif()
 if(NOT BUNDLE_LIB_SEARCH_DIRS)
   set(BUNDLE_LIB_SEARCH_DIRS "${ENV_LIB_DIR}")
-endif(NOT BUNDLE_LIB_SEARCH_DIRS)
+endif()
 message(STATUS "BUNDLE_LIB_SEARCH_DIRS: ${BUNDLE_LIB_SEARCH_DIRS}")
 
+# CMake module path: only our own modules and whatever the user/toolchain
+# provides. No more reaching into ${PROJECT_BINARY_DIR} for vendored libs.
+list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 
-# CMake Modules
-SET(CMAKE_MODULE_PATH
-  ${PROJECT_BINARY_DIR}/lib/CGAL
-  ${PROJECT_BINARY_DIR}/lib/cmake/lapack-3.4.2
-  ${CMAKE_SOURCE_DIR}/CMake
-  ${CMAKE_MODULE_PATH})
-
-
-# include macro for setting up Boost
-include( SetupBoost )
-include( SetupFFTW )
-include( SetupNFFT )
-include( SetupLapack )
-include( SetupCGAL )
+# Dependency discovery macros. Each Setup<Foo>.cmake calls find_package
+# against the system / package manager (apt, brew, vcpkg). NFFT may fall
+# back to FetchContent because it has no first-class package on every OS.
+include(SetupBoost)
+include(SetupFFTW)
+include(SetupNFFT)
+include(SetupLapack)
+include(SetupCGAL)
 
 #output 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
@@ -59,8 +53,8 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
 
-# Set the revision number from svn.
-option(USING_SUBVERSION "If you're using subversion, MolSurf can use the revision number for version info" OFF)
+# Optional Subversion revision tag (legacy; mostly for backward-compat banners).
+option(USING_SUBVERSION "Use the svn revision for version info" OFF)
 set(CVC_SVN_REVISION "0")
 if(USING_SUBVERSION)
   find_package(Subversion)
@@ -68,17 +62,15 @@ if(USING_SUBVERSION)
     Subversion_WC_INFO(${CMAKE_SOURCE_DIR} MolSurf)
     set(CVC_SVN_REVISION ${MolSurf_WC_REVISION})
     message(STATUS "Building Revision: ${CVC_SVN_REVISION}")
-  endif(Subversion_FOUND)
-endif(USING_SUBVERSION)
+  endif()
+endif()
 
-
-# The MolSurf version number.
-SET(MolSurf_VERSION_MAJOR 1)
-SET(MolSurf_VERSION_MINOR 0)
-SET(MolSurf_VERSION_PATCH ${CVC_SVN_REVISION})
-
-# The full version string
-SET(MolSurf_VERSION ${MolSurf_VERSION_MAJOR}.${MolSurf_VERSION_MINOR}.${MolSurf_VERSION_PATCH})
+# Version is set by project() above; alias the components for downstream
+# code / CPack metadata that still expects MolSurf_VERSION_*.
+set(MolSurf_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(MolSurf_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(MolSurf_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(MolSurf_VERSION       ${PROJECT_VERSION})
 message(STATUS "MolSurf version: ${MolSurf_VERSION}")
 
 # OSX Bundle settings
@@ -178,22 +170,15 @@ SET(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_SOURCE_DIR}/README")
 include( CPack )
 include(InstallRequiredSystemLibraries)
 
-option(PRE_BUILD "Builds dependencies" ON)
+option(PRE_BUILD "Build vendored third-party dependencies (REMOVED)" OFF)
 if(PRE_BUILD)
-  ADD_SUBDIRECTORY (third-party)
-  MESSAGE(STATUS "*******************************************************")
-  MESSAGE(STATUS "** If your expected target is not available, consider")
-  MESSAGE(STATUS "** changing the PRE_BUILD option using ccmake.")
-  MESSAGE(STATUS "*******************************************************")
-else(PRE_BUILD)
-  include_directories(${PROJECT_BINARY_DIR}/include)
-  link_directories(${PROJECT_BINARY_DIR}/lib)
-  ADD_SUBDIRECTORY (src)
-  MESSAGE(STATUS "*******************************************************")
-  MESSAGE(STATUS "** If needed dependencies are not available, consider")
-  MESSAGE(STATUS "** changing the PRE_BUILD option using ccmake.")
-  MESSAGE(STATUS "*******************************************************")
-endif(PRE_BUILD)
+  message(FATAL_ERROR
+    "PRE_BUILD=ON is no longer supported. The vendored third-party/ directory "
+    "has been removed; install dependencies through your system package "
+    "manager (apt / brew / vcpkg). See INSTALL for details.")
+endif()
+
+add_subdirectory(src)
 
 
 
