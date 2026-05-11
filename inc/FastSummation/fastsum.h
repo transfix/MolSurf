@@ -60,10 +60,9 @@
 #define fastsum_h_inc
 
 /** Include header for C99 complex datatype. */
-#include </usr/include/complex.h>
-/** Include header for utils from NFFT3 library. */
-#include "nfft3util.h"
-/** Include header for NFFT3 library. */
+#include <complex.h>
+/** Include header for NFFT3 library (utility functions live here in
+ *  NFFT >= 3.3; the old nfft3util.h is no longer installed). */
 #include "nfft3.h"
 
 typedef double _Complex (*kernel)(double , int , const double *);

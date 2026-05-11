@@ -26,8 +26,8 @@
 
 extern "C" {
   //#include <complex.h>
-  #include "/usr/include/complex.h"
-#include "nfft3util.h"
+#include <complex.h>
+/* nfft3util.h was removed in NFFT >= 3.3; utility prototypes are in nfft3.h. */
 #include "nfft3.h"
 #include <FastSummation/fastsum.h>
 }
