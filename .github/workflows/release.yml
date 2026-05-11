@@ -1,0 +1,233 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+permissions:
+  contents: write
+
+jobs:
+  # ── Linux: .deb + portable tarball ──
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Compute artifact metadata
+        id: meta
+        run: |
+          VERSION=$(awk '/^[[:space:]]*VERSION[[:space:]]+[0-9]/{gsub(/[^0-9.]/,"",$2); print $2; exit}' CMakeLists.txt)
+          ARCH=$(uname -m)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "arch=$ARCH" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build dpkg-dev \
+            autoconf automake libtool pkg-config \
+            libboost-all-dev libfftw3-dev libnfft3-dev \
+            libcgal-dev libgmp-dev libmpfr-dev \
+            liblapack-dev libblas-dev
+
+      - name: Configure
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Create portable tarball
+        run: |
+          cmake --install build --prefix staging/MolSurf || true
+          mkdir -p staging/MolSurf/lib staging/MolSurf/bin
+          if [ -d build/bin ]; then
+            cp -r build/bin/. staging/MolSurf/bin/ 2>/dev/null || true
+          fi
+          if [ -d build/lib ]; then
+            cp -r build/lib/. staging/MolSurf/lib/ 2>/dev/null || true
+          fi
+          for bin in staging/MolSurf/bin/*; do
+            [ -x "$bin" ] || continue
+            ldd "$bin" 2>/dev/null | grep -oP '/\S+lib(fftw|nfft|gmp|mpfr|CGAL)\S+' | while read lib; do
+              cp -uL "$lib" staging/MolSurf/lib/ 2>/dev/null || true
+            done
+          done
+          for bin in staging/MolSurf/bin/*; do
+            [ -x "$bin" ] || continue
+            name=$(basename "$bin")
+            mv "$bin" "$bin.real"
+            cat > "$bin" <<'WRAPPER'
+          #!/bin/sh
+          DIR="$(cd "$(dirname "$0")" && pwd)"
+          export LD_LIBRARY_PATH="$DIR/../lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+          exec "$DIR/BINNAME.real" "$@"
+          WRAPPER
+            sed -i "s/BINNAME/$name/" "$bin"
+            chmod +x "$bin"
+          done
+          cp README.md staging/MolSurf/ 2>/dev/null || true
+          tar -czf "MolSurf-${{ steps.meta.outputs.version }}-linux-${{ steps.meta.outputs.arch }}.tar.gz" -C staging MolSurf
+
+      - name: Build .deb package
+        run: |
+          cd build
+          cpack -G DEB || { echo "::warning::cpack DEB failed"; exit 0; }
+          for f in *.deb; do cp "$f" "../MolSurf-${{ steps.meta.outputs.version }}-linux-${{ steps.meta.outputs.arch }}.deb"; done
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-packages
+          path: |
+            MolSurf-${{ steps.meta.outputs.version }}-linux-${{ steps.meta.outputs.arch }}.tar.gz
+            MolSurf-${{ steps.meta.outputs.version }}-linux-${{ steps.meta.outputs.arch }}.deb
+          if-no-files-found: ignore
+
+  # ── macOS: .dmg ──
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Compute artifact metadata
+        id: meta
+        run: |
+          VERSION=$(awk '/^[[:space:]]*VERSION[[:space:]]+[0-9]/{gsub(/[^0-9.]/,"",$2); print $2; exit}' CMakeLists.txt)
+          ARCH=$(uname -m)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "arch=$ARCH" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies
+        run: |
+          brew install cmake ninja autoconf automake libtool pkg-config \
+            boost fftw cgal gmp mpfr lapack
+
+      - name: Configure
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr/local
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Create .dmg
+        run: |
+          cmake --install build --prefix staging/MolSurf.app/Contents/Resources || true
+          mkdir -p staging/MolSurf.app/Contents/MacOS staging/MolSurf.app/Contents/Frameworks
+          if [ -d build/bin ]; then
+            cp -r build/bin/. staging/MolSurf.app/Contents/MacOS/ 2>/dev/null || true
+          fi
+          for bin in staging/MolSurf.app/Contents/MacOS/*; do
+            [ -x "$bin" ] || continue
+            otool -L "$bin" 2>/dev/null | grep -oE '/[^ ]+lib(fftw|nfft|gmp|mpfr|CGAL)[^ ]+' | while read lib; do
+              bname=$(basename "$lib")
+              cp -n "$lib" staging/MolSurf.app/Contents/Frameworks/ 2>/dev/null || true
+              install_name_tool -change "$lib" \
+                "@executable_path/../Frameworks/$bname" "$bin" 2>/dev/null || true
+            done
+          done
+          cp README.md staging/MolSurf.app/Contents/Resources/ 2>/dev/null || true
+          ditto -c -k --keepParent staging/MolSurf.app "MolSurf-${{ steps.meta.outputs.version }}-macos-${{ steps.meta.outputs.arch }}.zip"
+          hdiutil create -volname MolSurf \
+            -srcfolder staging/MolSurf.app \
+            -ov -format UDZO \
+            MolSurf-${{ steps.meta.outputs.version }}-macos-${{ steps.meta.outputs.arch }}.dmg
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-package
+          path: |
+            MolSurf-${{ steps.meta.outputs.version }}-macos-${{ steps.meta.outputs.arch }}.dmg
+            MolSurf-${{ steps.meta.outputs.version }}-macos-${{ steps.meta.outputs.arch }}.zip
+          if-no-files-found: ignore
+
+  # ── Windows: .zip ──
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Compute artifact metadata
+        id: meta
+        shell: bash
+        run: |
+          VERSION=$(awk '/^[[:space:]]*VERSION[[:space:]]+[0-9]/{gsub(/[^0-9.]/,"",$2); print $2; exit}' CMakeLists.txt)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "arch=x64" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          vcpkg install \
+            boost-thread:x64-windows boost-filesystem:x64-windows \
+            boost-system:x64-windows boost-program-options:x64-windows \
+            boost-regex:x64-windows boost-date-time:x64-windows \
+            fftw3:x64-windows cgal:x64-windows \
+            gmp:x64-windows mpfr:x64-windows \
+            lapack-reference:x64-windows
+
+      - name: Configure
+        shell: bash
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" \
+            -DCMAKE_INSTALL_PREFIX=install
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Create zip
+        shell: bash
+        run: |
+          cmake --install build --config Release --prefix staging/MolSurf || true
+          mkdir -p staging/MolSurf/bin
+          if [ -d build/bin ]; then
+            find build/bin -name '*.exe' -exec cp {} staging/MolSurf/bin/ \; 2>/dev/null || true
+            find build/bin -name '*.dll' -exec cp {} staging/MolSurf/bin/ \; 2>/dev/null || true
+          fi
+          cp "$VCPKG_INSTALLATION_ROOT"/installed/x64-windows/bin/*.dll \
+             staging/MolSurf/bin/ 2>/dev/null || true
+          cp README.md staging/MolSurf/ 2>/dev/null || true
+          cd staging
+          7z a -tzip ../"MolSurf-${{ steps.meta.outputs.version }}-windows-${{ steps.meta.outputs.arch }}.zip" MolSurf/
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-package
+          path: MolSurf-${{ steps.meta.outputs.version }}-windows-${{ steps.meta.outputs.arch }}.zip
+          if-no-files-found: error
+
+  # ── Publish the GitHub Release ──
+  release:
+    needs: [linux, macos, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: List artifacts
+        run: find dist -type f -printf '%p\n'
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/**/*.tar.gz
+            dist/**/*.deb
+            dist/**/*.dmg
+            dist/**/*.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true

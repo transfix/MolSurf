@@ -47,6 +47,23 @@ include(SetupNFFT)
 include(SetupLapack)
 include(SetupCGAL)
 
+# ── libcvc dependency (FetchContent) ──
+# Pull in CVC-Lab/libcvc (via the transfix/libcvc mirror used by sibling
+# projects such as F2Dock and volrover) so MolSurf can reuse the shared
+# CVC libraries. Disable libcvc's own tests/coverage/CUDA/volrover3 build
+# to keep the configure step lean for MolSurf consumers.
+include(FetchContent)
+set(CVC_BUILD_TESTS     OFF CACHE BOOL "" FORCE)
+set(CVC_ENABLE_CUDA     OFF CACHE BOOL "" FORCE)
+set(CVC_ENABLE_COVERAGE OFF CACHE BOOL "" FORCE)
+set(CVC_BUILD_VOLROVER3 OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+  libcvc
+  GIT_REPOSITORY https://github.com/transfix/libcvc.git
+  GIT_TAG        972afd8552b4755356e572f9b4ffc33d4366cda9 # v3.1.0
+)
+FetchContent_MakeAvailable(libcvc)
+
 #output 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
