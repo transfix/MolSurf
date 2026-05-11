@@ -1,90 +1,35 @@
+# SetupBoost.cmake
 #
-# These macros are for setting up Boost for a target
+# Discover Boost via the system / package-manager installation (apt's
+# libboost-all-dev, Homebrew's `boost`, vcpkg's `boost-*`, etc.) and attach
+# the resulting imported targets to a caller's target.
 #
+# Usage:
+#   SetupBoost(<target> [extra_components...])
+#
+# Default components match what MolSurf historically vendored.
 
-macro(IncludeBoost)
-  set(Boost_FOUND FOUND)
-  set(Boost_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/third-party/boost)
-endmacro(IncludeBoost)
+set(MOLSURF_BOOST_DEFAULT_COMPONENTS
+  thread date_time regex filesystem system program_options)
 
-macro(find_boost)
-  set(Boost_FOUND FOUND)
-  set(Boost_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/third-party/boost)
-  set(Boost_components thread date_time regex filesystem system program_options)
-endmacro(find_boost)
+# Resolve Boost once per configure; cache for downstream calls.
+if(NOT MolSurf_Boost_FOUND)
+  find_package(Boost 1.66 REQUIRED
+    COMPONENTS ${MOLSURF_BOOST_DEFAULT_COMPONENTS})
+  set(MolSurf_Boost_FOUND TRUE CACHE INTERNAL "")
+endif()
 
 macro(SetupBoost TargetName)
-  # message("Setting up boost for target ${TargetName}")
-  set(Boost_FOUND FOUND)
-  set(BOOST_ROOT ${PROJECT_SOURCE_DIR}/third-party/boost)
-  set(Boost_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/third-party/boost/boost)
-  set(Boost_LIBRARY_DIRS ${PROJECT_SOURCE_DIR}/third-party/boost/libs)
-# if (NOT DEFINED Boost_USE_MULTITHREADED)
-  set(Boost_LIBRARIES boost_thread boost_date_time boost_regex boost_filesystem boost_system boost_program_options)
-  target_link_libraries(${TargetName} ${Boost_LIBRARIES}) 
-endmacro(SetupBoost)
-
-##
-## These macros are for setting up Boost for a target
-##
-#
-#macro(IncludeBoost)
-# find_package(Boost 1.41.0)
-# if(Boost_FOUND)
-#   include_directories(${Boost_INCLUDE_DIRS})
-#   message("Boost includes: ${Boost_INCLUDE_DIRS}")
-# else(Boost_FOUND)
-#   message(SEND_ERROR "If you're having trouble finding boost, set CMake variables "
-#           "BOOST_INCLUDEDIR and BOOST_LIBRARYDIR to the appropriate paths")
-# endif(Boost_FOUND)
-#endmacro(IncludeBoost)
-#
-#macro(find_boost)
-# # defaults
-# if (NOT DEFINED Boost_USE_STATIC)
-#   set(Boost_USE_STATIC OFF)
-# endif()
-# if (NOT DEFINED Boost_USE_MULTITHREADED)
-#   set(Boost_USE_MULTITHREADED ON)
-# endif()
-#
-# set(Boost_components ${ARGN})
-# if(NOT Boost_components)
-#   # default components if none are specified
-#   set(Boost_components thread date_time regex filesystem system program_options)
-# endif(NOT Boost_components)
-#
-# message("Boost_components: ${Boost_components}")
-# set(Boost_DEBUG TRUE)
-#
-# find_package(Boost 1.41.0 COMPONENTS ${Boost_components})
-# if(Boost_FOUND)
-#   include_directories(${Boost_INCLUDE_DIRS})
-#   message("Boost includes: ${Boost_INCLUDE_DIRS}")
-# else(Boost_FOUND)
-#   message(SEND_ERROR "If you're having trouble finding boost, "
-#                       "set CMake variables BOOST_INCLUDEDIR and "
-#                       "BOOST_LIBRARYDIR to the appropriate paths")
-# endif(Boost_FOUND)
-#
-#endmacro(find_boost)
-#
-#macro(SetupBoost TargetName)
-# message("Setting up boost for target ${TargetName}")
-## message("CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
-#
-# find_boost(${ARGN})
-# if(Boost_FOUND)
-##   include_directories(${Boost_INCLUDE_DIRS})
-#   set(LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES}) 
-##   message("Boost includes: ${Boost_INCLUDE_DIRS}")
-#   message("Boost libraries: ${Boost_LIBRARIES}")
-## else(Boost_FOUND)
-##   message(SEND_ERROR "${TargetName}: If you're having trouble finding boost, "
-##                       "set CMake variables BOOST_INCLUDEDIR and "
-##                       "BOOST_LIBRARYDIR to the appropriate paths")
-# endif(Boost_FOUND)
-# 
-# target_link_libraries(${TargetName} ${LINK_LIBS})
-#endmacro(SetupBoost)
-#
+  set(_components ${ARGN})
+  if(NOT _components)
+    set(_components ${MOLSURF_BOOST_DEFAULT_COMPONENTS})
+  endif()
+  foreach(_c IN LISTS _components)
+    if(TARGET Boost::${_c})
+      target_link_libraries(${TargetName} PUBLIC Boost::${_c})
+    endif()
+  endforeach()
+  if(TARGET Boost::headers)
+    target_link_libraries(${TargetName} PUBLIC Boost::headers)
+  endif()
+endmacro()

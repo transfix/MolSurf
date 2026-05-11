@@ -1,20 +1,14 @@
+# SetupMPFR.cmake
 #
-# This macro is for setting up a sub-project to use FFTW (float or double version)
-#
+# Attach the system MPFR imported target to a caller's target.
+
+if(NOT MolSurf_MPFR_Found)
+  find_package(MPFR REQUIRED)
+  set(MolSurf_MPFR_Found TRUE CACHE INTERNAL "")
+endif()
 
 macro(SetupMPFR TargetName)
-  find_package(MPFR)
-
-  if(MPFR_LIB)
-  target_link_libraries(${TargetName} ${MPFR_LIB})  
-  endif(MPFR_LIB)
-  
-  IF(MPFR_INCLUDE)
-    INCLUDE_DIRECTORIES( ${MPFR_INCLUDE})
-  ENDIF(MPFR_INCLUDE)
-
-#  set(MPFR_FOUND NOTFOUND)
-#  find_package(MPFR)
-#  MESSAGE(MPFR_LIB: ${MPFR_LIB})
-#  target_link_libraries(${TargetName} ${MPFR_LIB})  
-endmacro(SetupMPFR)
+  if(TARGET MPFR::mpfr)
+    target_link_libraries(${TargetName} PUBLIC MPFR::mpfr)
+  endif()
+endmacro()

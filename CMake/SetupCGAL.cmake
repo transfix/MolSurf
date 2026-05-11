@@ -1,92 +1,37 @@
+# SetupCGAL.cmake
 #
-# This macro is for setting up a sub-project to use CGAL
+# Locate a system CGAL installation (libcgal-dev / Homebrew `cgal` /
+# vcpkg `cgal`) and expose it through CGAL's modern imported target
+# CGAL::CGAL. GMP and MPFR are CGAL's required arithmetic dependencies
+# and are pulled in alongside.
 #
+# Set DISABLE_CGAL=ON to turn the macro into a no-op (useful when a
+# downstream component intentionally avoids CGAL on some platforms).
 
-include(SetupGMP)
-include(SetupMPFR)
+option(DISABLE_CGAL "Disable all CGAL-dependent components" OFF)
 
-#macro(SetupCGAL TargetName)
-#  if(NOT DISABLE_CGAL)
-#    message("Setting up CGAL for target ${TargetName}")
-#    set(CGAL_FOUND FOUND)
-#
-#
-#    # Note: I had to change CGAL_Core_LIBRARY in CGALConfig.cmake
-#    # to have the filename of the core library.  I don't know why it wasn't
-#    # included in the first place. -jme
-##    find_package(CGAL COMPONENTS Core)
-#
-##    if(CGAL_FOUND)
-#    #include(${CGAL_USE_FILE})
-#    # need the following flags in case CGAL has some
-#    # special compiler needs for this compiler
-#    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CGAL_CXX_FLAGS_INIT}")
-#
-#    set(CGAL_LIBRARIES CGAL CGAL_Core)
-##    set(CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_Qt4)
-#    message("CGAL libraries: ${CGAL_LIBRARIES}")
-#    set(CGAL_3RD_PARTY_LIBRARIES gmp mpfr)
-#    message("CGAL 3rd party libraries: ${CGAL_LIBRARIES}")
-#
-#    set(LIBS ${LIBS} ${CGAL_LIBRARIES})
-#    set(LIBS ${LIBS} ${CGAL_3RD_PARTY_LIBRARIES})
-#
-#    add_definitions(-DUSING_CGAL)
-#    if(CMAKE_COMPILER_IS_GNUCXX)
-#      message("SetupCGAL: g++ detected, using -frounding-math")
-#      add_definitions(-frounding-math)
-#    endif(CMAKE_COMPILER_IS_GNUCXX)
-#    target_link_libraries(${TargetName} ${LIBS})
-#
-#    #CHA: Setup GMP which used by CGAL for windows build
-#    #Do we need to set this up on linux or mac as well?
-#    #It seems the VolRover builds on the both withoout this.
-#    if(WIN32)
-#      SetupGMP(${TargetName})
-#      SetupMPFR(${TargetName})
-#    endif(WIN32)
-#      
-##    else(CGAL_FOUND)
-##      message("${TargetName} is requesting CGAL but it isnt found on the system!")
-##    endif(CGAL_FOUND)
-#  endif(NOT DISABLE_CGAL)
-#endmacro(SetupCGAL)
+if(NOT DISABLE_CGAL AND NOT MolSurf_CGAL_Found)
+  # CGAL configs require its arithmetic deps to be discoverable.
+  include(SetupGMP)
+  include(SetupMPFR)
+  find_package(CGAL CONFIG REQUIRED COMPONENTS Core)
+  set(MolSurf_CGAL_Found TRUE CACHE INTERNAL "")
+endif()
 
 macro(SetupCGAL TargetName)
   if(NOT DISABLE_CGAL)
-#    message("Setting up CGAL for target ${TargetName}")
-    # Note: I had to change CGAL_Core_LIBRARY in CGALConfig.cmake to have
-    # the filename of the core library.  I don't know why it wasn't included
-    # in the first place. -jme
-    find_package(CGAL COMPONENTS Core)
-    #find_package(CGAL 4.0)
-    if(CGAL_FOUND)
-      include(${CGAL_USE_FILE})
-      # need the following flags in case CGAL has some special compiler needs for this compiler
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CGAL_CXX_FLAGS_INIT}")
-
-#      message("CGAL libraries: ${CGAL_LIBRARIES}")
-
-      set(LIBS ${LIBS} ${CGAL_LIBRARIES})
-      set(LIBS ${LIBS} ${CGAL_3RD_PARTY_LIBRARIES})
-
-      add_definitions(-DUSING_CGAL)
-      if(CMAKE_COMPILER_IS_GNUCXX)
-#        message("SetupCGAL: g++ detected, using -frounding-math")
-        add_definitions(-frounding-math)
-      endif(CMAKE_COMPILER_IS_GNUCXX)
-      target_link_libraries(${TargetName} ${LIBS})
-
-      #CHA: Setup GMP which used by CGAL for windows build
-      #Do we need to set this up on linux or mac as well?
-      #It seems the VolRover builds on the both withoout this.
-#      if(WIN32)
-      SetupMPFR(${TargetName})
-      SetupGMP(${TargetName})
-#      endif(WIN32)
-      
-    else(CGAL_FOUND)
-      message("${TargetName} is requesting CGAL but it isnt found on the system!")
-    endif(CGAL_FOUND)
-  endif(NOT DISABLE_CGAL)
-endmacro(SetupCGAL)
+    if(TARGET CGAL::CGAL)
+      target_link_libraries(${TargetName} PUBLIC CGAL::CGAL)
+    endif()
+    if(TARGET CGAL::CGAL_Core)
+      target_link_libraries(${TargetName} PUBLIC CGAL::CGAL_Core)
+    endif()
+    target_compile_definitions(${TargetName} PUBLIC USING_CGAL)
+    # CGAL needs IEEE rounding to be honored; only meaningful with GCC.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      target_compile_options(${TargetName} PRIVATE -frounding-math)
+    endif()
+    SetupMPFR(${TargetName})
+    SetupGMP(${TargetName})
+  endif()
+endmacro()

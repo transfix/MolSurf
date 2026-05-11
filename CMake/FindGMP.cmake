@@ -1,54 +1,44 @@
- 
-  IF(NOT GMP_INC_SEARCHPATH)
-  SET(GMP_INC_SEARCHPATH
-    ${PROJECT_BINARY_DIR}/include
-    /sw/include
-    /usr/include
-    /usr/local/include
-    /usr/include/gmp
-    /usr/local/include/gmp
-    $ENV{_NMI_PREREQ_gmp_ROOT}/include
-    C:/MinGW/msys/1.0/local
-    $ENV{TACC_GMP_INC}
-  )
-  ENDIF(NOT GMP_INC_SEARCHPATH)
+# FindGMP.cmake
+#
+# Locate a system GMP installation (libgmp-dev / Homebrew gmp / vcpkg gmp).
 
-  message(GMP_INC_SEARCHPATH: ${GMP_INC_SEARCHPATH})
+include(FindPackageHandleStandardArgs)
 
-  FIND_PATH(GMP_INCLUDE_PATH gmp.h ${GMP_INC_SEARCHPATH})
+find_path(GMP_INCLUDE_DIR
+  NAMES gmp.h
+  PATH_SUFFIXES gmp
+  DOC "GMP include directory")
 
-  message(GMP_INCLUDE_PATH: ${GMP_INCLUDE_PATH})
+find_library(GMP_LIBRARY
+  NAMES gmp libgmp
+  DOC "GMP library")
 
-  IF(GMP_INCLUDE_PATH)
-    SET(GMP_INCLUDE ${GMP_INCLUDE_PATH})
-  ENDIF (GMP_INCLUDE_PATH)
+find_library(GMPXX_LIBRARY
+  NAMES gmpxx libgmpxx
+  DOC "GMP C++ wrapper library")
 
-  #IF(GMP_INCLUDE)
-  #  INCLUDE_DIRECTORIES( ${GMP_INCLUDE})
-  #ENDIF(GMP_INCLUDE)
+find_package_handle_standard_args(GMP
+  REQUIRED_VARS GMP_INCLUDE_DIR GMP_LIBRARY)
 
-  GET_FILENAME_COMPONENT(GMP_INSTALL_BASE_PATH ${GMP_INCLUDE_PATH} PATH)
+mark_as_advanced(GMP_INCLUDE_DIR GMP_LIBRARY GMPXX_LIBRARY)
 
-  IF(NOT GMP_LIB_SEARCHPATH)
-  SET(GMP_LIB_SEARCHPATH
-    ${PROJECT_BINARY_DIR}/lib
-    ${GMP_INSTALL_BASE_PATH}/lib
-    /usr/lib/gmp
-    /usr/local/lib/gmp
-    C:/MinGW/msys/1.0/local
-    $ENV{TACC_GMP_LIB}
-  )
-  ENDIF(NOT GMP_LIB_SEARCHPATH)
+if(GMP_FOUND)
+  if(NOT TARGET GMP::gmp)
+    add_library(GMP::gmp UNKNOWN IMPORTED)
+    set_target_properties(GMP::gmp PROPERTIES
+      IMPORTED_LOCATION "${GMP_LIBRARY}"
+      INTERFACE_INCLUDE_DIRECTORIES "${GMP_INCLUDE_DIR}")
+  endif()
+  if(GMPXX_LIBRARY AND NOT TARGET GMP::gmpxx)
+    add_library(GMP::gmpxx UNKNOWN IMPORTED)
+    set_target_properties(GMP::gmpxx PROPERTIES
+      IMPORTED_LOCATION "${GMPXX_LIBRARY}"
+      INTERFACE_INCLUDE_DIRECTORIES "${GMP_INCLUDE_DIR}"
+      INTERFACE_LINK_LIBRARIES GMP::gmp)
+  endif()
 
-  message(GMP_LIB_SEARCHPATH: ${GMP_LIB_SEARCHPATH})
-
-  FIND_LIBRARY(GMP_LIB libgmp.a ${GMP_LIB_SEARCHPATH})
-  FIND_LIBRARY(GMPXX_LIB libgmpxx.a ${GMP_LIB_SEARCHPATH})
-
-  IF(GMP_LIB AND GMPXX_LIB)
-    SET(GMP_FOUND 1)
-  ENDIF(GMP_LIB AND GMPXX_LIB)
-
-  MESSAGE(GMP_INCLUDE: ${GMP_INCLUDE})
-  MESSAGE(GMP_LIB: ${GMP_LIB})
-  MESSAGE(GMPXX_LIB: ${GMPXX_LIB})
+  # Legacy aliases.
+  set(GMP_INCLUDE "${GMP_INCLUDE_DIR}")
+  set(GMP_LIB     "${GMP_LIBRARY}")
+  set(GMPXX_LIB   "${GMPXX_LIBRARY}")
+endif()

@@ -1,23 +1,30 @@
+# SetupLapack.cmake
 #
-# This macro is for setting up a sub-project to use GMP
+# Locate a system LAPACK + BLAS installation using CMake's stock
+# FindLAPACK / FindBLAS modules. This supports OpenBLAS (Debian/Ubuntu's
+# `liblapack-dev`), Apple Accelerate (macOS), and the various vcpkg
+# LAPACK ports on Windows.
 #
+# Exposes a phony target MolSurf::lapack that bundles ${LAPACK_LIBRARIES}
+# (which already includes BLAS).
+
+if(NOT MolSurf_Lapack_Found)
+  find_package(LAPACK REQUIRED)
+  find_package(BLAS QUIET)
+  if(NOT TARGET MolSurf::lapack)
+    add_library(MolSurf::lapack INTERFACE IMPORTED GLOBAL)
+    set_property(TARGET MolSurf::lapack PROPERTY
+      INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}")
+  endif()
+  set(MolSurf_Lapack_Found TRUE CACHE INTERNAL "")
+
+  # Legacy aliases for any straggling references.
+  set(LAPACK_LIB "${LAPACK_LIBRARIES}")
+  set(BLAS_LIB   "${BLAS_LIBRARIES}")
+endif()
 
 macro(SetupLapack TargetName)
-
-  # CGAL provides its own Lapack search, which will be used by default.
-  # Since CGAL requires some variables to be set, find CGAL to set
-  # the variables before setting up Lapack.
-  #find_package(CGAL)
-
-  find_package(LapackLocal)
-  if(LAPACK_LIB)
-  target_link_libraries(${TargetName} ${LAPACK_LIB} gfortran)
-  endif(LAPACK_LIB)
-  if(BLAS_LIB)
-  target_link_libraries(${TargetName} ${BLAS_LIB} gfortran)
-  endif(BLAS_LIB)
-
-  message(Target: ${TargetName})
-  message(LAPACK_LIB: ${LAPACK_LIB})
-  message(BLAS_LIB: ${BLAS_LIB})
-endmacro(SetupLapack)
+  if(TARGET MolSurf::lapack)
+    target_link_libraries(${TargetName} PUBLIC MolSurf::lapack)
+  endif()
+endmacro()

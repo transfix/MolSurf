@@ -1,22 +1,17 @@
+# SetupGMP.cmake
 #
-# This macro is for setting up a sub-project to use GMP
-#
+# Attach the system GMP imported targets to a caller's target.
+
+if(NOT MolSurf_GMP_Found)
+  find_package(GMP REQUIRED)
+  set(MolSurf_GMP_Found TRUE CACHE INTERNAL "")
+endif()
 
 macro(SetupGMP TargetName)
-  find_package(GMP)
-  if(GMP_LIB)
-  target_link_libraries(${TargetName} ${GMP_LIB})
-  endif(GMP_LIB)
-  if(GMPXX_LIB)
-  target_link_libraries(${TargetName} ${GMPXX_LIB})
-  endif(GMPXX_LIB)
-  
-  IF(GMP_INCLUDE)
-    INCLUDE_DIRECTORIES( ${GMP_INCLUDE})
-  ENDIF(GMP_INCLUDE)
-
-#  set(GMP_FOUND NOTFOUND)
-#  find_package(GMP)
-#  MESSAGE(GMP_LIB: ${GMP_LIB})
-#  target_link_libraries(${TargetName} ${GMP_LIB})
-endmacro(SetupGMP)
+  if(TARGET GMP::gmp)
+    target_link_libraries(${TargetName} PUBLIC GMP::gmp)
+  endif()
+  if(TARGET GMP::gmpxx)
+    target_link_libraries(${TargetName} PUBLIC GMP::gmpxx)
+  endif()
+endmacro()

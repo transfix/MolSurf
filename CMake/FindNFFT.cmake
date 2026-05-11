@@ -1,44 +1,40 @@
+# FindNFFT.cmake
+#
+# Locate NFFT3. Available natively on Debian/Ubuntu (libnfft3-dev) but
+# absent from vcpkg and core Homebrew, so we may have to fall back to a
+# FetchContent build (handled in SetupNFFT.cmake).
 
-  SET(NFFT_INC_SEARCHPATH
-    ${PROJECT_BINARY_DIR}/include
-    /sw/include
-    /usr/include
-    /usr/local/include
-    /usr/include/nfft
-    /usr/local/include/nfft
-    $ENV{_NMI_PREREQ_nfft_ROOT}/include
-    C:/MinGW/msys/1.0/local
-    $ENV{TACC_NFFT_INC}
-  )
+include(FindPackageHandleStandardArgs)
 
-  FIND_PATH(NFFT_INCLUDE_PATH nfft3.h ${NFFT_INC_SEARCHPATH})
+# Try pkg-config first when available (covers most Linux installs).
+find_package(PkgConfig QUIET)
+if(PKG_CONFIG_FOUND)
+  pkg_check_modules(PC_NFFT QUIET nfft3)
+endif()
 
-  MARK_AS_ADVANCED(NFFT_INCLUDE)
-  MARK_AS_ADVANCED(NFFT_LIB)
+find_path(NFFT_INCLUDE_DIR
+  NAMES nfft3.h
+  HINTS ${PC_NFFT_INCLUDE_DIRS}
+  PATH_SUFFIXES nfft nfft3
+  DOC "NFFT3 include directory")
 
-  IF(NFFT_INCLUDE_PATH)
-    SET(NFFT_INCLUDE ${NFFT_INCLUDE_PATH})
-  ENDIF (NFFT_INCLUDE_PATH)
+find_library(NFFT_LIBRARY
+  NAMES nfft3 libnfft3
+  HINTS ${PC_NFFT_LIBRARY_DIRS}
+  DOC "NFFT3 library")
 
-  IF(NFFT_INCLUDE)
-    INCLUDE_DIRECTORIES( ${NFFT_INCLUDE})
-  ENDIF(NFFT_INCLUDE)
+find_package_handle_standard_args(NFFT
+  REQUIRED_VARS NFFT_INCLUDE_DIR NFFT_LIBRARY)
 
-  GET_FILENAME_COMPONENT(NFFT_INSTALL_BASE_PATH ${NFFT_INCLUDE_PATH} PATH)
+mark_as_advanced(NFFT_INCLUDE_DIR NFFT_LIBRARY)
 
-  SET(NFFT_LIB_SEARCHPATH
-    ${PROJECT_BINARY_DIR}/lib
-    ${NFFT_INSTALL_BASE_PATH}/lib
-    /usr/lib/nfft
-    /usr/local/lib/nfft
-    C:/MinGW/msys/1.0/local
-    $ENV{TACC_NFFT_LIB}
-  )
+if(NFFT_FOUND AND NOT TARGET NFFT::nfft3)
+  add_library(NFFT::nfft3 UNKNOWN IMPORTED)
+  set_target_properties(NFFT::nfft3 PROPERTIES
+    IMPORTED_LOCATION "${NFFT_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${NFFT_INCLUDE_DIR}")
 
-  FIND_LIBRARY(NFFT_LIB libnfft3.a ${NFFT_LIB_SEARCHPATH})
-
-  IF(NFFT_LIB)
-    SET(NFFT_FOUND 1)
-  ENDIF(NFFT_LIB)
-
-  #MESSAGE(NFFT_INCLUDE: ${NFFT_INCLUDE})
+  # Legacy aliases for old call sites.
+  set(NFFT_INCLUDE "${NFFT_INCLUDE_DIR}")
+  set(NFFT_LIB     "${NFFT_LIBRARY}")
+endif()
