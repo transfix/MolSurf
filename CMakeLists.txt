@@ -4,10 +4,19 @@ project(MolSurf
   DESCRIPTION "Volumetric image visualization and processing"
   LANGUAGES C CXX)
 
-# C++ standard
-set(CMAKE_CXX_STANDARD 17)
+# C++ standard. C++20 is required because the libcvc dependency (pulled in
+# below via FetchContent) uses std::format, which is a C++20 library feature.
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Prefer the upstream BoostConfig.cmake shipped with modern Boost (>= 1.70).
+# CMake 3.30 removed the legacy FindBoost module; Homebrew's Boost 1.90 only
+# ships BoostConfig. Setting CMP0167 to NEW makes find_package(Boost) consume
+# BoostConfig directly instead of falling back to the legacy finder.
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
 
 # Make CGAL's exact constructions stable with GCC. Other compilers do not
 # require this and would warn or fail on the flag.
