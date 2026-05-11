@@ -56,22 +56,106 @@ include(SetupNFFT)
 include(SetupLapack)
 include(SetupCGAL)
 
-# ── libcvc dependency (FetchContent) ──
-# Pull in CVC-Lab/libcvc (via the transfix/libcvc mirror used by sibling
-# projects such as F2Dock and volrover) so MolSurf can reuse the shared
-# CVC libraries. Disable libcvc's own tests/coverage/CUDA/volrover3 build
-# to keep the configure step lean for MolSurf consumers.
+# ── libcvc dependency ────────────────────────────────────────────────
+# Resolution order, falling through on failure:
+#   1. find_package(cvc CONFIG) against a pre-installed libcvc on
+#      CMAKE_PREFIX_PATH (fastest, no download or build).
+#   2. Download the prebuilt release tarball matching this platform /
+#      build type and find_package against the extracted tree.
+#   3. FetchContent_Declare(GIT_REPOSITORY ...) and build from source.
+#
+# MolSurf only needs the cvc::cvc target, which is shipped by every
+# published libcvc release archive, so strategies 1 and 2 normally
+# succeed and the source build (which pulls Boost/HDF5/CGAL/FFTW
+# rediscovery) is avoided. Override with -DLIBCVC_FORCE_SOURCE=ON if
+# you need to test against an unreleased libcvc commit.
+set(LIBCVC_TAG     "v3.1.1" CACHE STRING "libcvc release tag to consume")
+set(LIBCVC_VERSION "3.1.1"  CACHE STRING "libcvc package version to look up")
+set(LIBCVC_GIT_SHA "4af186a0641191b82ec3ea4799e81465c274c52c"
+    CACHE STRING "libcvc commit SHA used when falling through to source build")
+option(LIBCVC_FORCE_SOURCE "Skip prebuilt libcvc and always build from source" OFF)
+
 include(FetchContent)
+
+# Cache options consumed by libcvc's own CMakeLists when we fall through
+# to the source build. Harmless when find_package succeeds.
 set(CVC_BUILD_TESTS     OFF CACHE BOOL "" FORCE)
 set(CVC_ENABLE_CUDA     OFF CACHE BOOL "" FORCE)
 set(CVC_ENABLE_COVERAGE OFF CACHE BOOL "" FORCE)
 set(CVC_BUILD_VOLROVER3 OFF CACHE BOOL "" FORCE)
-FetchContent_Declare(
-  libcvc
-  GIT_REPOSITORY https://github.com/transfix/libcvc.git
-  GIT_TAG        972afd8552b4755356e572f9b4ffc33d4366cda9 # v3.1.0
-)
-FetchContent_MakeAvailable(libcvc)
+
+set(_libcvc_usable FALSE)
+
+# 1. Pre-installed package
+if(NOT LIBCVC_FORCE_SOURCE)
+  find_package(cvc ${LIBCVC_VERSION} CONFIG QUIET)
+  if(cvc_FOUND)
+    message(STATUS "Using pre-installed libcvc ${cvc_VERSION}")
+    set(_libcvc_usable TRUE)
+  endif()
+endif()
+
+# 2. Prebuilt release tarball
+if(NOT _libcvc_usable AND NOT LIBCVC_FORCE_SOURCE)
+  if(WIN32)
+    set(_libcvc_plat "windows-x86_64")
+    set(_libcvc_ext  "zip")
+  elseif(APPLE)
+    set(_libcvc_plat "macos-arm64")
+    set(_libcvc_ext  "zip")
+  elseif(UNIX)
+    set(_libcvc_plat "linux-x86_64")
+    set(_libcvc_ext  "tar.gz")
+  endif()
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(_libcvc_cfg "debug")
+  else()
+    set(_libcvc_cfg "release")
+  endif()
+  if(DEFINED _libcvc_plat)
+    set(_libcvc_archive "libcvc-${LIBCVC_VERSION}-${_libcvc_plat}-${_libcvc_cfg}.${_libcvc_ext}")
+    set(_libcvc_url     "https://github.com/transfix/libcvc/releases/download/${LIBCVC_TAG}/${_libcvc_archive}")
+    set(_libcvc_stage   "${CMAKE_BINARY_DIR}/libcvc-prebuilt")
+    set(_libcvc_cfgfile "${_libcvc_stage}/lib/cmake/cvc/cvcConfig.cmake")
+    if(NOT EXISTS "${_libcvc_cfgfile}")
+      message(STATUS "Downloading prebuilt libcvc: ${_libcvc_url}")
+      file(MAKE_DIRECTORY "${_libcvc_stage}")
+      file(DOWNLOAD "${_libcvc_url}" "${_libcvc_stage}/${_libcvc_archive}"
+           STATUS _libcvc_dl TLS_VERIFY ON)
+      list(GET _libcvc_dl 0 _libcvc_dl_code)
+      if(_libcvc_dl_code EQUAL 0)
+        execute_process(
+          COMMAND ${CMAKE_COMMAND} -E tar xzf "${_libcvc_archive}"
+          WORKING_DIRECTORY "${_libcvc_stage}"
+          RESULT_VARIABLE _libcvc_extract)
+        if(NOT _libcvc_extract EQUAL 0)
+          message(STATUS "Failed to extract ${_libcvc_archive} (exit ${_libcvc_extract})")
+        endif()
+      else()
+        message(STATUS "Prebuilt libcvc download failed: ${_libcvc_dl}")
+      endif()
+    endif()
+    if(EXISTS "${_libcvc_cfgfile}")
+      list(PREPEND CMAKE_PREFIX_PATH "${_libcvc_stage}")
+      find_package(cvc ${LIBCVC_VERSION} CONFIG QUIET)
+      if(cvc_FOUND)
+        message(STATUS "Using prebuilt libcvc ${cvc_VERSION} from ${_libcvc_url}")
+        set(_libcvc_usable TRUE)
+      endif()
+    endif()
+  endif()
+endif()
+
+# 3. Source build (fallback)
+if(NOT _libcvc_usable)
+  message(STATUS "Building libcvc ${LIBCVC_TAG} from source")
+  FetchContent_Declare(
+    libcvc
+    GIT_REPOSITORY https://github.com/transfix/libcvc.git
+    GIT_TAG        ${LIBCVC_GIT_SHA}
+  )
+  FetchContent_MakeAvailable(libcvc)
+endif()
 
 #output 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
