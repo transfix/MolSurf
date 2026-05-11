@@ -157,10 +157,10 @@ jobs:
           # Homebrew's current `boost` formula (Boost 1.90) ships an
           # incomplete CMake config that is missing per-component config
           # files like boost_system-config.cmake. Use the versioned
-          # `boost@1.86` formula whose bottle has complete configs.
-          brew install boost@1.86 || brew install boost
-          if brew --prefix boost@1.86 >/dev/null 2>&1; then
-            BOOST_PREFIX=$(brew --prefix boost@1.86)
+          # `boost@1.85` formula whose bottle has complete configs.
+          brew install boost@1.85 || brew install boost
+          if brew --prefix boost@1.85 >/dev/null 2>&1; then
+            BOOST_PREFIX=$(brew --prefix boost@1.85)
           else
             BOOST_PREFIX=$(brew --prefix boost)
           fi
@@ -360,11 +360,11 @@ jobs:
         run: |
           brew install cmake ninja autoconf automake libtool pkg-config \
             fftw cgal gmp mpfr lapack
-          # See ci.yml note on boost@1.86: current Homebrew `boost` is
+          # See ci.yml note on boost@1.85: current Homebrew `boost` is
           # missing per-component CMake configs.
-          brew install boost@1.86 || brew install boost
-          if brew --prefix boost@1.86 >/dev/null 2>&1; then
-            BOOST_PREFIX=$(brew --prefix boost@1.86)
+          brew install boost@1.85 || brew install boost
+          if brew --prefix boost@1.85 >/dev/null 2>&1; then
+            BOOST_PREFIX=$(brew --prefix boost@1.85)
           else
             BOOST_PREFIX=$(brew --prefix boost)
           fi

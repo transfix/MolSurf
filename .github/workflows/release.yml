@@ -109,9 +109,9 @@ jobs:
         run: |
           brew install cmake ninja autoconf automake libtool pkg-config \
             fftw cgal gmp mpfr lapack
-          brew install boost@1.86 || brew install boost
-          if brew --prefix boost@1.86 >/dev/null 2>&1; then
-            BOOST_PREFIX=$(brew --prefix boost@1.86)
+          brew install boost@1.85 || brew install boost
+          if brew --prefix boost@1.85 >/dev/null 2>&1; then
+            BOOST_PREFIX=$(brew --prefix boost@1.85)
           else
             BOOST_PREFIX=$(brew --prefix boost)
           fi
