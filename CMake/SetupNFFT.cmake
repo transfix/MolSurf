@@ -85,6 +85,13 @@ macro(SetupNFFT TargetName)
   if(TARGET NFFT::nfft3)
     target_link_libraries(${TargetName} PUBLIC NFFT::nfft3)
   endif()
+  # Modern NFFT releases (>=3.3) and the libnfft3-dev package no longer
+  # install the legacy `nfft3util.h` header that NFFT's bundled fastsum
+  # application -- from which MolSurf's FastSummation sources are derived --
+  # still includes. We ship a vendored copy of the 3.2-era header under
+  # inc/compat/ so the sources keep compiling against any NFFT version.
+  target_include_directories(${TargetName} PRIVATE
+    "${CMAKE_SOURCE_DIR}/inc/compat")
   # NFFT calls into FFTW so always pull FFTW in alongside.
   SetupFFTW(${TargetName})
 endmacro()
