@@ -1,81 +1,52 @@
 # SetupNFFT.cmake
 #
-# Discover NFFT3, falling back to a FetchContent autotools build when the
-# system has FFTW3 but no NFFT3 package (typical on Windows + vcpkg and on
-# macOS + Homebrew). NFFT depends on FFTW so SetupFFTW must run first.
+# Discover NFFT3 and expose it as the imported target `NFFT::nfft3`,
+# plus the helper macro `SetupNFFT(<target>)` which wires NFFT and
+# its FFTW dependency onto a consumer target.
 #
-# Cache options:
-#   MOLSURF_NFFT_FORCE_FETCHCONTENT  : skip find_package; always build from source.
-#   MOLSURF_NFFT_VERSION             : tarball version to fetch (default 3.5.3).
-#   MOLSURF_NFFT_URL                 : override the source tarball URL.
-
-option(MOLSURF_NFFT_FORCE_FETCHCONTENT
-  "Always build NFFT from source via FetchContent instead of using a system install" OFF)
-set(MOLSURF_NFFT_VERSION "3.5.3" CACHE STRING "NFFT source version to fetch when not found")
-set(MOLSURF_NFFT_URL "" CACHE STRING "Override URL for the NFFT source tarball")
+# MolSurf now consumes NFFT 3.5.x from the libcvc-deps prebuilt
+# bundle that the top-level CMakeLists.txt downloads on first
+# configure (Linux uses the apt `libnfft3-dev` package inside the
+# bundle; macOS and Windows use binaries built from source against
+# the bundled FFTW3). The discovery here is therefore intentionally
+# minimal: a CMake config-file lookup, a Find module lookup, and a
+# manual find_path / find_library fallback.
 
 if(NOT MolSurf_NFFT_Resolved)
-  if(NOT MOLSURF_NFFT_FORCE_FETCHCONTENT)
+  # 1) CMake package config (some NFFT distributions ship one).
+  find_package(NFFT CONFIG QUIET)
+
+  # 2) Find module (Find<Pkg>.cmake somewhere on CMAKE_MODULE_PATH).
+  if(NOT NFFT_FOUND)
     find_package(NFFT QUIET)
   endif()
 
-  if(NOT NFFT_FOUND)
-    # System NFFT not available -- build a private copy. Autotools-based, so
-    # we drive it through ExternalProject and re-expose it via an imported
-    # INTERFACE target named NFFT::nfft3.
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND NOT CMAKE_HOST_UNIX)
-      message(FATAL_ERROR
-        "NFFT3 was not found and the FetchContent build requires an autotools "
-        "toolchain (configure + make), which is not available on a plain "
-        "Windows host. Install NFFT3 (e.g. through MSYS2 with "
-        "`pacman -S mingw-w64-x86_64-nfft`) or configure with -DMOLSURF_NFFT_FORCE_FETCHCONTENT=OFF "
-        "and supply -DNFFT_INCLUDE_DIR / -DNFFT_LIBRARY pointing at an existing build.")
+  # 3) Manual probe against CMAKE_PREFIX_PATH (libcvc-deps lives there).
+  if(NOT TARGET NFFT::nfft3 AND NOT NFFT_FOUND)
+    find_path(NFFT_INCLUDE_DIR
+      NAMES nfft3.h
+      PATH_SUFFIXES include)
+    find_library(NFFT_LIBRARY
+      NAMES nfft3 libnfft3
+      PATH_SUFFIXES lib lib64)
+    if(NFFT_INCLUDE_DIR AND NFFT_LIBRARY)
+      add_library(NFFT::nfft3 UNKNOWN IMPORTED)
+      set_target_properties(NFFT::nfft3 PROPERTIES
+        IMPORTED_LOCATION "${NFFT_LIBRARY}"
+        INTERFACE_INCLUDE_DIRECTORIES "${NFFT_INCLUDE_DIR}")
+      set(NFFT_FOUND TRUE)
+      message(STATUS "NFFT: found header ${NFFT_INCLUDE_DIR}/nfft3.h and library ${NFFT_LIBRARY}")
     endif()
+  endif()
 
-    include(ExternalProject)
-    include(FetchContent)
-
-    if(NOT MOLSURF_NFFT_URL)
-      set(MOLSURF_NFFT_URL
-        "https://www-user.tu-chemnitz.de/~potts/nfft/download/nfft-${MOLSURF_NFFT_VERSION}.tar.gz")
-    endif()
-
-    set(_nfft_prefix "${CMAKE_BINARY_DIR}/_deps/nfft")
-    set(_nfft_install "${_nfft_prefix}/install")
-
-    # FFTW must already be discovered (SetupFFTW is included before us).
-    if(NOT FFTW_INCLUDE_DIR OR NOT FFTW_DOUBLE_LIB)
-      message(FATAL_ERROR
-        "NFFT FetchContent build requires FFTW3 to be already located. "
-        "Include SetupFFTW before SetupNFFT in the top-level CMakeLists.txt.")
-    endif()
-    get_filename_component(_fftw_lib_dir "${FFTW_DOUBLE_LIB}" DIRECTORY)
-
-    ExternalProject_Add(nfft_external
-      PREFIX            "${_nfft_prefix}"
-      URL               "${MOLSURF_NFFT_URL}"
-      CONFIGURE_COMMAND <SOURCE_DIR>/configure
-                          --prefix=${_nfft_install}
-                          --enable-static
-                          --disable-shared
-                          --with-fftw3-includedir=${FFTW_INCLUDE_DIR}
-                          --with-fftw3-libdir=${_fftw_lib_dir}
-      BUILD_COMMAND     ${CMAKE_MAKE_PROGRAM}
-      INSTALL_COMMAND   ${CMAKE_MAKE_PROGRAM} install
-      BUILD_BYPRODUCTS  "${_nfft_install}/lib/libnfft3.a"
-      LOG_DOWNLOAD ON LOG_CONFIGURE ON LOG_BUILD ON LOG_INSTALL ON)
-
-    file(MAKE_DIRECTORY "${_nfft_install}/include")
-    add_library(NFFT::nfft3 STATIC IMPORTED GLOBAL)
-    set_target_properties(NFFT::nfft3 PROPERTIES
-      IMPORTED_LOCATION "${_nfft_install}/lib/libnfft3.a"
-      INTERFACE_INCLUDE_DIRECTORIES "${_nfft_install}/include")
-    add_dependencies(NFFT::nfft3 nfft_external)
-
-    set(NFFT_INCLUDE "${_nfft_install}/include")
-    set(NFFT_LIB     "${_nfft_install}/lib/libnfft3.a")
-    set(NFFT_FOUND TRUE)
-    message(STATUS "NFFT: not found via find_package -- building ${MOLSURF_NFFT_VERSION} from source")
+  if(NOT TARGET NFFT::nfft3 AND NOT NFFT_FOUND)
+    message(FATAL_ERROR
+      "NFFT3 was not found. MolSurf normally pulls NFFT3 from the "
+      "libcvc-deps prebuilt bundle downloaded by CMakeLists.txt. If "
+      "that download was disabled (-DLIBCVC_DEPS_SKIP=ON) install "
+      "NFFT3 system-wide (apt: libnfft3-dev) or pass "
+      "-DNFFT_INCLUDE_DIR=<dir> -DNFFT_LIBRARY=<lib> on the CMake "
+      "command line.")
   endif()
 
   set(MolSurf_NFFT_Resolved TRUE CACHE INTERNAL "")
@@ -84,14 +55,10 @@ endif()
 macro(SetupNFFT TargetName)
   if(TARGET NFFT::nfft3)
     target_link_libraries(${TargetName} PUBLIC NFFT::nfft3)
+  elseif(NFFT_LIBRARY)
+    target_link_libraries(${TargetName} PUBLIC "${NFFT_LIBRARY}")
+    target_include_directories(${TargetName} PUBLIC "${NFFT_INCLUDE_DIR}")
   endif()
-  # Modern NFFT releases (>=3.3) and the libnfft3-dev package no longer
-  # install the legacy `nfft3util.h` header that NFFT's bundled fastsum
-  # application -- from which MolSurf's FastSummation sources are derived --
-  # still includes. We ship a vendored copy of the 3.2-era header under
-  # inc/compat/ so the sources keep compiling against any NFFT version.
-  target_include_directories(${TargetName} PRIVATE
-    "${CMAKE_SOURCE_DIR}/inc/compat")
   # NFFT calls into FFTW so always pull FFTW in alongside.
   SetupFFTW(${TargetName})
 endmacro()

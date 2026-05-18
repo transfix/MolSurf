@@ -94,27 +94,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      # ── vcpkg binary cache (Windows + macOS) ──
-      # Persist vcpkg's compiled package binaries in the GitHub Actions
-      # cache so that subsequent runs reuse them instead of rebuilding the
-      # entire Boost+CGAL+GMP+MPFR+LAPACK toolchain from source (~1h).
-      # macOS uses vcpkg for Boost too because the current Homebrew `boost`
-      # formula ships an incomplete CMake config and the versioned
-      # `boost@1.85` formula was disabled on 2026-04-05.
-      - name: Export GitHub Actions cache env (vcpkg)
-        if: runner.os == 'Windows' || runner.os == 'macOS'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-            core.exportVariable('VCPKG_BINARY_SOURCES', 'clear;x-gha,readwrite');
-
-      # ── FetchContent _deps cache (libcvc, NFFT fallback) ──
-      # libcvc is pinned by commit SHA so the cache key is stable across
-      # runs; flush it whenever the top-level CMakeLists.txt or any
-      # Setup*.cmake module changes.
-      - name: Cache CMake FetchContent _deps
+      # ── _deps cache (libcvc-deps bundle + libcvc release archive) ──
+      # The libcvc-deps prebuilt bundle (~150-700 MB depending on platform)
+      # and the libcvc release archive are downloaded by the top-level
+      # CMakeLists.txt into build/_deps/. Cache that whole subtree so
+      # subsequent runs skip the GitHub-release download as long as the
+      # pinned versions in CMakeLists.txt haven't changed.
+      - name: Cache CMake _deps (libcvc-deps + libcvc prebuilt)
         uses: actions/cache@v4
         with:
           path: build/_deps
@@ -123,7 +109,12 @@ jobs:
             deps-${{ runner.os }}-${{ matrix.build_type }}-
             deps-${{ runner.os }}-
 
-      # ── Linux dependencies ──
+      # ── Linux toolchain ──
+      # MolSurf consumes Boost / FFTW / NFFT3 / CGAL / GMP / MPFR /
+      # LAPACK / BLAS from the libcvc-deps prebuilt bundle that
+      # CMakeLists.txt downloads on first configure, so apt only needs
+      # the compiler/build tools and the OpenGL / X11 development
+      # headers that the MolSurf GUI links against directly.
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -132,94 +123,34 @@ jobs:
             build-essential \
             cmake \
             ninja-build \
-            autoconf automake libtool pkg-config \
-            libboost-all-dev \
-            libfftw3-dev \
-            libnfft3-dev \
-            libcgal-dev \
-            libgmp-dev \
-            libmpfr-dev \
-            liblapack-dev \
-            libblas-dev \
             libgl1-mesa-dev libglu1-mesa-dev \
             libxext-dev libxi-dev libxmu-dev libx11-dev
 
-      # ── macOS dependencies ──
-      # Use Homebrew for system-y tools (cmake/ninja/autotools/fftw/lapack)
-      # but use vcpkg for Boost + CGAL + GMP + MPFR because the current
-      # Homebrew `boost` ships an incomplete CMake config and `boost@1.85`
-      # was disabled upstream.
+      # ── macOS toolchain ──
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
-        run: |
-          brew install \
-            cmake \
-            ninja \
-            autoconf automake libtool pkg-config \
-            fftw \
-            lapack
-          # vcpkg ships preinstalled on the macos-latest runner image.
-          vcpkg install \
-            boost-thread boost-date-time boost-regex boost-filesystem \
-            boost-system boost-chrono boost-program-options \
-            boost-signals2 boost-format boost-property-tree \
-            boost-algorithm boost-asio boost-any boost-array \
-            boost-dynamic-bitset boost-exception boost-foreach \
-            boost-function boost-lambda boost-lexical-cast \
-            boost-multi-array boost-optional boost-smart-ptr \
-            boost-tuple boost-utility \
-            cgal gmp mpfr
-          echo "VCPKG_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" >> $GITHUB_ENV
-          # NFFT has no Homebrew formula; SetupNFFT.cmake fetches it via
-          # FetchContent and builds with autotools.
+        run: brew install cmake ninja
 
-      # ── Windows dependencies (vcpkg) ──
-      - name: Install dependencies (Windows)
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          vcpkg install \
-            boost-thread:x64-windows boost-date-time:x64-windows \
-            boost-regex:x64-windows boost-filesystem:x64-windows \
-            boost-system:x64-windows boost-chrono:x64-windows \
-            boost-program-options:x64-windows boost-signals2:x64-windows \
-            boost-format:x64-windows boost-property-tree:x64-windows \
-            boost-algorithm:x64-windows boost-asio:x64-windows \
-            boost-any:x64-windows boost-array:x64-windows \
-            boost-dynamic-bitset:x64-windows boost-exception:x64-windows \
-            boost-foreach:x64-windows boost-function:x64-windows \
-            boost-lambda:x64-windows boost-lexical-cast:x64-windows \
-            boost-multi-array:x64-windows boost-optional:x64-windows \
-            boost-smart-ptr:x64-windows boost-tuple:x64-windows \
-            boost-utility:x64-windows \
-            fftw3:x64-windows \
-            cgal:x64-windows \
-            gmp:x64-windows mpfr:x64-windows \
-            lapack-reference:x64-windows
-          # NFFT is not in vcpkg; SetupNFFT.cmake fetches it via FetchContent.
+      # ── Windows toolchain ──
+      # The Visual Studio Build Tools, CMake and Ninja are preinstalled on
+      # windows-latest runners. All library dependencies come from
+      # libcvc-deps via the top-level CMakeLists.txt download.
 
-      # ── Configure (Unix) ──
+      # ── Configure ──
       - name: Configure (Unix)
         if: runner.os != 'Windows'
         run: |
-          EXTRA=()
-          if [ -n "${VCPKG_TOOLCHAIN_FILE:-}" ]; then
-            EXTRA+=("-DCMAKE_TOOLCHAIN_FILE=${VCPKG_TOOLCHAIN_FILE}")
-          fi
           cmake -B build \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
-            "${EXTRA[@]}"
+            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
 
-      # ── Configure (Windows) ──
       - name: Configure (Windows)
         if: runner.os == 'Windows'
         shell: bash
         run: |
           cmake -B build \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" \
             -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install"
 
       # ── Build ──
@@ -281,15 +212,20 @@ jobs:
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
           echo "arch=$ARCH" >> "$GITHUB_OUTPUT"
 
+      - name: Cache CMake _deps (libcvc-deps + libcvc prebuilt)
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: deps-Linux-package-${{ hashFiles('CMakeLists.txt', 'CMake/Setup*.cmake') }}
+          restore-keys: |
+            deps-Linux-package-
+            deps-Linux-
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential cmake ninja-build dpkg-dev \
-            autoconf automake libtool pkg-config \
-            libboost-all-dev libfftw3-dev libnfft3-dev \
-            libcgal-dev libgmp-dev libmpfr-dev \
-            liblapack-dev libblas-dev \
             libgl1-mesa-dev libglu1-mesa-dev \
             libxext-dev libxi-dev libxmu-dev libx11-dev
 
@@ -373,7 +309,7 @@ jobs:
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
             core.exportVariable('VCPKG_BINARY_SOURCES', 'clear;x-gha,readwrite');
 
-      - name: Cache CMake FetchContent _deps
+      - name: Cache CMake _deps (libcvc-deps + libcvc prebuilt)
         uses: actions/cache@v4
         with:
           path: build/_deps
@@ -383,29 +319,12 @@ jobs:
             deps-macOS-
 
       - name: Install dependencies
-        run: |
-          brew install cmake ninja autoconf automake libtool pkg-config \
-            fftw lapack
-          # See ci.yml note on macOS Boost: current Homebrew `boost` ships
-          # an incomplete CMake config and `boost@1.85` was disabled, so
-          # use vcpkg for Boost/CGAL/GMP/MPFR.
-          vcpkg install \
-            boost-thread boost-date-time boost-regex boost-filesystem \
-            boost-system boost-chrono boost-program-options \
-            boost-signals2 boost-format boost-property-tree \
-            boost-algorithm boost-asio boost-any boost-array \
-            boost-dynamic-bitset boost-exception boost-foreach \
-            boost-function boost-lambda boost-lexical-cast \
-            boost-multi-array boost-optional boost-smart-ptr \
-            boost-tuple boost-utility \
-            cgal gmp mpfr
-          echo "VCPKG_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" >> $GITHUB_ENV
+        run: brew install cmake ninja
 
       - name: Configure
         run: |
           cmake -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_TOOLCHAIN_FILE="$VCPKG_TOOLCHAIN_FILE" \
             -DCMAKE_INSTALL_PREFIX=/usr/local
 
       - name: Build
@@ -460,15 +379,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Export GitHub Actions cache env (vcpkg)
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-            core.exportVariable('VCPKG_BINARY_SOURCES', 'clear;x-gha,readwrite');
-
-      - name: Cache CMake FetchContent _deps
+      - name: Cache CMake _deps (libcvc-deps + libcvc prebuilt)
         uses: actions/cache@v4
         with:
           path: build/_deps
@@ -487,33 +398,14 @@ jobs:
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
           echo "arch=x64" >> "$GITHUB_OUTPUT"
 
-      - name: Install dependencies
-        shell: bash
-        run: |
-          vcpkg install \
-            boost-thread:x64-windows boost-date-time:x64-windows \
-            boost-regex:x64-windows boost-filesystem:x64-windows \
-            boost-system:x64-windows boost-chrono:x64-windows \
-            boost-program-options:x64-windows boost-signals2:x64-windows \
-            boost-format:x64-windows boost-property-tree:x64-windows \
-            boost-algorithm:x64-windows boost-asio:x64-windows \
-            boost-any:x64-windows boost-array:x64-windows \
-            boost-dynamic-bitset:x64-windows boost-exception:x64-windows \
-            boost-foreach:x64-windows boost-function:x64-windows \
-            boost-lambda:x64-windows boost-lexical-cast:x64-windows \
-            boost-multi-array:x64-windows boost-optional:x64-windows \
-            boost-smart-ptr:x64-windows boost-tuple:x64-windows \
-            boost-utility:x64-windows \
-            fftw3:x64-windows cgal:x64-windows \
-            gmp:x64-windows mpfr:x64-windows \
-            lapack-reference:x64-windows
+      # All library dependencies come from the libcvc-deps prebuilt
+      # bundle that CMakeLists.txt downloads automatically.
 
       - name: Configure
         shell: bash
         run: |
           cmake -B build \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" \
             -DCMAKE_INSTALL_PREFIX=install
 
       - name: Build
@@ -530,6 +422,11 @@ jobs:
             find build/bin -name '*.dll' -exec cp {} staging/MolSurf/bin/ \; 2>/dev/null || true
           fi
           cp "$VCPKG_INSTALLATION_ROOT"/installed/x64-windows/bin/*.dll staging/MolSurf/bin/ 2>/dev/null || true
+          # Bundle DLLs from the libcvc-deps prebuilt tree that CMake
+          # downloaded into build/_deps/libcvc-deps/ during configure.
+          for d in build/_deps/libcvc-deps/libcvc-deps-*-windows-*/bin; do
+            [ -d "$d" ] && cp "$d"/*.dll staging/MolSurf/bin/ 2>/dev/null || true
+          done
           cp README.md staging/MolSurf/ 2>/dev/null || true
           cd staging
           7z a -tzip ../"$STEM.zip" MolSurf/
