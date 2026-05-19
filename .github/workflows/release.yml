@@ -101,6 +101,9 @@ jobs:
   # ── macOS: .dmg ──
   macos:
     runs-on: macos-latest
+    # macOS is advisory until libcvc-deps v1.0.3 ships with the missing
+    # boost_system component for the macOS-arm64 bundle.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v5
 
