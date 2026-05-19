@@ -119,11 +119,13 @@ jobs:
             deps-${{ runner.os }}-
 
       # ── Linux toolchain ──
-      # MolSurf consumes Boost / FFTW / NFFT3 / CGAL / GMP / MPFR /
-      # LAPACK / BLAS from the libcvc-deps prebuilt bundle that
-      # CMakeLists.txt downloads on first configure, so apt only needs
-      # the compiler/build tools and the OpenGL / X11 development
-      # headers that the MolSurf GUI links against directly.
+      # MolSurf consumes Boost / FFTW / NFFT3 / CGAL / GMP / MPFR from
+      # the libcvc-deps prebuilt bundle that CMakeLists.txt downloads on
+      # first configure. BLAS / LAPACK come from apt because the v1.0.2
+      # Linux bundle ships libblas.so / liblapack.so as dangling symlinks
+      # to /etc/alternatives/* paths that don't exist on a clean runner.
+      # apt also supplies the OpenGL / X11 development headers that the
+      # MolSurf GUI links against directly.
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -132,6 +134,7 @@ jobs:
             build-essential \
             cmake \
             ninja-build \
+            libblas-dev liblapack-dev libgfortran5 \
             libgl1-mesa-dev libglu1-mesa-dev \
             libxext-dev libxi-dev libxmu-dev libx11-dev
 
@@ -235,6 +238,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential cmake ninja-build dpkg-dev \
+            libblas-dev liblapack-dev libgfortran5 \
             libgl1-mesa-dev libglu1-mesa-dev \
             libxext-dev libxi-dev libxmu-dev libx11-dev
 
