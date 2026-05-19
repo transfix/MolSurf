@@ -154,9 +154,9 @@ include(SetupCGAL)
 # succeed and the source build (which pulls Boost/HDF5/CGAL/FFTW
 # rediscovery) is avoided. Override with -DLIBCVC_FORCE_SOURCE=ON if
 # you need to test against an unreleased libcvc commit.
-set(LIBCVC_TAG     "v3.2.2" CACHE STRING "libcvc release tag to consume")
+set(LIBCVC_TAG     "v3.2.3" CACHE STRING "libcvc release tag to consume")
 set(LIBCVC_VERSION "3.2.0"  CACHE STRING "libcvc package version to look up")
-set(LIBCVC_GIT_SHA "694243154bc28802ad983f170adfb8c86577ff7a"
+set(LIBCVC_GIT_SHA "d3ffce421cf7a495980cd5b0d267dcfbdd4d3584"
     CACHE STRING "libcvc commit SHA used when falling through to source build")
 option(LIBCVC_FORCE_SOURCE "Skip prebuilt libcvc and always build from source" OFF)
 

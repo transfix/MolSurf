@@ -38,6 +38,7 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             build-essential cmake ninja-build dpkg-dev \
             libblas-dev liblapack-dev libgfortran5 \
+            libtiff-dev libhdf5-dev \
             libgl1-mesa-dev libglu1-mesa-dev \
             libxext-dev libxi-dev libxmu-dev libx11-dev
 
