@@ -16,6 +16,11 @@ jobs:
   format-check:
     name: clang-format (changed lines)
     runs-on: ubuntu-24.04
+    # Advisory only: pre-existing formatting in this repo predates the
+    # clang-format style by years, so changed-line reformatting can
+    # rope in tabs/whitespace from unrelated context. Don't block CI
+    # on it until a one-shot top-to-bottom format pass lands.
+    continue-on-error: true
     concurrency:
       group: ci-${{ github.ref }}-format-check
       cancel-in-progress: true
