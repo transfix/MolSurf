@@ -89,6 +89,10 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} / ${{ matrix.build_type }}
+    # macOS is advisory until libcvc-deps v1.0.3 ships with the missing
+    # boost_system component for the macOS-arm64 bundle (v1.0.2's macOS
+    # zip is missing lib/cmake/boost_system-1.90.0/ and libboost_system.dylib).
+    continue-on-error: ${{ startsWith(matrix.os, 'macos') }}
     concurrency:
       group: ci-${{ github.ref }}-build-${{ matrix.os }}-${{ matrix.build_type }}
       cancel-in-progress: true
