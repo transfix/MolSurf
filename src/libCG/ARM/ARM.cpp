@@ -59,8 +59,6 @@ void ARM::setHierarchicalInformation(char* hinfofile)
 
 	ifstream fin(hinfofile);
 
-	ssize_t read;
-	size_t len = 0;
 	char* token = NULL;
 	char* line = NULL;
 	char* delim = (char*)" \t\n";

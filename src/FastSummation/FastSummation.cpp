@@ -41,6 +41,18 @@ extern "C" {
 
 }
 
+/* On some libc/C++ stdlib combinations (notably newer glibc), including
+ * <complex.h> from C++ does not expose the C99 helper macros `I` and
+ * `creal`.  The fastsum API uses `double _Complex` (a GCC C++ extension)
+ * so we substitute the GCC builtins/keywords that are always available
+ * in this translation unit. */
+#ifndef I
+# define I _Complex_I
+#endif
+#ifndef creal
+# define creal(z) __real__ (z)
+#endif
+
 using namespace std;
 
 FastSummation::FastSummation()

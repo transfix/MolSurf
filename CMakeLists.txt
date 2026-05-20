@@ -57,7 +57,7 @@ list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 # scaffolding in CI. Set -DLIBCVC_DEPS_SKIP=ON to fall back to the host
 # package manager (useful for local dev when the bundle is already
 # installed elsewhere).
-set(LIBCVC_DEPS_VERSION "1.0.2" CACHE STRING
+set(LIBCVC_DEPS_VERSION "1.1.0" CACHE STRING
     "libcvc-deps release version to download")
 option(LIBCVC_DEPS_SKIP
     "Do not download libcvc-deps; rely on system/CMAKE_PREFIX_PATH deps" OFF)

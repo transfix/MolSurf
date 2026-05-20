@@ -2,7 +2,10 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
 
 # CHA: we should be able to find third-party from our own build
 #IF (HAVE_NFFT)
-ADD_DEFINITIONS(-DWITH_CG)
+# WITH_CG pulls in libCG (POSIX/C99 features unsupported by MSVC).
+if(NOT MSVC)
+  ADD_DEFINITIONS(-DWITH_CG)
+endif()
 #ELSE (HAVE_NFFT)
 #ADD_DEFINITIONS(-UWITH_CG)
 #ENDIF (HAVE_NFFT)
