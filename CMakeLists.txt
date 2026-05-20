@@ -4,10 +4,19 @@ project(MolSurf
   DESCRIPTION "Volumetric image visualization and processing"
   LANGUAGES C CXX)
 
-# C++ standard
-set(CMAKE_CXX_STANDARD 17)
+# C++ standard. C++20 is required because the libcvc dependency (pulled in
+# below via FetchContent) uses std::format, which is a C++20 library feature.
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Prefer the upstream BoostConfig.cmake shipped with modern Boost (>= 1.70).
+# CMake 3.30 removed the legacy FindBoost module; Homebrew's Boost 1.90 only
+# ships BoostConfig. Setting CMP0167 to NEW makes find_package(Boost) consume
+# BoostConfig directly instead of falling back to the legacy finder.
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
 
 # Make CGAL's exact constructions stable with GCC. Other compilers do not
 # require this and would warn or fail on the flag.
@@ -38,14 +47,200 @@ message(STATUS "BUNDLE_LIB_SEARCH_DIRS: ${BUNDLE_LIB_SEARCH_DIRS}")
 # provides. No more reaching into ${PROJECT_BINARY_DIR} for vendored libs.
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 
+# ── libcvc-deps prebuilt dependency bundle ───────────────────────────
+# libcvc-deps (https://github.com/transfix/libcvc-deps) ships a single
+# CMAKE_PREFIX_PATH-shaped tree containing Boost, FFTW, NFFT3, CGAL,
+# GMP/MPFR, LAPACK/BLAS, and the rest of the libcvc/volrover3 dependency
+# graph for Linux / macOS / Windows × Debug / Release. Pulling it down
+# here means every Setup<Foo>.cmake (and the libcvc find below) sees a
+# matching set of dependencies without per-platform apt/brew/vcpkg
+# scaffolding in CI. Set -DLIBCVC_DEPS_SKIP=ON to fall back to the host
+# package manager (useful for local dev when the bundle is already
+# installed elsewhere).
+set(LIBCVC_DEPS_VERSION "1.1.0" CACHE STRING
+    "libcvc-deps release version to download")
+option(LIBCVC_DEPS_SKIP
+    "Do not download libcvc-deps; rely on system/CMAKE_PREFIX_PATH deps" OFF)
+
+if(NOT LIBCVC_DEPS_SKIP)
+  set(_dep_plat "")
+  if(WIN32)
+    set(_dep_plat "windows-x86_64")
+    set(_dep_ext  "zip")
+  elseif(APPLE)
+    set(_dep_plat "macos-arm64")
+    set(_dep_ext  "zip")
+  elseif(UNIX)
+    set(_dep_plat "linux-x86_64")
+    set(_dep_ext  "tar.gz")
+  endif()
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(_dep_cfg "debug")
+  else()
+    set(_dep_cfg "release")
+  endif()
+  if(_dep_plat)
+    set(_dep_stem    "libcvc-deps-${LIBCVC_DEPS_VERSION}-${_dep_plat}-${_dep_cfg}")
+    set(_dep_archive "${_dep_stem}.${_dep_ext}")
+    set(_dep_url     "https://github.com/transfix/libcvc-deps/releases/download/v${LIBCVC_DEPS_VERSION}/${_dep_archive}")
+    set(_dep_stage   "${CMAKE_BINARY_DIR}/_deps/libcvc-deps")
+    # The Linux tarball and the macOS zip embed the stem directory at
+    # the top level, but the Windows zip (produced by PowerShell's
+    # Compress-Archive -Path "$dist/*") flattens its contents. Probe
+    # both layouts so the consumer-side prefix discovery doesn't have
+    # to special-case anything.
+    set(_dep_root_with_stem "${_dep_stage}/${_dep_stem}")
+    set(_dep_root_flat      "${_dep_stage}")
+    if(EXISTS "${_dep_root_with_stem}/include")
+      set(_dep_root "${_dep_root_with_stem}")
+    elseif(EXISTS "${_dep_root_flat}/include")
+      set(_dep_root "${_dep_root_flat}")
+    else()
+      set(_dep_root "")
+    endif()
+    if(NOT _dep_root)
+      file(MAKE_DIRECTORY "${_dep_stage}")
+      message(STATUS "Downloading libcvc-deps: ${_dep_url}")
+      file(DOWNLOAD "${_dep_url}" "${_dep_stage}/${_dep_archive}"
+           STATUS _dep_dl SHOW_PROGRESS TLS_VERIFY ON)
+      list(GET _dep_dl 0 _dep_dl_code)
+      if(_dep_dl_code EQUAL 0)
+        execute_process(
+          COMMAND ${CMAKE_COMMAND} -E tar xf "${_dep_archive}"
+          WORKING_DIRECTORY "${_dep_stage}"
+          RESULT_VARIABLE _dep_extract)
+        if(NOT _dep_extract EQUAL 0)
+          message(WARNING "Failed to extract ${_dep_archive} (exit ${_dep_extract})")
+        endif()
+      else()
+        message(WARNING "libcvc-deps download failed: ${_dep_dl}")
+      endif()
+      if(EXISTS "${_dep_root_with_stem}/include")
+        set(_dep_root "${_dep_root_with_stem}")
+      elseif(EXISTS "${_dep_root_flat}/include")
+        set(_dep_root "${_dep_root_flat}")
+      endif()
+    endif()
+    if(_dep_root AND EXISTS "${_dep_root}/include")
+      list(PREPEND CMAKE_PREFIX_PATH "${_dep_root}")
+      set(libcvc-deps_ROOT "${_dep_root}" CACHE PATH "" FORCE)
+      message(STATUS "Using libcvc-deps ${LIBCVC_DEPS_VERSION} from ${_dep_root}")
+    else()
+      message(WARNING
+        "libcvc-deps bundle not available; falling back to system packages on CMAKE_PREFIX_PATH")
+    endif()
+  endif()
+endif()
+
 # Dependency discovery macros. Each Setup<Foo>.cmake calls find_package
-# against the system / package manager (apt, brew, vcpkg). NFFT may fall
-# back to FetchContent because it has no first-class package on every OS.
+# against the libcvc-deps prefix prepended above (or the host package
+# manager when LIBCVC_DEPS_SKIP=ON).
 include(SetupBoost)
 include(SetupFFTW)
 include(SetupNFFT)
 include(SetupLapack)
 include(SetupCGAL)
+
+# ── libcvc dependency ────────────────────────────────────────────────
+# Resolution order, falling through on failure:
+#   1. find_package(cvc CONFIG) against a pre-installed libcvc on
+#      CMAKE_PREFIX_PATH (fastest, no download or build).
+#   2. Download the prebuilt release tarball matching this platform /
+#      build type and find_package against the extracted tree.
+#   3. FetchContent_Declare(GIT_REPOSITORY ...) and build from source.
+#
+# MolSurf only needs the cvc::cvc target, which is shipped by every
+# published libcvc release archive, so strategies 1 and 2 normally
+# succeed and the source build (which pulls Boost/HDF5/CGAL/FFTW
+# rediscovery) is avoided. Override with -DLIBCVC_FORCE_SOURCE=ON if
+# you need to test against an unreleased libcvc commit.
+set(LIBCVC_TAG     "v3.2.3" CACHE STRING "libcvc release tag to consume")
+set(LIBCVC_VERSION "3.2.0"  CACHE STRING "libcvc package version to look up")
+set(LIBCVC_GIT_SHA "d3ffce421cf7a495980cd5b0d267dcfbdd4d3584"
+    CACHE STRING "libcvc commit SHA used when falling through to source build")
+option(LIBCVC_FORCE_SOURCE "Skip prebuilt libcvc and always build from source" OFF)
+
+include(FetchContent)
+
+# Cache options consumed by libcvc's own CMakeLists when we fall through
+# to the source build. Harmless when find_package succeeds.
+set(CVC_BUILD_TESTS     OFF CACHE BOOL "" FORCE)
+set(CVC_ENABLE_CUDA     OFF CACHE BOOL "" FORCE)
+set(CVC_ENABLE_COVERAGE OFF CACHE BOOL "" FORCE)
+set(CVC_BUILD_VOLROVER3 OFF CACHE BOOL "" FORCE)
+
+set(_libcvc_usable FALSE)
+
+# 1. Pre-installed package
+if(NOT LIBCVC_FORCE_SOURCE)
+  find_package(cvc ${LIBCVC_VERSION} CONFIG QUIET)
+  if(cvc_FOUND)
+    message(STATUS "Using pre-installed libcvc ${cvc_VERSION}")
+    set(_libcvc_usable TRUE)
+  endif()
+endif()
+
+# 2. Prebuilt release tarball
+if(NOT _libcvc_usable AND NOT LIBCVC_FORCE_SOURCE)
+  if(WIN32)
+    set(_libcvc_plat "windows-x86_64")
+    set(_libcvc_ext  "zip")
+  elseif(APPLE)
+    set(_libcvc_plat "macos-arm64")
+    set(_libcvc_ext  "zip")
+  elseif(UNIX)
+    set(_libcvc_plat "linux-x86_64")
+    set(_libcvc_ext  "tar.gz")
+  endif()
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(_libcvc_cfg "debug")
+  else()
+    set(_libcvc_cfg "release")
+  endif()
+  if(DEFINED _libcvc_plat)
+    set(_libcvc_archive "libcvc-${LIBCVC_VERSION}-${_libcvc_plat}-${_libcvc_cfg}.${_libcvc_ext}")
+    set(_libcvc_url     "https://github.com/transfix/libcvc/releases/download/${LIBCVC_TAG}/${_libcvc_archive}")
+    set(_libcvc_stage   "${CMAKE_BINARY_DIR}/_deps/libcvc-prebuilt")
+    set(_libcvc_cfgfile "${_libcvc_stage}/lib/cmake/cvc/cvcConfig.cmake")
+    if(NOT EXISTS "${_libcvc_cfgfile}")
+      message(STATUS "Downloading prebuilt libcvc: ${_libcvc_url}")
+      file(MAKE_DIRECTORY "${_libcvc_stage}")
+      file(DOWNLOAD "${_libcvc_url}" "${_libcvc_stage}/${_libcvc_archive}"
+           STATUS _libcvc_dl TLS_VERIFY ON)
+      list(GET _libcvc_dl 0 _libcvc_dl_code)
+      if(_libcvc_dl_code EQUAL 0)
+        execute_process(
+          COMMAND ${CMAKE_COMMAND} -E tar xzf "${_libcvc_archive}"
+          WORKING_DIRECTORY "${_libcvc_stage}"
+          RESULT_VARIABLE _libcvc_extract)
+        if(NOT _libcvc_extract EQUAL 0)
+          message(STATUS "Failed to extract ${_libcvc_archive} (exit ${_libcvc_extract})")
+        endif()
+      else()
+        message(STATUS "Prebuilt libcvc download failed: ${_libcvc_dl}")
+      endif()
+    endif()
+    if(EXISTS "${_libcvc_cfgfile}")
+      list(PREPEND CMAKE_PREFIX_PATH "${_libcvc_stage}")
+      find_package(cvc ${LIBCVC_VERSION} CONFIG QUIET)
+      if(cvc_FOUND)
+        message(STATUS "Using prebuilt libcvc ${cvc_VERSION} from ${_libcvc_url}")
+        set(_libcvc_usable TRUE)
+      endif()
+    endif()
+  endif()
+endif()
+
+# 3. Source build (fallback)
+if(NOT _libcvc_usable)
+  message(STATUS "Building libcvc ${LIBCVC_TAG} from source")
+  FetchContent_Declare(
+    libcvc
+    GIT_REPOSITORY https://github.com/transfix/libcvc.git
+    GIT_TAG        ${LIBCVC_GIT_SHA}
+  )
+  FetchContent_MakeAvailable(libcvc)
+endif()
 
 #output 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")

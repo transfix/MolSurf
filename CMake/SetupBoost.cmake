@@ -12,9 +12,16 @@
 set(MOLSURF_BOOST_DEFAULT_COMPONENTS
   thread date_time regex filesystem system program_options)
 
+# Prefer the upstream BoostConfig.cmake (Boost >= 1.70) over the legacy
+# FindBoost module which was removed in CMake 3.30 and is missing from
+# modern Homebrew Boost packages.
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
+
 # Resolve Boost once per configure; cache for downstream calls.
 if(NOT MolSurf_Boost_FOUND)
-  find_package(Boost 1.66 REQUIRED
+  find_package(Boost 1.66 REQUIRED CONFIG
     COMPONENTS ${MOLSURF_BOOST_DEFAULT_COMPONENTS})
   set(MolSurf_Boost_FOUND TRUE CACHE INTERNAL "")
 endif()

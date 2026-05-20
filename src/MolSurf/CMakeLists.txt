@@ -8,7 +8,10 @@ ADD_DEFINITIONS(-DHAVE_LAPACK)
 #ENDIF (HAVE_LAPACK)
 
 #IF (HAVE_NFFT)
-ADD_DEFINITIONS(-DWITH_CG)
+# WITH_CG pulls in libCG (POSIX/C99 features unsupported by MSVC).
+if(NOT MSVC)
+  ADD_DEFINITIONS(-DWITH_CG)
+endif()
 #ELSE (HAVE_NFFT)
 #ADD_DEFINITIONS(-UWITH_CG)
 #ENDIF (HAVE_NFFT)
@@ -47,7 +50,10 @@ ENDIF(APPLE)
 SET(MOLSURF_LINK_LIBS MolSurfAPI LBIE_lib AdaptiveIsocontouring ASpline)
 
 #IF (HAVE_NFFT)
-SET(MOLSURF_LINK_LIBS ${MOLSURF_LINK_LIBS} OptimizerLib	ARM CoarseGrain Optimizer)
+# libCG (ARM/CoarseGrain/Optimizer) uses POSIX/C99 features unsupported by MSVC.
+if(NOT MSVC)
+  SET(MOLSURF_LINK_LIBS ${MOLSURF_LINK_LIBS} OptimizerLib	ARM CoarseGrain Optimizer)
+endif()
 #ENDIF (HAVE_NFFT)
 
 SET(MOLSURF_LINK_LIBS ${MOLSURF_LINK_LIBS} 
@@ -107,7 +113,11 @@ SET(MOLSURF_LINK_LIBS ${MOLSURF_LINK_LIBS}
 #IF (HAVE_NFFT)
 #SET(MOLSURF_LINK_LIBS ${MOLSURF_LINK_LIBS} kernelsarand FastSummation nfft3 fftw3 levmar)
 find_package(FFTW)
-SET(MOLSURF_LINK_LIBS ${MOLSURF_LINK_LIBS} FastSummation levmar ${FFTW_LIB})
+# FastSummation requires C99 `double _Complex` (GCC C++ extension); not built on MSVC.
+if(NOT MSVC)
+  SET(MOLSURF_LINK_LIBS ${MOLSURF_LINK_LIBS} FastSummation ${FFTW_LIB})
+endif()
+SET(MOLSURF_LINK_LIBS ${MOLSURF_LINK_LIBS} levmar)
 #ENDIF (HAVE_NFFT)
 
 SET(MOLSURF_LINK_LIBS ${MOLSURF_LINK_LIBS} 

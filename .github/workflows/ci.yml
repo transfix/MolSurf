@@ -1,0 +1,451 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+# Cheap jobs cancel on new pushes for fast feedback.
+# Packaging jobs keep running so branch builds still produce downloadable
+# binaries even when new commits arrive during a long package step.
+
+jobs:
+  format-check:
+    name: clang-format (changed lines)
+    runs-on: ubuntu-24.04
+    # Advisory only: pre-existing formatting in this repo predates the
+    # clang-format style by years, so changed-line reformatting can
+    # rope in tabs/whitespace from unrelated context. Don't block CI
+    # on it until a one-shot top-to-bottom format pass lands.
+    continue-on-error: true
+    concurrency:
+      group: ci-${{ github.ref }}-format-check
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang-format
+
+      - name: Determine merge base
+        id: base
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+          else
+            base="${{ github.event.before }}"
+            if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+              base="HEAD~1"
+            fi
+          fi
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+
+      - name: Run git-clang-format on changed lines
+        run: |
+          set -euo pipefail
+          base="${{ steps.base.outputs.base }}"
+          out=$(git clang-format --diff "$base" -- \
+                  '*.c' '*.cc' '*.cpp' '*.cxx' \
+                  '*.h' '*.hh' '*.hpp' '*.hxx' || true)
+          if [ -z "$out" ] \
+             || [ "$out" = "no modified files to format" ] \
+             || [ "$out" = "clang-format did not modify any files" ]; then
+            echo "Formatting OK on changed lines."
+            exit 0
+          fi
+          echo "::error::clang-format would reformat changed lines. To apply:"
+          echo "  git clang-format $base"
+          echo
+          echo "$out"
+          exit 1
+
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux
+          - os: ubuntu-latest
+            build_type: Debug
+          - os: ubuntu-latest
+            build_type: Release
+          # macOS
+          - os: macos-latest
+            build_type: Debug
+          - os: macos-latest
+            build_type: Release
+          # Windows
+          - os: windows-latest
+            build_type: Debug
+          - os: windows-latest
+            build_type: Release
+
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} / ${{ matrix.build_type }}
+    concurrency:
+      group: ci-${{ github.ref }}-build-${{ matrix.os }}-${{ matrix.build_type }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      # ── _deps cache (libcvc-deps bundle + libcvc release archive) ──
+      # The libcvc-deps prebuilt bundle (~150-700 MB depending on platform)
+      # and the libcvc release archive are downloaded by the top-level
+      # CMakeLists.txt into build/_deps/. Cache that whole subtree so
+      # subsequent runs skip the GitHub-release download as long as the
+      # pinned versions in CMakeLists.txt haven't changed.
+      - name: Cache CMake _deps (libcvc-deps + libcvc prebuilt)
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: deps-${{ runner.os }}-${{ matrix.build_type }}-${{ hashFiles('CMakeLists.txt', 'CMake/Setup*.cmake') }}
+          restore-keys: |
+            deps-${{ runner.os }}-${{ matrix.build_type }}-
+            deps-${{ runner.os }}-
+
+      # ── Linux toolchain ──
+      # MolSurf consumes Boost / FFTW / NFFT3 / CGAL / GMP / MPFR from
+      # the libcvc-deps prebuilt bundle that CMakeLists.txt downloads on
+      # first configure. BLAS / LAPACK come from apt because the v1.0.2
+      # Linux bundle ships libblas.so / liblapack.so as dangling symlinks
+      # to /etc/alternatives/* paths that don't exist on a clean runner.
+      # apt also supplies the OpenGL / X11 development headers that the
+      # MolSurf GUI links against directly.
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            ninja-build \
+            libblas-dev liblapack-dev libgfortran5 \
+            libtiff-dev libhdf5-dev \
+            libgl1-mesa-dev libglu1-mesa-dev \
+            libxext-dev libxi-dev libxmu-dev libx11-dev
+
+      # ── macOS toolchain ──
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install cmake ninja
+
+      # ── Windows toolchain ──
+      # The Visual Studio Build Tools, CMake and Ninja are preinstalled on
+      # windows-latest runners. All library dependencies come from
+      # libcvc-deps via the top-level CMakeLists.txt download.
+
+      # ── Configure ──
+      - name: Configure (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          cmake -B build \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+
+      - name: Configure (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install"
+
+      # ── Build ──
+      - name: Build
+        run: cmake --build build --config ${{ matrix.build_type }} --parallel
+
+      # ── Verify build output ──
+      - name: Verify build artifacts (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          if [ ! -d build/bin ] && [ ! -d build/lib ]; then
+            echo "::error::No build/bin or build/lib directory produced"
+            exit 1
+          fi
+          echo "Build artifacts:"
+          ls -la build/bin 2>/dev/null || true
+          ls -la build/lib 2>/dev/null || true
+
+      - name: Verify build artifacts (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $hasBin = Test-Path build/bin
+          $hasLib = Test-Path build/lib
+          if (-not ($hasBin -or $hasLib)) {
+            Write-Error "No build/bin or build/lib directory produced"
+            exit 1
+          }
+          if ($hasBin) { Get-ChildItem build/bin -Recurse | Select-Object FullName }
+          if ($hasLib) { Get-ChildItem build/lib -Recurse | Select-Object FullName }
+
+      # ── Upload build artifacts ──
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.os }}-${{ matrix.build_type }}
+          path: |
+            build/bin/
+            build/lib/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  package-linux:
+    runs-on: ubuntu-latest
+    name: package / linux
+    concurrency:
+      group: ci-${{ github.ref }}-package-linux
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Compute artifact metadata
+        id: meta
+        run: |
+          VERSION=$(awk '/^[[:space:]]*VERSION[[:space:]]+[0-9]/{gsub(/[^0-9.]/,"",$2); print $2; exit}' CMakeLists.txt)
+          SHA=$(git rev-parse --short=8 HEAD)
+          ARCH=$(uname -m)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "arch=$ARCH" >> "$GITHUB_OUTPUT"
+
+      - name: Cache CMake _deps (libcvc-deps + libcvc prebuilt)
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: deps-Linux-package-${{ hashFiles('CMakeLists.txt', 'CMake/Setup*.cmake') }}
+          restore-keys: |
+            deps-Linux-package-
+            deps-Linux-
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build dpkg-dev \
+            libblas-dev liblapack-dev libgfortran5 \
+            libtiff-dev libhdf5-dev \
+            libgl1-mesa-dev libglu1-mesa-dev \
+            libxext-dev libxi-dev libxmu-dev libx11-dev
+
+      - name: Configure
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Create portable tarball
+        run: |
+          STEM="MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-linux-${{ steps.meta.outputs.arch }}"
+          cmake --install build --prefix staging/MolSurf || true
+          mkdir -p staging/MolSurf/lib staging/MolSurf/bin
+          # Fall back to copying build outputs if install was a no-op
+          if [ -d build/bin ]; then
+            cp -r build/bin/. staging/MolSurf/bin/ 2>/dev/null || true
+          fi
+          if [ -d build/lib ]; then
+            cp -r build/lib/. staging/MolSurf/lib/ 2>/dev/null || true
+          fi
+          for bin in staging/MolSurf/bin/*; do
+            [ -x "$bin" ] || continue
+            ldd "$bin" 2>/dev/null | grep -oP '/\S+lib(fftw|nfft|gmp|mpfr|gsl|CGAL)\S+' | while read lib; do
+              cp -uL "$lib" staging/MolSurf/lib/ 2>/dev/null || true
+            done
+          done
+          cp README.md staging/MolSurf/ 2>/dev/null || true
+          tar -czf "$STEM.tar.gz" -C staging MolSurf
+
+      - name: Build .deb package
+        run: |
+          STEM="MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-linux-${{ steps.meta.outputs.arch }}"
+          cd build
+          cpack -G DEB || { echo "::warning::cpack DEB failed; skipping"; exit 0; }
+          for f in *.deb; do cp "$f" "../$STEM.deb"; done
+
+      - name: Upload Linux tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-linux-${{ steps.meta.outputs.arch }}.tar.gz
+          path: MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-linux-${{ steps.meta.outputs.arch }}.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload Linux .deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-linux-${{ steps.meta.outputs.arch }}.deb
+          path: MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-linux-${{ steps.meta.outputs.arch }}.deb
+          if-no-files-found: ignore
+          retention-days: 30
+
+  package-macos:
+    runs-on: macos-latest
+    name: package / macos
+    concurrency:
+      group: ci-${{ github.ref }}-package-macos
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Compute artifact metadata
+        id: meta
+        run: |
+          VERSION=$(awk '/^[[:space:]]*VERSION[[:space:]]+[0-9]/{gsub(/[^0-9.]/,"",$2); print $2; exit}' CMakeLists.txt)
+          SHA=$(git rev-parse --short=8 HEAD)
+          ARCH=$(uname -m)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "arch=$ARCH" >> "$GITHUB_OUTPUT"
+
+      - name: Export GitHub Actions cache env (vcpkg)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+            core.exportVariable('VCPKG_BINARY_SOURCES', 'clear;x-gha,readwrite');
+
+      - name: Cache CMake _deps (libcvc-deps + libcvc prebuilt)
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: deps-macOS-package-${{ hashFiles('CMakeLists.txt', 'CMake/Setup*.cmake') }}
+          restore-keys: |
+            deps-macOS-package-
+            deps-macOS-
+
+      - name: Install dependencies
+        run: brew install cmake ninja
+
+      - name: Configure
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr/local
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Create .dmg and .zip
+        run: |
+          STEM="MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-macos-${{ steps.meta.outputs.arch }}"
+          cmake --install build --prefix staging/MolSurf.app/Contents/Resources || true
+          mkdir -p staging/MolSurf.app/Contents/MacOS staging/MolSurf.app/Contents/Frameworks
+          # Fall back to copying build outputs if install was a no-op
+          if [ -d build/bin ]; then
+            cp -r build/bin/. staging/MolSurf.app/Contents/MacOS/ 2>/dev/null || true
+          fi
+          for bin in staging/MolSurf.app/Contents/MacOS/*; do
+            [ -x "$bin" ] || continue
+            otool -L "$bin" 2>/dev/null | grep -oE '/[^ ]+lib(fftw|nfft|gmp|mpfr|CGAL)[^ ]+' | while read lib; do
+              bname=$(basename "$lib")
+              cp -n "$lib" staging/MolSurf.app/Contents/Frameworks/ 2>/dev/null || true
+              install_name_tool -change "$lib" "@executable_path/../Frameworks/$bname" "$bin" 2>/dev/null || true
+            done
+          done
+          cp README.md staging/MolSurf.app/Contents/Resources/ 2>/dev/null || true
+          ditto -c -k --keepParent staging/MolSurf.app "$STEM.zip"
+          hdiutil create -volname MolSurf \
+            -srcfolder staging/MolSurf.app \
+            -ov -format UDZO \
+            "$STEM.dmg"
+
+      - name: Upload macOS dmg
+        uses: actions/upload-artifact@v4
+        with:
+          name: MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-macos-${{ steps.meta.outputs.arch }}.dmg
+          path: MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-macos-${{ steps.meta.outputs.arch }}.dmg
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload macOS zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-macos-${{ steps.meta.outputs.arch }}.zip
+          path: MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-macos-${{ steps.meta.outputs.arch }}.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  package-windows:
+    runs-on: windows-latest
+    name: package / windows
+    concurrency:
+      group: ci-${{ github.ref }}-package-windows
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Cache CMake _deps (libcvc-deps + libcvc prebuilt)
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: deps-Windows-package-${{ hashFiles('CMakeLists.txt', 'CMake/Setup*.cmake') }}
+          restore-keys: |
+            deps-Windows-package-
+            deps-Windows-
+
+      - name: Compute artifact metadata
+        id: meta
+        shell: bash
+        run: |
+          VERSION=$(awk '/^[[:space:]]*VERSION[[:space:]]+[0-9]/{gsub(/[^0-9.]/,"",$2); print $2; exit}' CMakeLists.txt)
+          SHA=$(git rev-parse --short=8 HEAD)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "arch=x64" >> "$GITHUB_OUTPUT"
+
+      # All library dependencies come from the libcvc-deps prebuilt
+      # bundle that CMakeLists.txt downloads automatically.
+
+      - name: Configure
+        shell: bash
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=install
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Create zip
+        shell: bash
+        run: |
+          STEM="MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-windows-${{ steps.meta.outputs.arch }}"
+          cmake --install build --config Release --prefix staging/MolSurf || true
+          mkdir -p staging/MolSurf/bin
+          if [ -d build/bin ]; then
+            find build/bin -name '*.exe' -exec cp {} staging/MolSurf/bin/ \; 2>/dev/null || true
+            find build/bin -name '*.dll' -exec cp {} staging/MolSurf/bin/ \; 2>/dev/null || true
+          fi
+          cp "$VCPKG_INSTALLATION_ROOT"/installed/x64-windows/bin/*.dll staging/MolSurf/bin/ 2>/dev/null || true
+          # Bundle DLLs from the libcvc-deps prebuilt tree that CMake
+          # downloaded into build/_deps/libcvc-deps/ during configure.
+          for d in build/_deps/libcvc-deps/libcvc-deps-*-windows-*/bin; do
+            [ -d "$d" ] && cp "$d"/*.dll staging/MolSurf/bin/ 2>/dev/null || true
+          done
+          cp README.md staging/MolSurf/ 2>/dev/null || true
+          cd staging
+          7z a -tzip ../"$STEM.zip" MolSurf/
+
+      - name: Upload Windows zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-windows-${{ steps.meta.outputs.arch }}.zip
+          path: MolSurf-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.sha }}-windows-${{ steps.meta.outputs.arch }}.zip
+          if-no-files-found: error
+          retention-days: 30

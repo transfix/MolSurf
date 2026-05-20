@@ -30,16 +30,28 @@
 #include "FastSummation/FastSummation.h"
 
 extern "C" {
-#include "/usr/include/complex.h"
+#include <complex.h>
 
-  //#include <complex.h>
 #include <FastSummation/kernels.h>
 #include <FastSummation/fastsum.h>
-#include <nfft3util.h>
+/* nfft3util.h was removed in NFFT >= 3.3; nfft3.h declares all utility
+ * functions used here. */
 #include <nfft3.h>
 
 
 }
+
+/* On some libc/C++ stdlib combinations (notably newer glibc), including
+ * <complex.h> from C++ does not expose the C99 helper macros `I` and
+ * `creal`.  The fastsum API uses `double _Complex` (a GCC C++ extension)
+ * so we substitute the GCC builtins/keywords that are always available
+ * in this translation unit. */
+#ifndef I
+# define I _Complex_I
+#endif
+#ifndef creal
+# define creal(z) __real__ (z)
+#endif
 
 using namespace std;
 
@@ -308,26 +320,26 @@ void FastSummation::threadedFastSumCorrection(double *x, double *y, double *alph
         for ( int j = 0; j < ths[ q ]->mv1.d; j++ )
            ths[ q ]->mv1.x[ ths[ q ]->mv1.d * i + j ] = - ths[ q ]->x[ ths[ q ]->mv1.d * i + j ];
           
-      if ( ths[ q ]->mv1.nfft_flags & PRE_LIN_PSI )
+      if ( ths[ q ]->mv1.flags & PRE_LIN_PSI )
  	nfft_precompute_lin_psi( &( ths[ q ]->mv1 ) );
 
-      if ( ths[ q ]->mv1.nfft_flags & PRE_PSI )
+      if ( ths[ q ]->mv1.flags & PRE_PSI )
 	nfft_precompute_psi( &( ths[ q ]->mv1 ) );
 
-      if ( ths[ q ]->mv1.nfft_flags & PRE_FULL_PSI )
+      if ( ths[ q ]->mv1.flags & PRE_FULL_PSI )
 	nfft_precompute_full_psi( &( ths[ q ]->mv1 ) );
 	
       for ( int i = 0; i < ths[ q ]->mv2.M_total; i++ )
 	for ( int j = 0; j < ths[ q ]->mv2.d; j++ )
            ths[ q ]->mv2.x[ ths[ q ]->mv2.d * i + j ] = - ths[ q ]->y[ ths[ q ]->mv2.d * i + j];
            
-      if ( ths[ q ]->mv2.nfft_flags & PRE_LIN_PSI )
+      if ( ths[ q ]->mv2.flags & PRE_LIN_PSI )
  	nfft_precompute_lin_psi( &( ths[ q ]->mv2 ) );
 
-      if ( ths[ q ]->mv2.nfft_flags & PRE_PSI )
+      if ( ths[ q ]->mv2.flags & PRE_PSI )
 	nfft_precompute_psi( &( ths[ q ]->mv2 ) );
 
-      if ( ths[ q ]->mv2.nfft_flags & PRE_FULL_PSI )
+      if ( ths[ q ]->mv2.flags & PRE_FULL_PSI )
 	nfft_precompute_full_psi( &( ths[ q ]->mv2 ) );           
      }
 
@@ -476,26 +488,26 @@ void FastSummation::threadedFastSum(double *x, double *y, double *alpha, double 
         for ( int j = 0; j < ths[ q ]->mv1.d; j++ )
            ths[ q ]->mv1.x[ ths[ q ]->mv1.d * i + j ] = - ths[ q ]->x[ ths[ q ]->mv1.d * i + j ];
           
-      if ( ths[ q ]->mv1.nfft_flags & PRE_LIN_PSI )
+      if ( ths[ q ]->mv1.flags & PRE_LIN_PSI )
  	nfft_precompute_lin_psi( &( ths[ q ]->mv1 ) );
 
-      if ( ths[ q ]->mv1.nfft_flags & PRE_PSI )
+      if ( ths[ q ]->mv1.flags & PRE_PSI )
 	nfft_precompute_psi( &( ths[ q ]->mv1 ) );
 
-      if ( ths[ q ]->mv1.nfft_flags & PRE_FULL_PSI )
+      if ( ths[ q ]->mv1.flags & PRE_FULL_PSI )
 	nfft_precompute_full_psi( &( ths[ q ]->mv1 ) );
 	
       for ( int i = 0; i < ths[ q ]->mv2.M_total; i++ )
 	for ( int j = 0; j < ths[ q ]->mv2.d; j++ )
            ths[ q ]->mv2.x[ ths[ q ]->mv2.d * i + j ] = - ths[ q ]->y[ ths[ q ]->mv2.d * i + j];
            
-      if ( ths[ q ]->mv2.nfft_flags & PRE_LIN_PSI )
+      if ( ths[ q ]->mv2.flags & PRE_LIN_PSI )
  	nfft_precompute_lin_psi( &( ths[ q ]->mv2 ) );
 
-      if ( ths[ q ]->mv2.nfft_flags & PRE_PSI )
+      if ( ths[ q ]->mv2.flags & PRE_PSI )
 	nfft_precompute_psi( &( ths[ q ]->mv2 ) );
 
-      if ( ths[ q ]->mv2.nfft_flags & PRE_FULL_PSI )
+      if ( ths[ q ]->mv2.flags & PRE_FULL_PSI )
 	nfft_precompute_full_psi( &( ths[ q ]->mv2 ) );           
      }
 
@@ -616,13 +628,13 @@ void FastSummation::fastSum(double *x, double *y, double *alpha, double *alphax,
 			ths->mv1.x[ths->mv1.d*k+t] = - ths->x[ths->mv1.d*k+t];  // note the factor -1 for transposed transform instead of adjoint //
 
 	// precompute psi, the entries of the matrix B //
-	if(ths->mv1.nfft_flags & PRE_LIN_PSI)
+	if(ths->mv1.flags & PRE_LIN_PSI)
 		nfft_precompute_lin_psi(&(ths->mv1));
 
-	if(ths->mv1.nfft_flags & PRE_PSI)
+	if(ths->mv1.flags & PRE_PSI)
 		nfft_precompute_psi(&(ths->mv1));
 
-	if(ths->mv1.nfft_flags & PRE_FULL_PSI)
+	if(ths->mv1.flags & PRE_FULL_PSI)
 		nfft_precompute_full_psi(&(ths->mv1));
 /*
 	// init Fourier coefficients //
@@ -635,13 +647,13 @@ void FastSummation::fastSum(double *x, double *y, double *alpha, double *alphax,
 			ths->mv2.x[ths->mv2.d*j+t] = - ths->y[ths->mv2.d*j+t];  // note the factor -1 for conjugated transform instead of standard //
 
 	// precompute psi, the entries of the matrix B //
-  	if(ths->mv2.nfft_flags & PRE_LIN_PSI)
+  	if(ths->mv2.flags & PRE_LIN_PSI)
 		nfft_precompute_lin_psi(&(ths->mv2));
 
-	if(ths->mv2.nfft_flags & PRE_PSI)
+	if(ths->mv2.flags & PRE_PSI)
 		nfft_precompute_psi(&(ths->mv2));
 
-	if(ths->mv2.nfft_flags & PRE_FULL_PSI)
+	if(ths->mv2.flags & PRE_FULL_PSI)
 		nfft_precompute_full_psi(&(ths->mv2));
 
 	// precompute Fourier coefficients of regularised kernel //
@@ -819,13 +831,13 @@ void FastSummation::fastSum(double *x, double *y, double *alpha, double *sum)
 			ths->mv1.x[ths->mv1.d*k+t] = - ths->x[ths->mv1.d*k+t];  // note the factor -1 for transposed transform instead of adjoint //
 
 	// precompute psi, the entries of the matrix B //
-	if(ths->mv1.nfft_flags & PRE_LIN_PSI)
+	if(ths->mv1.flags & PRE_LIN_PSI)
 		nfft_precompute_lin_psi(&(ths->mv1));
 
-	if(ths->mv1.nfft_flags & PRE_PSI)
+	if(ths->mv1.flags & PRE_PSI)
 		nfft_precompute_psi(&(ths->mv1));
 
-	if(ths->mv1.nfft_flags & PRE_FULL_PSI)
+	if(ths->mv1.flags & PRE_FULL_PSI)
 		nfft_precompute_full_psi(&(ths->mv1));
 /*
 	// init Fourier coefficients //
@@ -838,13 +850,13 @@ void FastSummation::fastSum(double *x, double *y, double *alpha, double *sum)
 			ths->mv2.x[ths->mv2.d*j+t] = - ths->y[ths->mv2.d*j+t];  // note the factor -1 for conjugated transform instead of standard //
 
 	// precompute psi, the entries of the matrix B //
-  	if(ths->mv2.nfft_flags & PRE_LIN_PSI)
+  	if(ths->mv2.flags & PRE_LIN_PSI)
 		nfft_precompute_lin_psi(&(ths->mv2));
 
-	if(ths->mv2.nfft_flags & PRE_PSI)
+	if(ths->mv2.flags & PRE_PSI)
 		nfft_precompute_psi(&(ths->mv2));
 
-	if(ths->mv2.nfft_flags & PRE_FULL_PSI)
+	if(ths->mv2.flags & PRE_FULL_PSI)
 		nfft_precompute_full_psi(&(ths->mv2));
 
 	// precompute Fourier coefficients of regularised kernel //

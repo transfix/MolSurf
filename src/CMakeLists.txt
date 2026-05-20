@@ -31,8 +31,13 @@ ADD_SUBDIRECTORY (LBIE_lib)
 ADD_SUBDIRECTORY (LeastRMSD)
 
 ADD_SUBDIRECTORY (levmar-2.5)
-ADD_SUBDIRECTORY (FastSummation)
-ADD_SUBDIRECTORY (libCG)
+# FastSummation and libCG use C99/POSIX-only features (`double _Complex`,
+# `ssize_t`, variable-length arrays) that MSVC does not support. Gate
+# them on non-MSVC compilers until they are ported.
+if(NOT MSVC)
+  ADD_SUBDIRECTORY (FastSummation)
+  ADD_SUBDIRECTORY (libCG)
+endif()
 
 ADD_SUBDIRECTORY (MolecularCharacteristics)
 ADD_SUBDIRECTORY (MolSurf)
